@@ -50,7 +50,7 @@ const tocTitleClass =
       class="site-grid site-grid--page relative z-10 text-text-primary dark:text-text-primary-dark"
     >
       <div class="hidden min-w-0 min-[821px]:block min-[821px]:sticky min-[821px]:top-20">
-        <Sidebar />
+        <Sidebar musicHydration="desktop" />
       </div>
       <div class="min-w-0">
         <article class="rounded-card border border-border bg-card p-4 backdrop-blur-lg dark:border-border-dark dark:bg-card-dark sm:p-8">
@@ -120,7 +120,7 @@ const tocTitleClass =
       </summary>
       <div class="mobile-assist__panel scrollbar-thin">
         <div class="grid gap-3">
-          <Sidebar />
+          <Sidebar musicHydration="mobile" />
           <aside class="grid w-full content-start gap-4 text-text-primary dark:text-text-primary-dark" aria-label="文章辅助信息">
             <section class={tocCardClass} aria-labelledby="mobile-article-toc-title">
               <h2 id="mobile-article-toc-title" class={tocTitleClass}>文章目录</h2>

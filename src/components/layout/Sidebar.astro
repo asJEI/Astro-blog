@@ -2,6 +2,12 @@
 import avatar from "../../assets/sidebar-avatar.png";
 import MusicPlayer from "../sidebar/MusicPlayer";
 
+interface Props {
+  musicHydration?: "all" | "desktop" | "mobile" | "none";
+}
+
+const { musicHydration = "all" } = Astro.props;
+
 const skills = ["AI", "LLM", "Frontend", "TS", "Python"];
 
 const socialLinks = [
@@ -46,7 +52,9 @@ const tagClass =
   <div class="grid gap-4">
     <section class={cardClass} aria-labelledby="music-player-title">
       <h3 id="music-player-title" class="sr-only">音乐播放器</h3>
-      <MusicPlayer client:load />
+      {musicHydration === "all" && <MusicPlayer client:load />}
+      {musicHydration === "desktop" && <MusicPlayer client:media="(min-width: 821px)" />}
+      {musicHydration === "mobile" && <MusicPlayer client:media="(max-width: 820px)" />}
     </section>
 
     <section class={cardClass} aria-labelledby="social-title">

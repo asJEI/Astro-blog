@@ -4,51 +4,108 @@ type Track = {
   title: string;
   artist: string;
   src: string;
+  cover: string;
   accent: string;
 };
+
+declare global {
+  interface Window {
+    __beihaiActiveAudio?: HTMLAudioElement;
+  }
+}
 
 const BACKGROUND_VOLUME = 0.25;
 
 const musicSrc = (filename: string) => `/music/${encodeURIComponent(filename)}`;
 
-const tracks: Track[] = [
+const musicCoverSrc = (filename: string) => {
+  const coverName = filename.replace(/\.[^.]+$/, ".webp");
+  return `/music/covers/${encodeURIComponent(coverName)}`;
+};
+
+const parseTrackName = (filename: string) => {
+  const name = filename.replace(/\.[^.]+$/, "");
+  const [artist, ...titleParts] = name.split(/\s*-\s*/);
+  const title = titleParts.join(" - ");
+
+  return {
+    artist: artist || "未知歌手",
+    title: title || name,
+  };
+};
+
+const trackFiles = [
   {
-    artist: "mizuki",
-    title: "Avid",
-    src: musicSrc("mizuki - Avid.mp3"),
+    filename: "mizuki - Avid.mp3",
     accent: "from-primary/40 to-warm/30",
   },
   {
-    artist: "Sound Horizon",
-    title: "美しきもの",
-    src: musicSrc("Sound Horizon - 美しきもの.mp3"),
+    filename: "Sound Horizon - 美しきもの.mp3",
     accent: "from-accent/35 to-primary/30",
   },
   {
-    artist: "福禄寿FloruitShow",
-    title: "我用什么把你留住",
-    src: musicSrc("福禄寿FloruitShow - 我用什么把你留住.mp3"),
+    filename: "福禄寿FloruitShow - 我用什么把你留住.mp3",
     accent: "from-warm/35 to-accent/25",
   },
   {
-    artist: "鹿乃",
-    title: "優しさの記憶",
-    src: musicSrc("鹿乃 - 優しさの記憶.mp3"),
+    filename: "鹿乃 - 優しさの記憶.mp3",
     accent: "from-primary/35 to-accent/30",
   },
   {
-    artist: "MyGO!!!!!",
-    title: "栞",
-    src: musicSrc("MyGO!!!!! - 栞.mp3"),
+    filename: "MyGO!!!!! - 栞.mp3",
     accent: "from-accent/40 to-warm/25",
   },
   {
-    artist: "米津玄師",
-    title: "Lemon",
-    src: musicSrc("米津玄師 - Lemon.mp3"),
+    filename: "米津玄師 - Lemon.mp3",
     accent: "from-warm/40 to-primary/25",
   },
+  {
+    filename: "Justin Bieber - Peaches.mp3",
+    accent: "from-warm/35 to-accent/30",
+  },
 ];
+
+const tracks: Track[] = trackFiles.map((track) => ({
+  ...parseTrackName(track.filename),
+  src: musicSrc(track.filename),
+  cover: musicCoverSrc(track.filename),
+  accent: track.accent,
+}));
+
+const TrackCover = ({
+  track,
+  className,
+  fallbackClassName,
+}: {
+  track: Track;
+  className: string;
+  fallbackClassName?: string;
+}) => {
+  const [hasError, setHasError] = useState(false);
+
+  if (hasError) {
+    return (
+      <div
+        className={`grid place-items-center bg-gradient-to-br ${track.accent} ${fallbackClassName ?? className}`}
+        aria-hidden="true"
+      >
+        <span className="text-xs font-bold text-white/90">{track.title.slice(0, 1)}</span>
+      </div>
+    );
+  }
+
+  return (
+    <img
+      className={className}
+      src={track.cover}
+      alt=""
+      width={56}
+      height={56}
+      loading="lazy"
+      onError={() => setHasError(true)}
+    />
+  );
+};
 
 const formatTime = (seconds: number) => {
   if (!Number.isFinite(seconds) || seconds <= 0) {
@@ -68,7 +125,9 @@ export default function MusicPlayer() {
   const rangeRef = useRef<HTMLInputElement | null>(null);
   const hasAutoPlayedRef = useRef(false);
   const shouldAutoPlayRef = useRef(false);
+  const volumeRef = useRef(BACKGROUND_VOLUME);
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
+  const [volume, setVolume] = useState(BACKGROUND_VOLUME);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isReady, setIsReady] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -87,22 +146,41 @@ export default function MusicPlayer() {
   useEffect(() => {
     const audio = new Audio(currentTrack.src);
     audio.preload = "metadata";
-    audio.volume = BACKGROUND_VOLUME;
+    audio.volume = volumeRef.current;
     audioRef.current = audio;
     setIsReady(false);
     setCurrentTime(0);
     setDuration(0);
     setIsPlaying(false);
 
-    const tryPlay = () => {
-      audio.play().catch(() => {
-        const resumeOnInteraction = () => {
-          document.removeEventListener("click", resumeOnInteraction);
-          document.removeEventListener("keydown", resumeOnInteraction);
-          audio.play().catch(() => {});
-        };
+    let isResumeArmed = false;
+    const playAudio = async () => {
+      const activeAudio = window.__beihaiActiveAudio;
 
-        document.addEventListener("click", resumeOnInteraction);
+      if (activeAudio && activeAudio !== audio && !activeAudio.paused) {
+        activeAudio.pause();
+      }
+
+      if (audio.paused) {
+        await audio.play();
+      }
+
+      window.__beihaiActiveAudio = audio;
+    };
+    const resumeOnInteraction = () => {
+      document.removeEventListener("pointerdown", resumeOnInteraction);
+      document.removeEventListener("keydown", resumeOnInteraction);
+      isResumeArmed = false;
+      playAudio().catch(() => {});
+    };
+    const tryPlay = () => {
+      playAudio().catch(() => {
+        if (isResumeArmed) {
+          return;
+        }
+
+        isResumeArmed = true;
+        document.addEventListener("pointerdown", resumeOnInteraction);
         document.addEventListener("keydown", resumeOnInteraction);
       });
     };
@@ -139,11 +217,16 @@ export default function MusicPlayer() {
 
     return () => {
       audio.pause();
+      document.removeEventListener("pointerdown", resumeOnInteraction);
+      document.removeEventListener("keydown", resumeOnInteraction);
       audio.removeEventListener("loadedmetadata", handleLoadedMetadata);
       audio.removeEventListener("timeupdate", handleTimeUpdate);
       audio.removeEventListener("ended", handleEnded);
       audio.removeEventListener("play", handlePlay);
       audio.removeEventListener("pause", handlePause);
+      if (window.__beihaiActiveAudio === audio) {
+        window.__beihaiActiveAudio = undefined;
+      }
       audioRef.current = null;
     };
   }, [currentTrack.src]);
@@ -160,7 +243,14 @@ export default function MusicPlayer() {
     }
 
     try {
+      const activeAudio = window.__beihaiActiveAudio;
+
+      if (activeAudio && activeAudio !== audio && !activeAudio.paused) {
+        activeAudio.pause();
+      }
+
       await audio.play();
+      window.__beihaiActiveAudio = audio;
     } catch {
       setIsPlaying(false);
     }
@@ -181,39 +271,80 @@ export default function MusicPlayer() {
       return;
     }
 
+    shouldAutoPlayRef.current = isPlaying;
     setCurrentTrackIndex(index);
   };
 
   const moveTrack = (direction: 1 | -1) => {
+    shouldAutoPlayRef.current = isPlaying;
     setCurrentTrackIndex((index) => (index + direction + tracks.length) % tracks.length);
   };
 
+  const setVolumeValue = (value: number) => {
+    const nextVolume = Math.min(1, Math.max(0, value / 100));
+    volumeRef.current = nextVolume;
+    setVolume(nextVolume);
+
+    if (audioRef.current) {
+      audioRef.current.volume = nextVolume;
+    }
+  };
+
+  const volumePercent = Math.round(volume * 100);
+
   return (
     <div className="grid gap-4 max-sm:gap-3" aria-label="音乐播放器">
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div className="min-w-0">
+      <div className="grid gap-2">
+        <div className="flex items-start justify-between gap-3">
           <p className="m-0 text-xs font-bold uppercase leading-none tracking-[0.12em] text-text-muted dark:text-text-muted-dark">
             音乐时间
           </p>
-          <p className="mt-2 truncate text-base font-bold leading-6 tracking-[-0.04em]">
-            {currentTrack.artist}
-          </p>
-          <p className="mt-1 truncate text-xs leading-5 text-text-muted dark:text-text-muted-dark">
-            {currentTrack.title}
-          </p>
+          <span className="shrink-0 rounded-pill border border-primary/16 bg-primary/8 px-2.5 py-1 text-[0.68rem] font-medium leading-none text-text-muted dark:border-primary/18 dark:bg-primary/10 dark:text-text-muted-dark">
+            {isPlaying ? "播放中" : isReady ? "已暂停" : "加载中"}
+          </span>
         </div>
-        <span className="shrink-0 rounded-pill border border-primary/16 bg-primary/8 px-2.5 py-1 text-[0.68rem] font-medium leading-none text-text-muted dark:border-primary/18 dark:bg-primary/10 dark:text-text-muted-dark">
-          {isPlaying ? "播放中" : isReady ? "已暂停" : "加载中"}
-        </span>
+        <div className="flex items-center gap-3">
+          <div className="min-w-0 flex-1">
+            <p className="m-0 truncate text-xl font-bold leading-7 tracking-[-0.04em]">
+              {currentTrack.title}
+            </p>
+            <p className="mt-1 truncate text-xs leading-5 text-text-muted dark:text-text-muted-dark">
+              {currentTrack.artist}
+            </p>
+          </div>
+          <div className="flex w-[5.75rem] shrink-0 items-center gap-1.5 self-center">
+            <svg
+              className="h-3.5 w-3.5 shrink-0 text-text-muted dark:text-text-muted-dark"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path
+                d="M11 5 6 9H3v6h3l5 4V5Zm4.73 2.5a1 1 0 0 1 1.41 0 6.5 6.5 0 0 1 0 9.19 1 1 0 1 1-1.41-1.41 4.5 4.5 0 0 0 0-6.37 1 1 0 0 1 0-1.41Zm2.12-2.12a1 1 0 0 1 1.41 0 10.5 10.5 0 0 1 0 14.84 1 1 0 1 1-1.41-1.41 8.5 8.5 0 0 0 0-12.02 1 1 0 0 1 0-1.41Z"
+                fill="currentColor"
+              />
+            </svg>
+            <input
+              className="music-progress-slider music-player-volume min-w-0 flex-1 cursor-pointer outline-none"
+              type="range"
+              min="0"
+              max="100"
+              value={volumePercent}
+              step="1"
+              onInput={(event) => setVolumeValue(Number(event.currentTarget.value))}
+              onChange={(event) => setVolumeValue(Number(event.currentTarget.value))}
+              style={{ "--music-progress": `${volumePercent}%` } as CSSProperties}
+              aria-label="音量"
+            />
+          </div>
+        </div>
       </div>
 
       <div className="flex items-center gap-3 max-[360px]:grid max-[360px]:grid-cols-[3.5rem_minmax(0,1fr)]">
-        <div
-          className={`grid h-14 w-14 shrink-0 place-items-center rounded-card border border-primary/18 bg-gradient-to-br ${currentTrack.accent} shadow-[0_14px_32px_rgb(0_0_0_/_0.12)] dark:border-primary/20`}
-          aria-hidden="true"
-        >
-          <span className="text-lg font-bold text-white/90">{currentTrack.artist.slice(0, 1)}</span>
-        </div>
+        <TrackCover
+          track={currentTrack}
+          className="h-14 w-14 shrink-0 rounded-card border border-primary/18 object-cover shadow-[0_14px_32px_rgb(0_0_0_/_0.12)] dark:border-primary/20"
+          fallbackClassName="h-14 w-14 shrink-0 rounded-card border border-primary/18 shadow-[0_14px_32px_rgb(0_0_0_/_0.12)] dark:border-primary/20"
+        />
         <div className="min-w-0 flex-1">
           <div className="flex items-center justify-between gap-2 text-[0.68rem] font-medium leading-none text-text-muted dark:text-text-muted-dark">
             <span>{formatTime(currentTime)}</span>
@@ -228,6 +359,7 @@ export default function MusicPlayer() {
             value={duration ? currentTime : 0}
             step="1"
             disabled={!duration}
+            onInput={(event) => seek(Number(event.currentTarget.value))}
             onChange={(event) => seek(Number(event.currentTarget.value))}
             style={{ "--music-progress": `${progress}%` } as CSSProperties}
             aria-label="播放进度"
@@ -309,16 +441,15 @@ export default function MusicPlayer() {
                   key={track.src}
                   onClick={() => selectTrack(index)}
                 >
-                  <span
-                    className={`grid h-8 w-8 place-items-center rounded-card bg-gradient-to-br ${track.accent} text-xs font-bold text-white/90`}
-                    aria-hidden="true"
-                  >
-                    {index + 1}
-                  </span>
+                  <TrackCover
+                    track={track}
+                    className="h-8 w-8 rounded-card object-cover"
+                    fallbackClassName="h-8 w-8 rounded-card"
+                  />
                   <span className="min-w-0">
-                    <span className="block truncate text-sm font-semibold leading-5">{track.artist}</span>
+                    <span className="block truncate text-base font-bold leading-6">{track.title}</span>
                     <span className="block truncate text-xs leading-5 text-text-muted dark:text-text-muted-dark">
-                      {track.title}
+                      {track.artist}
                     </span>
                   </span>
                 </button>
@@ -327,6 +458,22 @@ export default function MusicPlayer() {
           </div>
         </div>
       )}
+      <style>{`
+        .music-player-volume {
+          height: 1.25rem;
+        }
+
+        .music-player-volume::-webkit-slider-thumb {
+          width: 0.75rem;
+          height: 0.75rem;
+          margin-top: -0.21875rem;
+        }
+
+        .music-player-volume::-moz-range-thumb {
+          width: 0.65rem;
+          height: 0.65rem;
+        }
+      `}</style>
     </div>
   );
 }

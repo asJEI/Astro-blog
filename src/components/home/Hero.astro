@@ -18,23 +18,23 @@ import mobileHeroImage from "../../assets/mobile-hero-background.png";
   <div class="hero-fade absolute inset-x-0 bottom-0 h-[34vh]" aria-hidden="true"></div>
 
   <div class="relative z-10 mx-auto w-[min(calc(100%_-_3rem),1180px)] py-28 pt-36 max-sm:flex max-sm:min-h-[100svh] max-sm:w-[min(calc(100%_-_2rem),1180px)] max-sm:flex-col max-sm:items-center max-sm:justify-center max-sm:py-24 max-sm:pt-28 max-sm:text-center">
-    <p class="mb-5 text-xs font-semibold uppercase tracking-[0.32em] text-white/62 max-[360px]:tracking-[0.22em]">
+    <p class="mb-5 text-xs font-semibold uppercase tracking-[0.32em] text-white/62 max-sm:hidden">
       Personal Tech Blog
     </p>
 
-    <h1 id="hero-title" class="max-w-[10ch] text-[clamp(4rem,13vw,9.5rem)] font-bold leading-[0.92] tracking-[-0.08em] text-balance max-sm:mx-auto max-sm:text-[clamp(3.5rem,18vw,5.5rem)]">
+    <h1 id="hero-title" class="max-w-[10ch] text-[clamp(4rem,13vw,9.5rem)] font-bold leading-[0.92] tracking-[-0.08em] text-balance max-sm:hidden">
       北海
     </h1>
 
-    <p class="mt-8 max-w-[12ch] text-[clamp(1.55rem,8vw,3rem)] font-semibold leading-[1.08] tracking-[-0.045em] max-sm:mx-auto max-sm:mt-6 max-sm:max-w-[14ch]">
-      欢迎来到北海的博客
+    <p class="mt-8 max-w-[12ch] text-[clamp(1.55rem,8vw,3rem)] font-semibold leading-[1.08] tracking-[-0.045em] max-sm:mx-auto max-sm:mt-0 max-sm:max-w-none max-sm:text-sm max-sm:font-medium max-sm:leading-6 max-sm:tracking-[0.18em]">
+      <span class="typewriter-text">欢迎来到北海的博客</span>
     </p>
 
-    <p class="mt-5 max-w-2xl text-base leading-8 text-white/76 max-sm:max-w-[18rem] sm:text-lg">
+    <p class="mt-5 max-w-2xl text-base leading-8 text-white/76 max-sm:hidden sm:text-lg">
       记录生活，分享思考，探索技术的无限可能
     </p>
 
-    <div class="mt-10 flex flex-wrap gap-3 max-sm:w-full max-sm:flex-col max-sm:items-stretch" aria-label="Hero actions">
+    <div class="mt-10 flex flex-wrap gap-3 max-sm:hidden" aria-label="Hero actions">
       <a
         class="inline-flex min-h-12 items-center justify-center rounded-pill border border-white/75 bg-white/90 px-6 py-3 text-sm font-semibold leading-none text-background-dark no-underline shadow-[0_14px_34px_rgb(0_0_0_/_0.18)] transition duration-200 hover:-translate-y-px hover:bg-white"
         href="/blog"
@@ -45,10 +45,14 @@ import mobileHeroImage from "../../assets/mobile-hero-background.png";
         class="inline-flex min-h-12 items-center justify-center rounded-pill border border-white/18 bg-white/12 px-6 py-3 text-sm font-semibold leading-none text-white no-underline backdrop-blur-md transition duration-200 hover:-translate-y-px hover:border-white/38 hover:bg-white/18"
         href="/projects"
       >
-        View Projects
+        前往GitHub
       </a>
     </div>
   </div>
+
+  <a class="scroll-cue" href="#main-content" aria-label="下滑查看更多内容">
+    <span class="scroll-cue__chevron" aria-hidden="true"></span>
+  </a>
 </section>
 
 <style>
@@ -66,6 +70,77 @@ import mobileHeroImage from "../../assets/mobile-hero-background.png";
     background: linear-gradient(180deg, rgb(9 13 24 / 0) 0%, rgb(9 13 24 / 0.38) 72%, var(--color-background-dark) 100%);
   }
 
+  .typewriter-text {
+    display: inline-block;
+    width: 0;
+    max-width: max-content;
+    overflow: hidden;
+    border-right: 0.08em solid currentColor;
+    white-space: nowrap;
+    animation:
+      typewriter 1.8s steps(9) 0.35s forwards,
+      typewriter-caret 0.75s step-end infinite;
+  }
+
+  .scroll-cue {
+    position: absolute;
+    bottom: max(2.25rem, env(safe-area-inset-bottom));
+    left: 50%;
+    z-index: 20;
+    display: grid;
+    width: 2.75rem;
+    height: 2.75rem;
+    translate: -50% 0;
+    place-items: center;
+    color: white;
+    text-decoration: none;
+    opacity: 0;
+    animation: scroll-cue-enter 0.7s ease 2.1s forwards;
+  }
+
+  .scroll-cue__chevron {
+    width: 1.35rem;
+    height: 1.35rem;
+    border-right: 0.22rem solid currentColor;
+    border-bottom: 0.22rem solid currentColor;
+    rotate: 45deg;
+    animation: scroll-cue-bob 1.35s ease-in-out infinite;
+    filter: drop-shadow(0 0.5rem 1rem rgb(0 0 0 / 0.28));
+  }
+
+  @keyframes typewriter {
+    from {
+      width: 0;
+    }
+
+    to {
+      width: 9em;
+    }
+  }
+
+  @keyframes typewriter-caret {
+    50% {
+      border-color: transparent;
+    }
+  }
+
+  @keyframes scroll-cue-enter {
+    to {
+      opacity: 0.86;
+    }
+  }
+
+  @keyframes scroll-cue-bob {
+    0%,
+    100% {
+      translate: 0 -0.2rem;
+    }
+
+    50% {
+      translate: 0 0.25rem;
+    }
+  }
+
   @media (max-width: 720px) {
     .hero-scrim {
       background:
@@ -80,6 +155,32 @@ import mobileHeroImage from "../../assets/mobile-hero-background.png";
 
     :global(.dark) .hero-fade {
       background: linear-gradient(180deg, rgb(9 13 24 / 0) 0%, rgb(9 13 24 / 0.44) 72%, var(--color-background-dark) 100%);
+    }
+  }
+
+  @media (max-width: 640px) {
+    .typewriter-text {
+      animation:
+        typewriter 1.6s steps(9) 0.35s forwards,
+        typewriter-caret 0.75s step-end infinite;
+    }
+
+    .scroll-cue {
+      bottom: max(4.75rem, env(safe-area-inset-bottom));
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .typewriter-text {
+      width: auto;
+      border-right: 0;
+      animation: none;
+    }
+
+    .scroll-cue,
+    .scroll-cue__chevron {
+      opacity: 0.86;
+      animation: none;
     }
   }
 </style>

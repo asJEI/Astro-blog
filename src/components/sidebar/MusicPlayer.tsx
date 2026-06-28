@@ -9,22 +9,10 @@ type Track = {
 
 const tracks: Track[] = [
   {
-    title: "Rain",
-    artist: "Beihai Radio",
-    src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+    title: "Peaches",
+    artist: "Justin Bieber",
+    src: "/music/Justin%20Bieber%2CDaniel%20Caesar%2CGIV%C4%92ON%20-%20Peaches.mp3",
     accent: "from-primary/40 to-warm/30",
-  },
-  {
-    title: "Nocturne Notes",
-    artist: "Quiet Tech Blog",
-    src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
-    accent: "from-accent/35 to-primary/30",
-  },
-  {
-    title: "Late City Lights",
-    artist: "Placeholder Session",
-    src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
-    accent: "from-warm/35 to-accent/25",
   },
 ];
 

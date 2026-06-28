@@ -4,6 +4,7 @@ import { getCollection, render } from "astro:content";
 import "../../styles/global.css";
 
 import Navbar from "../../components/layout/Navbar.astro";
+import Sidebar from "../../components/layout/Sidebar.astro";
 import siteIcon from "../../assets/site-icon.png";
 
 export async function getStaticPaths() {
@@ -16,7 +17,8 @@ export async function getStaticPaths() {
 }
 
 const { post } = Astro.props;
-const { Content } = await render(post);
+const { Content, headings } = await render(post);
+const tocHeadings = headings.filter((heading) => heading.depth >= 2 && heading.depth <= 3);
 
 const formatDate = (date: Date) =>
   new Intl.DateTimeFormat("zh-CN", {
@@ -27,6 +29,10 @@ const formatDate = (date: Date) =>
 
 const tagClass =
   "rounded-pill border border-primary/16 bg-primary/8 px-2 py-1 text-xs font-medium leading-tight text-text-secondary transition-colors duration-200 hover:border-accent/28 hover:bg-accent/9 hover:text-text-primary dark:border-primary/18 dark:bg-primary/10 dark:text-text-secondary-dark dark:hover:border-accent/30 dark:hover:bg-accent/12 dark:hover:text-text-primary-dark";
+const tocCardClass =
+  "rounded-card border border-border bg-card p-4 backdrop-blur-lg dark:border-border-dark dark:bg-card-dark";
+const tocTitleClass =
+  "mb-3 text-xs font-bold uppercase leading-none tracking-[0.12em] text-text-muted dark:text-text-muted-dark";
 ---
 
 <html lang="zh-CN">
@@ -40,35 +46,71 @@ const tagClass =
   </head>
   <body class="min-h-screen">
     <Navbar />
-    <main class="mx-auto w-[min(calc(100%_-_2rem),860px)] py-28 text-text-primary dark:text-text-primary-dark">
-      <article class="rounded-card border border-border bg-card p-6 backdrop-blur-lg dark:border-border-dark dark:bg-card-dark sm:p-8">
-        <header class="border-b border-border pb-6 dark:border-border-dark">
-          <a
-            class="text-sm font-semibold text-text-secondary no-underline transition-colors duration-200 hover:text-accent dark:text-text-secondary-dark"
-            href="/blog"
-          >
-            返回文章列表
-          </a>
-          <h1 class="mt-5 text-3xl font-bold leading-tight tracking-[-0.06em] sm:text-5xl">{post.data.title}</h1>
-          <div class="mt-4 flex flex-wrap items-center gap-3">
-            <time class="text-sm text-text-muted dark:text-text-muted-dark" datetime={post.data.date.toISOString()}>
-              {formatDate(post.data.date)}
-            </time>
-            {post.data.tags.map((tag) => <span class={tagClass}>{tag}</span>)}
-          </div>
-          {
-            post.data.description && (
-              <p class="mt-5 text-base leading-8 text-text-secondary dark:text-text-secondary-dark">
-                {post.data.description}
-              </p>
-            )
-          }
-        </header>
+    <main
+      class="relative z-10 mx-auto grid w-[min(calc(100%_-_0.75rem),1600px)] grid-cols-1 items-start gap-3 py-28 text-text-primary min-[821px]:grid-cols-[minmax(0,14rem)_minmax(0,1fr)] min-[1101px]:grid-cols-[minmax(0,14rem)_minmax(0,1fr)_minmax(0,14rem)] dark:text-text-primary-dark"
+    >
+      <div class="min-w-0 min-[821px]:sticky min-[821px]:top-20">
+        <Sidebar />
+      </div>
+      <div class="min-w-0">
+        <article class="rounded-card border border-border bg-card p-6 backdrop-blur-lg dark:border-border-dark dark:bg-card-dark sm:p-8">
+          <header class="border-b border-border pb-6 dark:border-border-dark">
+            <a
+              class="text-sm font-semibold text-text-secondary no-underline transition-colors duration-200 hover:text-accent dark:text-text-secondary-dark"
+              href="/blog"
+            >
+              返回文章列表
+            </a>
+            <h1 class="mt-5 text-3xl font-bold leading-tight tracking-[-0.06em] sm:text-5xl">{post.data.title}</h1>
+            <div class="mt-4 flex flex-wrap items-center gap-3">
+              <time class="text-sm text-text-muted dark:text-text-muted-dark" datetime={post.data.date.toISOString()}>
+                {formatDate(post.data.date)}
+              </time>
+              {post.data.tags.map((tag) => <span class={tagClass}>#{tag}</span>)}
+            </div>
+            {
+              post.data.description && (
+                <p class="mt-5 text-base leading-8 text-text-secondary dark:text-text-secondary-dark">
+                  {post.data.description}
+                </p>
+              )
+            }
+          </header>
 
-        <div class="article-content mt-8">
-          <Content />
-        </div>
-      </article>
+          <div class="article-content mt-8">
+            <Content />
+          </div>
+        </article>
+      </div>
+      <div class="min-w-0 min-[821px]:col-start-2 min-[1101px]:sticky min-[1101px]:top-20 min-[1101px]:col-auto">
+        <aside class="grid w-full content-start gap-4 text-text-primary dark:text-text-primary-dark" aria-label="文章辅助信息">
+          <section class={tocCardClass} aria-labelledby="article-toc-title">
+            <h2 id="article-toc-title" class={tocTitleClass}>文章目录</h2>
+            {
+              tocHeadings.length > 0 ? (
+                <nav aria-label="文章目录">
+                  <ol class="m-0 grid list-none gap-2 p-0">
+                    {tocHeadings.map((heading) => (
+                      <li class={heading.depth === 3 ? "pl-3" : ""}>
+                        <a
+                          class="block rounded-card px-2 py-1.5 text-sm leading-5 text-text-secondary no-underline transition duration-200 hover:bg-primary/10 hover:text-text-primary dark:text-text-secondary-dark dark:hover:bg-white/8 dark:hover:text-text-primary-dark"
+                          href={`#${heading.slug}`}
+                        >
+                          {heading.text}
+                        </a>
+                      </li>
+                    ))}
+                  </ol>
+                </nav>
+              ) : (
+                <p class="m-0 text-sm leading-6 text-text-secondary dark:text-text-secondary-dark">
+                  这篇文章暂无可跳转的小标题。
+                </p>
+              )
+            }
+          </section>
+        </aside>
+      </div>
     </main>
   </body>
 </html>
@@ -88,6 +130,7 @@ const tagClass =
     margin: 2rem 0 0.75rem;
     line-height: 1.35;
     letter-spacing: -0.04em;
+    scroll-margin-top: 6rem;
   }
 
   .article-content :global(h2) {

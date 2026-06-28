@@ -2,6 +2,7 @@
 title: Attention：我们都活在彼此的注意力机制里
 date: 2026-05-26
 description: "\"Attention is all you need.\" 把注意力放到你自己的重要的事情上。 2017年，《Attention Is All You Need》发表的时候，很多人还没有意识到，它不仅改变了AI，也在某种程度上，把人类理解世界的方式暴露了出来。后来人们把这种思考方式叫做 Transformer。如今..."
+tags: ["技术交流", "幽微"]
 ---
 
 > "Attention is all you need."  

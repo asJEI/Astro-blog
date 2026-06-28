@@ -1,17 +1,25 @@
 ---
+import { getCollection } from "astro:content";
+
+const posts = (await getCollection("blog", ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime(),
+);
+const tags = [...new Set(posts.flatMap((post) => post.data.tags))].sort((a, b) => a.localeCompare(b, "zh-CN"));
+const siteStartYear =
+  posts.length > 0
+    ? String(Math.min(...posts.map((post) => post.data.date.getFullYear())))
+    : String(new Date().getFullYear());
+
 const siteStats = [
-  { label: "文章数量", value: "12" },
-  { label: "标签数量", value: "8" },
-  { label: "建站时间", value: "2026" },
+  { label: "文章数量", value: String(posts.length) },
+  { label: "标签数量", value: String(tags.length) },
+  { label: "建站时间", value: siteStartYear },
 ];
 
-const tags = ["Astro", "TypeScript", "AI", "LLM", "Frontend", "Python", "Notes", "Life"];
-
-const recentUpdates = [
-  "完成首页基础视觉搭建",
-  "整理博客内容结构",
-  "准备接入文章集合",
-];
+const recentUpdates = posts.slice(0, 3).map((post) => ({
+  title: post.data.title,
+  href: `/blog/${post.id}/`,
+}));
 
 const cardClass =
   "rounded-card border border-border bg-card p-4 backdrop-blur-lg transition duration-200 hover:-translate-y-px hover:border-primary/30 hover:bg-white/82 dark:border-border-dark dark:bg-card-dark dark:hover:border-primary/30 dark:hover:bg-white/7";
@@ -37,20 +45,41 @@ const tagClass =
   </section>
 
   <section class={cardClass} aria-labelledby="tag-cloud-title">
-    <h2 id="tag-cloud-title" class={sectionTitleClass}>标签云</h2>
-    <div class="flex flex-wrap gap-2" aria-label="标签云">
-      {tags.map((tag) => <span class={tagClass}>{tag}</span>)}
-    </div>
+    <h2 id="tag-cloud-title" class={sectionTitleClass}>文章标签</h2>
+    {
+      tags.length > 0 ? (
+        <div class="flex flex-wrap gap-2" aria-label="文章标签">
+          {tags.map((tag) => <span class={tagClass}>{tag}</span>)}
+        </div>
+      ) : (
+        <p class="m-0 text-sm leading-6 text-text-secondary dark:text-text-secondary-dark">
+          暂无标签
+        </p>
+      )
+    }
   </section>
 
   <section class={cardClass} aria-labelledby="recent-updates-title">
     <h2 id="recent-updates-title" class={sectionTitleClass}>最新动态</h2>
-    <ul class="m-0 grid list-none gap-3 p-0">
-      {
-        recentUpdates.map((item) => (
-          <li class="text-sm leading-6 text-text-secondary dark:text-text-secondary-dark">{item}</li>
-        ))
-      }
-    </ul>
+    {
+      recentUpdates.length > 0 ? (
+        <ul class="m-0 grid list-none gap-3 p-0">
+          {recentUpdates.map((item) => (
+            <li>
+              <a
+                class="block text-sm leading-6 text-text-secondary no-underline transition-colors duration-200 hover:text-accent dark:text-text-secondary-dark"
+                href={item.href}
+              >
+                {item.title}
+              </a>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p class="m-0 text-sm leading-6 text-text-secondary dark:text-text-secondary-dark">
+          暂无动态
+        </p>
+      )
+    }
   </section>
 </aside>

@@ -1,0 +1,108 @@
+---
+import type { BlogPost } from "../../lib/blog";
+
+import "../../styles/global.css";
+
+import Navbar from "../layout/Navbar.astro";
+import RightAside from "../layout/RightAside.astro";
+import Sidebar from "../layout/Sidebar.astro";
+import siteIcon from "../../assets/site-icon.png";
+
+interface Props {
+  posts: BlogPost[];
+  title: string;
+  eyebrow: string;
+  description: string;
+  pageTitle?: string;
+}
+
+const { posts, title, eyebrow, description, pageTitle = `${title} | 北海` } = Astro.props;
+
+const formatDate = (date: Date) =>
+  new Intl.DateTimeFormat("zh-CN", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(date);
+
+const cardClass =
+  "rounded-card border border-border bg-card p-5 backdrop-blur-lg transition duration-200 hover:-translate-y-px hover:border-primary/30 hover:bg-white/82 dark:border-border-dark dark:bg-card-dark dark:hover:border-primary/30 dark:hover:bg-white/7";
+const tagClass =
+  "rounded-pill border border-primary/16 bg-primary/8 px-2 py-1 text-xs font-medium leading-tight text-text-secondary transition-colors duration-200 hover:border-accent/28 hover:bg-accent/9 hover:text-text-primary dark:border-primary/18 dark:bg-primary/10 dark:text-text-secondary-dark dark:hover:border-accent/30 dark:hover:bg-accent/12 dark:hover:text-text-primary-dark";
+---
+
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/png" href={siteIcon.src} />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+  </head>
+  <body class="min-h-screen">
+    <Navbar />
+    <main
+      class="relative z-10 mx-auto grid w-[min(calc(100%_-_0.75rem),1600px)] grid-cols-1 items-start gap-3 py-28 text-text-primary min-[821px]:grid-cols-[minmax(0,14rem)_minmax(0,1fr)] min-[1101px]:grid-cols-[minmax(0,14rem)_minmax(0,1fr)_minmax(0,14rem)] dark:text-text-primary-dark"
+    >
+      <div class="min-w-0 min-[821px]:sticky min-[821px]:top-20">
+        <Sidebar />
+      </div>
+      <div class="min-w-0">
+        <header class="mb-10">
+          <p class="m-0 text-xs font-bold uppercase leading-none tracking-[0.16em] text-text-muted dark:text-text-muted-dark">
+            {eyebrow}
+          </p>
+          <h1 class="mt-3 text-4xl font-bold leading-tight tracking-[-0.06em] sm:text-5xl">{title}</h1>
+          <p class="mt-4 max-w-2xl text-base leading-8 text-text-secondary dark:text-text-secondary-dark">
+            {description}
+          </p>
+        </header>
+
+        {
+          posts.length > 0 ? (
+            <section class="grid gap-4" aria-label={`${title}列表`}>
+              {posts.map((post) => (
+                <article class={`${cardClass} grid gap-3`}>
+                  <div class="grid gap-2 sm:flex sm:items-start sm:justify-between sm:gap-4">
+                    <h2 class="m-0 text-xl font-bold leading-8 tracking-[-0.04em]">
+                      <a class="no-underline transition-colors duration-200 hover:text-accent" href={`/blog/${post.id}/`}>
+                        {post.data.title}
+                      </a>
+                    </h2>
+                    <time
+                      class="shrink-0 text-xs leading-6 text-text-muted dark:text-text-muted-dark"
+                      datetime={post.data.date.toISOString()}
+                    >
+                      {formatDate(post.data.date)}
+                    </time>
+                  </div>
+                  <p class="m-0 text-sm leading-7 text-text-secondary dark:text-text-secondary-dark">
+                    {post.data.description ?? "这篇文章暂无摘要，点击标题阅读全文。"}
+                  </p>
+                  {post.data.tags.length > 0 && (
+                    <div class="flex flex-wrap gap-2">
+                      {post.data.tags.map((tag) => (
+                        <span class={tagClass}>#{tag}</span>
+                      ))}
+                    </div>
+                  )}
+                </article>
+              ))}
+            </section>
+          ) : (
+            <section class={cardClass}>
+              <h2 class="m-0 text-xl font-bold tracking-[-0.04em]">暂无文章</h2>
+              <p class="mt-3 text-sm leading-7 text-text-secondary dark:text-text-secondary-dark">
+                当前分类下还没有文章。
+              </p>
+            </section>
+          )
+        }
+      </div>
+      <div class="min-w-0 min-[821px]:col-start-2 min-[1101px]:sticky min-[1101px]:top-20 min-[1101px]:col-auto">
+        <RightAside />
+      </div>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,20 @@
+---
+import { getCollection } from "astro:content";
+
+import BlogListLayout from "../../components/blog/BlogListLayout.astro";
+import { blogTagGroups, hasAnyTag, sortPostsByDateDesc } from "../../lib/blog";
+
+const posts = sortPostsByDateDesc(
+  (await getCollection("blog", ({ data }) => !data.draft)).filter((post) =>
+    hasAnyTag(post, blogTagGroups.life),
+  ),
+);
+---
+
+<BlogListLayout
+  posts={posts}
+  title="生活"
+  eyebrow="Life Archive"
+  description="包含日常分享和其他标签的文章，按发布时间倒序排列。"
+  pageTitle="生活 | 北海"
+/>

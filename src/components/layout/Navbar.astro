@@ -1,13 +1,24 @@
 ---
+import { getCollection } from "astro:content";
+
 import siteIcon from "../../assets/site-icon.png";
+import { sortPostsByDateDesc } from "../../lib/blog";
 
 const navItems = [
   { label: "首页", href: "/" },
-  { label: "文章", href: "/blog" },
-  { label: "项目", href: "/projects" },
-  { label: "幽微", href: "/moments" },
+  { label: "所有文章", href: "/blog" },
+  { label: "技术", href: "/blog/tech" },
+  { label: "生活", href: "/blog/life" },
+  { label: "幽微", href: "/blog/moments" },
   { label: "关于", href: "/about" },
 ];
+
+const searchPosts = sortPostsByDateDesc(await getCollection("blog", ({ data }) => !data.draft)).map((post) => ({
+  title: post.data.title,
+  description: post.data.description ?? "",
+  tags: post.data.tags,
+  href: `/blog/${post.id}/`,
+}));
 
 const actionClass =
   "relative flex h-10 w-10 items-center justify-center rounded-card text-white/70 transition duration-200 hover:-translate-y-px hover:bg-white/10 hover:text-white";
@@ -37,7 +48,7 @@ const actionClass =
     </div>
 
     <div class="flex justify-end gap-1">
-      <button class={actionClass} type="button" aria-label="搜索">
+      <button class={actionClass} type="button" aria-label="搜索" data-search-toggle>
         <svg class="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
           <path
             d="m21 21-4.35-4.35m1.35-5.65a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"
@@ -83,9 +94,29 @@ const actionClass =
       </a>
     </div>
   </nav>
+
+  <div
+    class="pointer-events-none mx-auto mt-3 hidden w-full max-w-2xl opacity-0 transition duration-200 data-[open=true]:pointer-events-auto data-[open=true]:grid data-[open=true]:opacity-100"
+    data-search-panel
+  >
+    <div class="rounded-[1.25rem] border border-white/12 bg-slate-950/80 p-3 shadow-[0_18px_48px_rgb(0_0_0_/_0.24)] backdrop-blur-2xl">
+      <label class="sr-only" for="site-search-input">搜索文章</label>
+      <input
+        id="site-search-input"
+        class="h-11 w-full rounded-card border border-white/12 bg-white/8 px-4 text-sm text-white outline-none transition duration-200 placeholder:text-white/45 focus:border-accent/50 focus:bg-white/12"
+        type="search"
+        placeholder="搜索标题、摘要或标签..."
+        autocomplete="off"
+        data-search-input
+      />
+      <div class="mt-3 grid max-h-[22rem] gap-2 overflow-y-auto scrollbar-thin" data-search-results>
+        <p class="m-0 px-2 py-3 text-sm text-white/58">输入关键词开始搜索。</p>
+      </div>
+    </div>
+  </div>
 </header>
 
-<script>
+<script define:vars={{ searchPosts }}>
   const toggle = document.querySelector("[data-theme-toggle]");
   const root = document.documentElement;
   const storedTheme = localStorage.getItem("theme");
@@ -98,5 +129,66 @@ const actionClass =
   toggle?.addEventListener("click", () => {
     const isDark = root.classList.toggle("dark");
     localStorage.setItem("theme", isDark ? "dark" : "light");
+  });
+
+  const searchToggle = document.querySelector("[data-search-toggle]");
+  const searchPanel = document.querySelector("[data-search-panel]");
+  const searchInput = document.querySelector("[data-search-input]");
+  const searchResults = document.querySelector("[data-search-results]");
+
+  const escapeHtml = (value) =>
+    value.replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" })[char]);
+
+  const renderSearchResults = (query) => {
+    if (!searchResults) return;
+
+    const keyword = query.trim().toLowerCase();
+
+    if (!keyword) {
+      searchResults.innerHTML = '<p class="m-0 px-2 py-3 text-sm text-white/58">输入关键词开始搜索。</p>';
+      return;
+    }
+
+    const results = searchPosts
+      .filter((post) => {
+        const haystack = [post.title, post.description, ...post.tags].join(" ").toLowerCase();
+        return haystack.includes(keyword);
+      })
+      .slice(0, 8);
+
+    if (results.length === 0) {
+      searchResults.innerHTML = '<p class="m-0 px-2 py-3 text-sm text-white/58">没有找到相关文章。</p>';
+      return;
+    }
+
+    searchResults.innerHTML = results
+      .map(
+        (post) => `
+          <a class="grid gap-1 rounded-card px-3 py-2 text-white/82 no-underline transition duration-200 hover:bg-white/10 hover:text-white" href="${post.href}">
+            <span class="text-sm font-semibold leading-6">${escapeHtml(post.title)}</span>
+            <span class="line-clamp-2 text-xs leading-5 text-white/55">${escapeHtml(post.description || post.tags.map((tag) => `#${tag}`).join(" "))}</span>
+          </a>
+        `,
+      )
+      .join("");
+  };
+
+  searchToggle?.addEventListener("click", () => {
+    const isOpen = searchPanel?.getAttribute("data-open") === "true";
+    searchPanel?.setAttribute("data-open", String(!isOpen));
+
+    if (!isOpen) {
+      requestAnimationFrame(() => searchInput?.focus());
+    }
+  });
+
+  searchInput?.addEventListener("input", (event) => {
+    renderSearchResults(event.currentTarget.value);
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      searchPanel?.setAttribute("data-open", "false");
+    }
   });
 </script>

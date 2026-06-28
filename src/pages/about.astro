@@ -1,0 +1,94 @@
+---
+import "../styles/global.css";
+
+import Navbar from "../components/layout/Navbar.astro";
+import Sidebar from "../components/layout/Sidebar.astro";
+import siteIcon from "../assets/site-icon.png";
+
+const pageTitle = "关于";
+const pageDate = new Date("2026-06-28");
+
+const formatDate = (date: Date) =>
+  new Intl.DateTimeFormat("zh-CN", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(date);
+
+const tocCardClass =
+  "rounded-card border border-border bg-card p-4 backdrop-blur-lg dark:border-border-dark dark:bg-card-dark";
+const tocTitleClass =
+  "mb-3 text-xs font-bold uppercase leading-none tracking-[0.12em] text-text-muted dark:text-text-muted-dark";
+---
+
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/png" href={siteIcon.src} />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{pageTitle} | 北海</title>
+    <meta name="description" content="关于北海的占位页面" />
+  </head>
+  <body class="min-h-screen">
+    <Navbar />
+    <main
+      class="relative z-10 mx-auto grid w-[min(calc(100%_-_0.75rem),1600px)] grid-cols-1 items-start gap-3 py-28 text-text-primary min-[821px]:grid-cols-[minmax(0,14rem)_minmax(0,1fr)] min-[1101px]:grid-cols-[minmax(0,14rem)_minmax(0,1fr)_minmax(0,14rem)] dark:text-text-primary-dark"
+    >
+      <div class="min-w-0 min-[821px]:sticky min-[821px]:top-20">
+        <Sidebar />
+      </div>
+      <div class="min-w-0">
+        <article class="rounded-card border border-border bg-card p-6 backdrop-blur-lg dark:border-border-dark dark:bg-card-dark sm:p-8">
+          <header class="border-b border-border pb-6 dark:border-border-dark">
+            <p class="m-0 text-xs font-bold uppercase leading-none tracking-[0.16em] text-text-muted dark:text-text-muted-dark">
+              About
+            </p>
+            <h1 class="mt-5 text-3xl font-bold leading-tight tracking-[-0.06em] sm:text-5xl">{pageTitle}</h1>
+            <time class="mt-4 block text-sm text-text-muted dark:text-text-muted-dark" datetime={pageDate.toISOString()}>
+              {formatDate(pageDate)}
+            </time>
+          </header>
+
+          <div class="article-content mt-8">
+            <p>这里是关于页面的占位内容。</p>
+            <p>后续可以在这里补充个人介绍、博客说明、联系方式、建站记录等信息。</p>
+          </div>
+        </article>
+      </div>
+      <div class="min-w-0 min-[821px]:col-start-2 min-[1101px]:sticky min-[1101px]:top-20 min-[1101px]:col-auto">
+        <aside class="grid w-full content-start gap-4 text-text-primary dark:text-text-primary-dark" aria-label="关于页面辅助信息">
+          <section class={tocCardClass} aria-labelledby="about-meta-title">
+            <h2 id="about-meta-title" class={tocTitleClass}>页面信息</h2>
+            <dl class="m-0 grid gap-3 text-sm leading-6">
+              <div class="flex items-center justify-between gap-3">
+                <dt class="text-text-secondary dark:text-text-secondary-dark">标题</dt>
+                <dd class="m-0 font-semibold">{pageTitle}</dd>
+              </div>
+              <div class="flex items-center justify-between gap-3">
+                <dt class="text-text-secondary dark:text-text-secondary-dark">时间</dt>
+                <dd class="m-0 font-semibold">{formatDate(pageDate)}</dd>
+              </div>
+            </dl>
+          </section>
+        </aside>
+      </div>
+    </main>
+  </body>
+</html>
+
+<style>
+  .article-content {
+    color: var(--color-text-primary);
+    font-size: 1rem;
+    line-height: 1.9;
+  }
+
+  :global(.dark) .article-content {
+    color: var(--color-text-primary-dark);
+  }
+
+  .article-content :global(p) {
+    margin: 1rem 0;
+  }
+</style>

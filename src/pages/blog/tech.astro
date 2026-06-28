@@ -1,0 +1,20 @@
+---
+import { getCollection } from "astro:content";
+
+import BlogListLayout from "../../components/blog/BlogListLayout.astro";
+import { blogTagGroups, hasAnyTag, sortPostsByDateDesc } from "../../lib/blog";
+
+const posts = sortPostsByDateDesc(
+  (await getCollection("blog", ({ data }) => !data.draft)).filter((post) =>
+    hasAnyTag(post, blogTagGroups.tech),
+  ),
+);
+---
+
+<BlogListLayout
+  posts={posts}
+  title="技术"
+  eyebrow="Tech Archive"
+  description="包含技术交流和项目讲解标签的文章，按发布时间倒序排列。"
+  pageTitle="技术 | 北海"
+/>

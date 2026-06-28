@@ -43,26 +43,28 @@ const tagClass =
     </p>
   </section>
 
-  <section class={cardClass} aria-labelledby="music-player-title">
-    <h3 id="music-player-title" class="sr-only">音乐播放器</h3>
-    <MusicPlayer client:load />
-  </section>
+  <div class="grid gap-4">
+    <section class={cardClass} aria-labelledby="music-player-title">
+      <h3 id="music-player-title" class="sr-only">音乐播放器</h3>
+      <MusicPlayer client:load />
+    </section>
 
-  <section class={cardClass} aria-labelledby="social-title">
-    <h3 id="social-title" class={sectionTitleClass}>其他站点</h3>
-    <div class="grid gap-1">
-      {
-        socialLinks.map((link) => (
-          <a
-            class="flex items-center justify-between rounded-card px-3 py-2 text-sm font-semibold text-text-secondary no-underline transition duration-200 after:text-xs after:text-text-muted after:content-['↗'] hover:-translate-y-px hover:bg-primary/10 hover:text-text-primary dark:text-text-secondary-dark dark:after:text-text-muted-dark dark:hover:bg-white/8 dark:hover:text-text-primary-dark"
-            href={link.href}
-            target="_blank"
-            rel="noreferrer"
-          >
-            {link.label}
-          </a>
-        ))
-      }
-    </div>
-  </section>
+    <section class={cardClass} aria-labelledby="social-title">
+      <h3 id="social-title" class={sectionTitleClass}>其他站点</h3>
+      <div class="grid gap-1">
+        {
+          socialLinks.map((link) => (
+            <a
+              class="flex items-center justify-between rounded-card px-3 py-2 text-sm font-semibold text-text-secondary no-underline transition duration-200 after:text-xs after:text-text-muted after:content-['↗'] hover:-translate-y-px hover:bg-primary/10 hover:text-text-primary dark:text-text-secondary-dark dark:after:text-text-muted-dark dark:hover:bg-white/8 dark:hover:text-text-primary-dark"
+              href={link.href}
+              target="_blank"
+              rel="noreferrer"
+            >
+              {link.label}
+            </a>
+          ))
+        }
+      </div>
+    </section>
+  </div>
 </aside>

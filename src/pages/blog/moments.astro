@@ -1,0 +1,20 @@
+---
+import { getCollection } from "astro:content";
+
+import BlogListLayout from "../../components/blog/BlogListLayout.astro";
+import { blogTagGroups, hasAnyTag, sortPostsByDateDesc } from "../../lib/blog";
+
+const posts = sortPostsByDateDesc(
+  (await getCollection("blog", ({ data }) => !data.draft)).filter((post) =>
+    hasAnyTag(post, blogTagGroups.moments),
+  ),
+);
+---
+
+<BlogListLayout
+  posts={posts}
+  title="幽微"
+  eyebrow="Moments Archive"
+  description="包含幽微标签的文章，按发布时间倒序排列。"
+  pageTitle="幽微 | 北海"
+/>

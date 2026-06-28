@@ -21,15 +21,15 @@ import siteIcon from "../assets/site-icon.png";
 		<Navbar />
 		<Hero />
 		<main
-			class="relative z-10 mx-auto grid w-[min(calc(100%_-_2rem),1280px)] grid-cols-1 items-start gap-6 py-16 min-[821px]:grid-cols-[minmax(0,18rem)_minmax(0,1fr)] min-[1101px]:grid-cols-[minmax(0,18rem)_minmax(0,1fr)_minmax(0,16rem)]"
+			class="relative z-10 mx-auto grid w-[min(calc(100%_-_0.75rem),1600px)] grid-cols-1 items-start gap-3 py-16 min-[821px]:grid-cols-[minmax(0,14rem)_minmax(0,1fr)] min-[1101px]:grid-cols-[minmax(0,14rem)_minmax(0,1fr)_minmax(0,14rem)]"
 		>
-			<div class="min-w-0">
+			<div class="min-w-0 min-[821px]:sticky min-[821px]:top-20">
 				<Sidebar />
 			</div>
 			<div class="min-w-0">
 				<MainContent />
 			</div>
-			<div class="min-w-0 min-[821px]:col-start-2 min-[1101px]:col-auto">
+			<div class="min-w-0 min-[821px]:col-start-2 min-[1101px]:sticky min-[1101px]:top-20 min-[1101px]:col-auto">
 				<RightAside />
 			</div>
 		</main>

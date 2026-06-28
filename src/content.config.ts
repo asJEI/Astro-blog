@@ -2,6 +2,21 @@ import { defineCollection } from "astro:content";
 import { glob } from "astro/loaders";
 import { z } from "astro/zod";
 
+const tagsSchema = z.preprocess((value) => {
+  if (Array.isArray(value)) {
+    return value.map((tag) => String(tag).trim()).filter(Boolean);
+  }
+
+  if (typeof value === "string") {
+    return value
+      .split(/[,，]/)
+      .map((tag) => tag.trim())
+      .filter(Boolean);
+  }
+
+  return [];
+}, z.array(z.string()));
+
 const blog = defineCollection({
   loader: glob({
     base: "./src/content/blog",
@@ -11,7 +26,7 @@ const blog = defineCollection({
     title: z.string(),
     date: z.coerce.date(),
     description: z.string().optional(),
-    tags: z.array(z.string()).default([]),
+    tags: tagsSchema.default([]),
     draft: z.boolean().default(false),
   }),
 });

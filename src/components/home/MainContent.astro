@@ -88,9 +88,13 @@ const tagClass =
             <p class="m-0 text-sm leading-7 text-text-secondary dark:text-text-secondary-dark">
               {article.summary}
             </p>
-            <div class="flex flex-wrap gap-2">
-              {article.tags.map((tag) => <span class={tagClass}>{tag}</span>)}
-            </div>
+            {
+              article.tags.length > 0 && (
+                <div class="flex flex-wrap gap-2">
+                  {article.tags.map((tag) => <span class={tagClass}>#{tag}</span>)}
+                </div>
+              )
+            }
           </article>
         ))
       }

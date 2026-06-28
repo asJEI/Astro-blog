@@ -75,11 +75,11 @@ import mobileHeroImage from "../../assets/mobile-hero-background.png";
     width: 0;
     max-width: max-content;
     overflow: hidden;
-    border-right: 0.08em solid currentColor;
+    border-right: 0.06em solid currentColor;
     white-space: nowrap;
     animation:
-      typewriter 1.8s steps(9) 0.35s forwards,
-      typewriter-caret 0.75s step-end infinite;
+      typewriter 1.15s steps(18, end) 0.2s forwards,
+      typewriter-caret 0.58s step-end infinite;
   }
 
   .scroll-cue {
@@ -95,7 +95,7 @@ import mobileHeroImage from "../../assets/mobile-hero-background.png";
     color: white;
     text-decoration: none;
     opacity: 0;
-    animation: scroll-cue-enter 0.7s ease 2.1s forwards;
+    animation: scroll-cue-enter 0.6s ease 1.45s forwards;
   }
 
   .scroll-cue__chevron {
@@ -161,8 +161,8 @@ import mobileHeroImage from "../../assets/mobile-hero-background.png";
   @media (max-width: 640px) {
     .typewriter-text {
       animation:
-        typewriter 1.6s steps(9) 0.35s forwards,
-        typewriter-caret 0.75s step-end infinite;
+        typewriter 1.05s steps(18, end) 0.2s forwards,
+        typewriter-caret 0.58s step-end infinite;
     }
 
     .scroll-cue {

@@ -1,22 +1,25 @@
 ---
-import { getCollection } from "astro:content";
+import { getCollection, getEntry } from "astro:content";
 
-const featuredProjects = [
-  {
-    title: "Featured Project",
-    summary: "用于展示个人项目的占位卡片，后续可替换为真实项目数据。",
-    tags: ["Astro", "TypeScript"],
-  },
-  {
-    title: "AI Playground",
-    summary: "记录 AI 工具、LLM 实验和工程化实践的占位项目。",
-    tags: ["AI", "LLM"],
-  },
+const featuredPostIds = [
+  "2026/03/本人对-vibe-coding-的一些认识以及使用技巧",
+  "2026/05/attention-我们都活在彼此的注意力机制里",
 ];
+
+const featuredProjects = (
+  await Promise.all(featuredPostIds.map((id) => getEntry("blog", id)))
+)
+  .filter((post) => post && !post.data.draft)
+  .map((post) => ({
+    title: post.data.title,
+    href: `/blog/${post.id}/`,
+    summary: post.data.description ?? "这篇文章暂无摘要，点击标题阅读全文。",
+    tags: post.data.tags,
+  }));
 
 const latestArticles = (await getCollection("blog", ({ data }) => !data.draft))
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
-  .slice(0, 3)
+  .slice(0, 5)
   .map((post) => ({
     title: post.data.title,
     date: post.data.date,
@@ -53,9 +56,13 @@ const tagClass =
         featuredProjects.map((project) => (
           <article class={cardClass}>
             <div class="mb-4 flex flex-wrap gap-2">
-              {project.tags.map((tag) => <span class={tagClass}>{tag}</span>)}
+              {project.tags.map((tag) => <span class={tagClass}>#{tag}</span>)}
             </div>
-            <h3 class="m-0 text-lg font-bold leading-7 tracking-[-0.04em]">{project.title}</h3>
+            <h3 class="m-0 text-lg font-bold leading-7 tracking-[-0.04em]">
+              <a class="no-underline transition-colors duration-200 hover:text-accent" href={project.href}>
+                {project.title}
+              </a>
+            </h3>
             <p class="mt-3 text-sm leading-7 text-text-secondary dark:text-text-secondary-dark">
               {project.summary}
             </p>

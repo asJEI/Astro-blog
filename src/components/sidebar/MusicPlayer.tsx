@@ -143,7 +143,7 @@ export default function MusicPlayer() {
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="m-0 text-xs font-bold uppercase leading-none tracking-[0.12em] text-text-muted dark:text-text-muted-dark">
-            Now Playing
+           音乐时间
           </p>
           <p className="mt-2 truncate text-base font-bold leading-6 tracking-[-0.04em]">
             {currentTrack.title}

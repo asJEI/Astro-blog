@@ -120,6 +120,15 @@ const formatTime = (seconds: number) => {
   return `${minutes}:${remainingSeconds}`;
 };
 
+const getAdaptiveTitleSize = (title: string, variant: "now-playing" | "playlist") => {
+  const length = Math.max(title.length, 1);
+  const max = variant === "now-playing" ? 1.25 : 1;
+  const min = variant === "now-playing" ? 0.6875 : 0.75;
+  const availableWidth = variant === "now-playing" ? 5.5 : 8;
+
+  return `${Math.max(min, Math.min(max, (availableWidth / length) * 0.95))}rem`;
+};
+
 export default function MusicPlayer() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const rangeRef = useRef<HTMLInputElement | null>(null);
@@ -293,7 +302,7 @@ export default function MusicPlayer() {
   const volumePercent = Math.round(volume * 100);
 
   return (
-    <div className="grid gap-4 max-sm:gap-3" aria-label="音乐播放器">
+    <div className="grid min-w-0 gap-4 max-sm:gap-3" aria-label="音乐播放器">
       <div className="grid gap-2">
         <div className="flex items-start justify-between gap-3">
           <p className="m-0 text-xs font-bold uppercase leading-none tracking-[0.12em] text-text-muted dark:text-text-muted-dark">
@@ -303,12 +312,16 @@ export default function MusicPlayer() {
             {isPlaying ? "播放中" : isReady ? "已暂停" : "加载中"}
           </span>
         </div>
-        <div className="flex items-center gap-3">
-          <div className="min-w-0 flex-1">
-            <p className="m-0 truncate text-xl font-bold leading-7 tracking-[-0.04em]">
+        <div className="flex min-w-0 items-center gap-3">
+          <div className="min-w-0 flex-1 overflow-hidden">
+            <p
+              className="music-player-title m-0 truncate font-bold leading-tight tracking-[-0.04em]"
+              style={{ fontSize: getAdaptiveTitleSize(currentTrack.title, "now-playing") }}
+              title={currentTrack.title}
+            >
               {currentTrack.title}
             </p>
-            <p className="mt-1 truncate text-xs leading-5 text-text-muted dark:text-text-muted-dark">
+            <p className="mt-1 truncate text-xs leading-5 text-text-muted dark:text-text-muted-dark" title={currentTrack.artist}>
               {currentTrack.artist}
             </p>
           </div>
@@ -446,9 +459,15 @@ export default function MusicPlayer() {
                     className="h-8 w-8 rounded-card object-cover"
                     fallbackClassName="h-8 w-8 rounded-card"
                   />
-                  <span className="min-w-0">
-                    <span className="block truncate text-base font-bold leading-6">{track.title}</span>
-                    <span className="block truncate text-xs leading-5 text-text-muted dark:text-text-muted-dark">
+                  <span className="min-w-0 overflow-hidden">
+                    <span
+                      className="music-player-title block truncate font-bold leading-tight"
+                      style={{ fontSize: getAdaptiveTitleSize(track.title, "playlist") }}
+                      title={track.title}
+                    >
+                      {track.title}
+                    </span>
+                    <span className="block truncate text-xs leading-5 text-text-muted dark:text-text-muted-dark" title={track.artist}>
                       {track.artist}
                     </span>
                   </span>
@@ -459,6 +478,10 @@ export default function MusicPlayer() {
         </div>
       )}
       <style>{`
+        .music-player-title {
+          max-width: 100%;
+        }
+
         .music-player-volume {
           height: 1.25rem;
         }

@@ -1,0 +1,148 @@
+---
+import { getCollection, render } from "astro:content";
+
+import "../../styles/global.css";
+
+import Navbar from "../../components/layout/Navbar.astro";
+import siteIcon from "../../assets/site-icon.png";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("blog", ({ data }) => !data.draft);
+
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+
+const formatDate = (date: Date) =>
+  new Intl.DateTimeFormat("zh-CN", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(date);
+
+const tagClass =
+  "rounded-pill border border-primary/16 bg-primary/8 px-2 py-1 text-xs font-medium leading-tight text-text-secondary transition-colors duration-200 hover:border-accent/28 hover:bg-accent/9 hover:text-text-primary dark:border-primary/18 dark:bg-primary/10 dark:text-text-secondary-dark dark:hover:border-accent/30 dark:hover:bg-accent/12 dark:hover:text-text-primary-dark";
+---
+
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/png" href={siteIcon.src} />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{post.data.title} | 北海</title>
+    {post.data.description && <meta name="description" content={post.data.description} />}
+  </head>
+  <body class="min-h-screen">
+    <Navbar />
+    <main class="mx-auto w-[min(calc(100%_-_2rem),860px)] py-28 text-text-primary dark:text-text-primary-dark">
+      <article class="rounded-card border border-border bg-card p-6 backdrop-blur-lg dark:border-border-dark dark:bg-card-dark sm:p-8">
+        <header class="border-b border-border pb-6 dark:border-border-dark">
+          <a
+            class="text-sm font-semibold text-text-secondary no-underline transition-colors duration-200 hover:text-accent dark:text-text-secondary-dark"
+            href="/blog"
+          >
+            返回文章列表
+          </a>
+          <h1 class="mt-5 text-3xl font-bold leading-tight tracking-[-0.06em] sm:text-5xl">{post.data.title}</h1>
+          <div class="mt-4 flex flex-wrap items-center gap-3">
+            <time class="text-sm text-text-muted dark:text-text-muted-dark" datetime={post.data.date.toISOString()}>
+              {formatDate(post.data.date)}
+            </time>
+            {post.data.tags.map((tag) => <span class={tagClass}>{tag}</span>)}
+          </div>
+          {
+            post.data.description && (
+              <p class="mt-5 text-base leading-8 text-text-secondary dark:text-text-secondary-dark">
+                {post.data.description}
+              </p>
+            )
+          }
+        </header>
+
+        <div class="article-content mt-8">
+          <Content />
+        </div>
+      </article>
+    </main>
+  </body>
+</html>
+
+<style>
+  .article-content {
+    color: var(--color-text-primary);
+    font-size: 1rem;
+    line-height: 1.9;
+  }
+
+  :global(.dark) .article-content {
+    color: var(--color-text-primary-dark);
+  }
+
+  .article-content :global(:where(h2, h3, h4)) {
+    margin: 2rem 0 0.75rem;
+    line-height: 1.35;
+    letter-spacing: -0.04em;
+  }
+
+  .article-content :global(h2) {
+    font-size: 1.5rem;
+  }
+
+  .article-content :global(h3) {
+    font-size: 1.25rem;
+  }
+
+  .article-content :global(:where(p, ul, ol, blockquote)) {
+    margin: 1rem 0;
+  }
+
+  .article-content :global(:where(ul, ol)) {
+    padding-left: 1.25rem;
+  }
+
+  .article-content :global(blockquote) {
+    border-left: 3px solid var(--color-accent);
+    padding-left: 1rem;
+    color: var(--color-text-secondary);
+  }
+
+  :global(.dark) .article-content :global(blockquote) {
+    color: var(--color-text-secondary-dark);
+  }
+
+  .article-content :global(a) {
+    color: var(--color-accent);
+    text-decoration: none;
+  }
+
+  .article-content :global(a:hover) {
+    text-decoration: underline;
+  }
+
+  .article-content :global(code) {
+    border-radius: 0.35rem;
+    background: rgb(142 164 200 / 0.12);
+    padding: 0.12rem 0.28rem;
+    font-size: 0.92em;
+  }
+
+  .article-content :global(pre) {
+    overflow-x: auto;
+    border-radius: var(--radius-card);
+    background: rgb(15 23 42 / 0.92);
+    padding: 1rem;
+    color: rgb(248 250 252);
+  }
+
+  .article-content :global(pre code) {
+    background: transparent;
+    padding: 0;
+    color: inherit;
+  }
+</style>

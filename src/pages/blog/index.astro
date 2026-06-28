@@ -1,0 +1,90 @@
+---
+import { getCollection } from "astro:content";
+
+import "../../styles/global.css";
+
+import Navbar from "../../components/layout/Navbar.astro";
+import siteIcon from "../../assets/site-icon.png";
+
+const posts = (await getCollection("blog", ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime(),
+);
+
+const formatDate = (date: Date) =>
+  new Intl.DateTimeFormat("zh-CN", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(date);
+
+const cardClass =
+  "rounded-card border border-border bg-card p-5 backdrop-blur-lg transition duration-200 hover:-translate-y-px hover:border-primary/30 hover:bg-white/82 dark:border-border-dark dark:bg-card-dark dark:hover:border-primary/30 dark:hover:bg-white/7";
+const tagClass =
+  "rounded-pill border border-primary/16 bg-primary/8 px-2 py-1 text-xs font-medium leading-tight text-text-secondary transition-colors duration-200 hover:border-accent/28 hover:bg-accent/9 hover:text-text-primary dark:border-primary/18 dark:bg-primary/10 dark:text-text-secondary-dark dark:hover:border-accent/30 dark:hover:bg-accent/12 dark:hover:text-text-primary-dark";
+---
+
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/png" href={siteIcon.src} />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>文章 | 北海</title>
+    <meta name="description" content="北海的博客文章归档" />
+  </head>
+  <body class="min-h-screen">
+    <Navbar />
+    <main class="mx-auto w-[min(calc(100%_-_2rem),980px)] py-28 text-text-primary dark:text-text-primary-dark">
+      <header class="mb-10">
+        <p class="m-0 text-xs font-bold uppercase leading-none tracking-[0.16em] text-text-muted dark:text-text-muted-dark">
+          Blog Archive
+        </p>
+        <h1 class="mt-3 text-4xl font-bold leading-tight tracking-[-0.06em] sm:text-5xl">文章</h1>
+        <p class="mt-4 max-w-2xl text-base leading-8 text-text-secondary dark:text-text-secondary-dark">
+          这里收录从 WordPress 迁移而来的文章，按发布时间倒序排列。
+        </p>
+      </header>
+
+      {
+        posts.length > 0 ? (
+          <section class="grid gap-4" aria-label="文章列表">
+            {posts.map((post) => (
+              <article class={`${cardClass} grid gap-3`}>
+                <div class="grid gap-2 sm:flex sm:items-start sm:justify-between sm:gap-4">
+                  <h2 class="m-0 text-xl font-bold leading-8 tracking-[-0.04em]">
+                    <a class="no-underline transition-colors duration-200 hover:text-accent" href={`/blog/${post.id}/`}>
+                      {post.data.title}
+                    </a>
+                  </h2>
+                  <time
+                    class="shrink-0 text-xs leading-6 text-text-muted dark:text-text-muted-dark"
+                    datetime={post.data.date.toISOString()}
+                  >
+                    {formatDate(post.data.date)}
+                  </time>
+                </div>
+                <p class="m-0 text-sm leading-7 text-text-secondary dark:text-text-secondary-dark">
+                  {post.data.description ?? "这篇文章暂无摘要，点击标题阅读全文。"}
+                </p>
+                {post.data.tags.length > 0 && (
+                  <div class="flex flex-wrap gap-2">
+                    {post.data.tags.map((tag) => (
+                      <span class={tagClass}>{tag}</span>
+                    ))}
+                  </div>
+                )}
+              </article>
+            ))}
+          </section>
+        ) : (
+          <section class={cardClass}>
+            <h2 class="m-0 text-xl font-bold tracking-[-0.04em]">暂无文章</h2>
+            <p class="mt-3 text-sm leading-7 text-text-secondary dark:text-text-secondary-dark">
+              将 Markdown 文件放入 src/content/blog 后，文章会自动显示在这里。
+            </p>
+          </section>
+        )
+      }
+    </main>
+  </body>
+</html>

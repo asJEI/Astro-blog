@@ -1,4 +1,6 @@
 ---
+import { getCollection } from "astro:content";
+
 const featuredProjects = [
   {
     title: "Featured Project",
@@ -12,26 +14,23 @@ const featuredProjects = [
   },
 ];
 
-const latestArticles = [
-  {
-    title: "如何搭建一个长期维护的个人博客",
-    date: "2026-06-27",
-    tags: ["Astro", "Blog"],
-    summary: "这里是文章摘要占位文本，用于展示文章列表卡片的基础结构。",
-  },
-  {
-    title: "关于前端工程化的一些思考",
-    date: "2026-06-20",
-    tags: ["Frontend", "Engineering"],
-    summary: "这里是文章摘要占位文本，后续会接入 Content Collections 数据。",
-  },
-  {
-    title: "LLM 时代的个人知识管理",
-    date: "2026-06-12",
-    tags: ["AI", "Notes"],
-    summary: "这里是文章摘要占位文本，用来保证列表布局在无真实内容时仍完整。",
-  },
-];
+const latestArticles = (await getCollection("blog", ({ data }) => !data.draft))
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+  .slice(0, 3)
+  .map((post) => ({
+    title: post.data.title,
+    date: post.data.date,
+    href: `/blog/${post.id}/`,
+    tags: post.data.tags,
+    summary: post.data.description ?? "这篇文章暂无摘要，点击标题阅读全文。",
+  }));
+
+const formatDate = (date: Date) =>
+  new Intl.DateTimeFormat("zh-CN", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(date);
 
 const cardClass =
   "rounded-card border border-border bg-card p-5 backdrop-blur-lg transition duration-200 hover:-translate-y-px hover:border-primary/30 hover:bg-white/82 dark:border-border-dark dark:bg-card-dark dark:hover:border-primary/30 dark:hover:bg-white/7";
@@ -77,9 +76,13 @@ const tagClass =
         latestArticles.map((article) => (
           <article class={`${cardClass} grid gap-3`}>
             <div class="grid gap-2 sm:flex sm:items-start sm:justify-between sm:gap-4">
-              <h3 class="m-0 text-lg font-bold leading-7 tracking-[-0.04em]">{article.title}</h3>
-              <time class="shrink-0 text-xs leading-6 text-text-muted dark:text-text-muted-dark" datetime={article.date}>
-                {article.date}
+              <h3 class="m-0 text-lg font-bold leading-7 tracking-[-0.04em]">
+                <a class="no-underline transition-colors duration-200 hover:text-accent" href={article.href}>
+                  {article.title}
+                </a>
+              </h3>
+              <time class="shrink-0 text-xs leading-6 text-text-muted dark:text-text-muted-dark" datetime={article.date.toISOString()}>
+                {formatDate(article.date)}
               </time>
             </div>
             <p class="m-0 text-sm leading-7 text-text-secondary dark:text-text-secondary-dark">

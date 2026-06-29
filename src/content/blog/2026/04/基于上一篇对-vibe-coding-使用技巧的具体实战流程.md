@@ -11,7 +11,7 @@ tags: ["技术交流", "经验分享"]
 
 首先我们第一步就是让自己变成“**系统架构者**”，我们应该明确目标：“我想要制作通过输入视频链接然后可以把视频保存到本地的工具”，怀着这个想法我们可以去询问 AI （当然你也可以自己进行规划），这个项目不算复杂，我们可以很快的列出它的核心功能：
 
-![](http://www.hokkai2005.online/wp-content/uploads/2026/04/image-1-1024x466.png)
+![](/images/blog/04/image-1.png)
 
 > 这里我们会用到的工具如下：
 > 
@@ -33,7 +33,7 @@ tags: ["技术交流", "经验分享"]
 “你是一位精通 Python、Streamlit、yt-dlp 和 FFmpeg 的高级全栈工程师。项目最终要求：干净、现代、响应式的 Streamlit Web 应用；支持用户粘贴任意视频链接→ 自动识别平台 → 显示视频标题、封面、时长、所有可用清晰度 → 用户选择清晰度 → 一键下载（自动用 ffmpeg 合并音视频）→ 显示本地路径；未来可扩展新功能。请先创建目录结构，生成对应的requirements.txt填写所需依赖，生成 config.py 文件填写用户默认保存路径和FFmpeg 路径自动检测（如果系统有就用系统路径，没有就提示用户安装），生成 memory-bank/project-memory.md 填写上项目当前阶段和已完成功能以及未完成功能。具体代码暂时不用生成“（以上由 Gork 生成）
 ```
 
-![](http://www.hokkai2005.online/wp-content/uploads/2026/04/image-2.png)
+![](/images/blog/04/image-2.png)
 
 我们可以看到，文件的框架十分清晰，下一步就是在框架之下填充对应代码了
 
@@ -153,29 +153,29 @@ tags: ["技术交流", "经验分享"]
 
 首先输入 “pip install -r requirements.txt“ 安装运行所需的依赖，接着 ”streamlit run main.py“ 运行程序，注意由于我们使用是 FFmpeg 所以需要先配置好系统变量，这样我们的程序才可以直接调用 FFmpeg 。同时因为我的前端使用的是 Streamlit 框架所以在第一次运行时会有这样一个弹窗：
 
-![](http://www.hokkai2005.online/wp-content/uploads/2026/04/image-3.png)
+![](/images/blog/04/image-3.png)
 
 回车略过即可，随后编译器自动给我们打开了一个网页，整体界面如下：
 
-![](http://www.hokkai2005.online/wp-content/uploads/2026/04/image-4.png)
+![](/images/blog/04/image-4.png)
 
 看上去很完美，接下来我们复制一个视频链接输入进去，实际测试一下...不过好像出了一点问题，在询问 AI 之后我们得到了原因：
 
-![](http://www.hokkai2005.online/wp-content/uploads/2026/04/image-5.png)
+![](/images/blog/04/image-5.png)
 
 我们需要新鲜的曲奇才能进行解析，那么如何获得曲奇呢？_~（当然是去蛋糕店买一点了）~_
 
 我们在浏览器上安装拓展：
 
-![](http://www.hokkai2005.online/wp-content/uploads/2026/04/image-6.png)
+![](/images/blog/04/image-6.png)
 
 接着在对应的视频平台下使用这个拓展工具下载导出我们的 cookies.txt 文件，将文件贴在项目根目录然后再让 AI 进行优化生成读取 cookies.txt 的代码。随后我们再次进行测试。效果如下：
 
-![](http://www.hokkai2005.online/wp-content/uploads/2026/04/image-7.png)
+![](/images/blog/04/image-7.png)
 
 这次没有问题了，我们点击 ”开始下载“ 接着出现进度条，然后下载完毕之后自动调用 FFmpeg 把下载的音频和视频合并，点开默认下载目录后我们就看到了最终成品
 
-![](http://www.hokkai2005.online/wp-content/uploads/2026/04/image-8.png)
+![](/images/blog/04/image-8.png)
 
 恭喜！！！我们的项目成功完成了。
 

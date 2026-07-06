@@ -1,0 +1,46 @@
+---
+import type { AdjacentPosts } from "../../lib/blog";
+import { getPostHref } from "../../lib/blog";
+
+interface Props {
+  adjacent: AdjacentPosts;
+}
+
+const { adjacent } = Astro.props;
+const { prev, next } = adjacent;
+
+if (!prev && !next) {
+  return null;
+}
+
+const linkClass =
+  "text-sm leading-7 text-text-secondary no-underline transition-colors duration-200 hover:text-accent dark:text-text-secondary-dark";
+---
+
+<nav
+  class="mt-10 border-t border-border pt-6 dark:border-border-dark"
+  aria-label="文章导航"
+>
+  <ul class="m-0 grid list-none gap-2 p-0">
+    {
+      prev && (
+        <li>
+          <span class="text-sm text-text-muted dark:text-text-muted-dark">上一篇：</span>
+          <a class={linkClass} href={getPostHref(prev)}>
+            {prev.data.title}
+          </a>
+        </li>
+      )
+    }
+    {
+      next && (
+        <li>
+          <span class="text-sm text-text-muted dark:text-text-muted-dark">下一篇：</span>
+          <a class={linkClass} href={getPostHref(next)}>
+            {next.data.title}
+          </a>
+        </li>
+      )
+    }
+  </ul>
+</nav>

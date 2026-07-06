@@ -1,7 +1,7 @@
 ---
 title: Web3 Day1 学习记录：从自己的钱包到第一笔链上交易
 date: 2026-07-06
-slug: web3-day1-wallet-first-transaction
+slug: web3-notes-02
 description: Monad Builder Camp 正式开课的第一天，我没有急着碰资产，而是先把「钱包」和「链上认知」这两块地基打好。本文记录了课程专用钱包的准备、Monad Testnet 的配置、区块浏览器的第一次打开，以及完成第一笔测试网转账后的完整复盘——包括 from / to、value、gas 这些字段各自代表什么，以及链上产品和普通互联网产品在结构上的根本差异。
 tags: ["技术交流", "经验分享"]
 ---
@@ -42,12 +42,12 @@ tags: ["技术交流", "经验分享"]
 
 ### 网络配置信息
 
-| 字段 | 值 |
-| --- | --- |
-| 网络名称 | Monad Testnet |
-| RPC URL | `https://testnet-rpc.monad.xyz` |
-| Chain ID | `10143` |
-| 货币符号 | MON |
+| 字段       | 值                                  |
+| ---------- | ----------------------------------- |
+| 网络名称   | Monad Testnet                       |
+| RPC URL    | `https://testnet-rpc.monad.xyz`     |
+| Chain ID   | `10143`                             |
+| 货币符号   | MON                                 |
 | 区块浏览器 | `https://testnet.monadexplorer.com` |
 
 在 Rabby 里：**设置 → 自定义网络 → 添加自定义网络**，把上面的信息填进去即可。也可以直接访问 [Monad Testnet 应用中心](https://testnet.monad.xyz/)，通常有一键添加网络的按钮，比手动填省事。
@@ -133,15 +133,15 @@ tags: ["技术交流", "经验分享"]
 
 ![](/images/blog/07/image-2.png)
 
-| 字段 | 含义 | 我这笔交易的值 |
-| --- | --- | --- |
-| **Status** | 成功 / 失败 | ✅ Success |
-| **Block** | 交易被打包进哪个区块 | `42697503` |
-| **From** | 发起方地址（谁签的名、谁付的 Gas） | `0x86E1...2156` |
-| **To** | 接收方地址 | `0x240e...3e7E` |
-| **Value** | 转账金额（原生代币 MON） | 4 MON |
-| **Gas Price** | 每单位 Gas 的价格 | 122.4 Gwei |
-| **Transaction Fee** | 手续费 = Gas Used × Gas Price | 0.0038556 MON |
+| 字段                | 含义                               | 我这笔交易的值  |
+| ------------------- | ---------------------------------- | --------------- |
+| **Status**          | 成功 / 失败                        | ✅ Success      |
+| **Block**           | 交易被打包进哪个区块               | `42697503`      |
+| **From**            | 发起方地址（谁签的名、谁付的 Gas） | `0x86E1...2156` |
+| **To**              | 接收方地址                         | `0x240e...3e7E` |
+| **Value**           | 转账金额（原生代币 MON）           | 4 MON           |
+| **Gas Price**       | 每单位 Gas 的价格                  | 122.4 Gwei      |
+| **Transaction Fee** | 手续费 = Gas Used × Gas Price      | 0.0038556 MON   |
 
 ## 六、用自己的话解释：这笔交易到底发生了什么？
 
@@ -196,4 +196,3 @@ tags: ["技术交流", "经验分享"]
 
 - [Monad Testnet 文档](https://docs.monad.xyz/)
 - [Monad Testnet Explorer](https://testnet.monadexplorer.com)
-- 上一篇：[从 Web2 到 Web3：我在转向之前做了什么](/blog/web3-notes-01)

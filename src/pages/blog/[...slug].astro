@@ -3,9 +3,11 @@ import { getCollection, render } from "astro:content";
 
 import "../../styles/global.css";
 
+import BlogPostNav from "../../components/blog/BlogPostNav.astro";
 import Navbar from "../../components/layout/Navbar.astro";
 import Sidebar from "../../components/layout/Sidebar.astro";
 import SiteHead from "../../components/layout/SiteHead.astro";
+import { getAdjacentPosts } from "../../lib/blog";
 import { site } from "../../lib/seo";
 
 export async function getStaticPaths() {
@@ -13,11 +15,14 @@ export async function getStaticPaths() {
 
   return posts.map((post) => ({
     params: { slug: post.id },
-    props: { post },
+    props: {
+      post,
+      adjacent: getAdjacentPosts(post, posts),
+    },
   }));
 }
 
-const { post } = Astro.props;
+const { post, adjacent } = Astro.props;
 const { Content, headings } = await render(post);
 const tocHeadings = headings.filter((heading) => heading.depth >= 2 && heading.depth <= 3);
 
@@ -81,6 +86,7 @@ const tocTitleClass =
           <div class="article-content mt-8">
             <Content />
           </div>
+          <BlogPostNav adjacent={adjacent} />
         </article>
       </div>
       <div class="hidden min-w-0 min-[821px]:col-start-2 min-[821px]:block min-[1101px]:sticky min-[1101px]:top-20 min-[1101px]:col-auto">

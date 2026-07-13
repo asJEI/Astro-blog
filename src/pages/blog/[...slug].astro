@@ -4,6 +4,7 @@ import { getCollection, render } from "astro:content";
 import "../../styles/global.css";
 
 import BlogPostNav from "../../components/blog/BlogPostNav.astro";
+import ImageLightbox from "../../components/blog/ImageLightbox.astro";
 import Navbar from "../../components/layout/Navbar.astro";
 import Sidebar from "../../components/layout/Sidebar.astro";
 import SiteHead from "../../components/layout/SiteHead.astro";
@@ -158,6 +159,7 @@ const tocTitleClass =
         </div>
       </div>
     </details>
+    <ImageLightbox />
   </body>
 </html>
 

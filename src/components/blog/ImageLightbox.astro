@@ -1,0 +1,110 @@
+---
+---
+
+<style is:global>
+  .article-content img {
+    cursor: zoom-in;
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+  }
+
+  .article-content img:hover {
+    box-shadow: 0 8px 24px rgb(15 23 42 / 0.12);
+  }
+
+  .dark .article-content img:hover {
+    box-shadow: 0 8px 24px rgb(0 0 0 / 0.35);
+  }
+
+  body.image-lightbox-open {
+    overflow: hidden;
+  }
+
+  .image-lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 120;
+    display: grid;
+    grid-template-rows: 1fr auto;
+    background: rgb(9 13 24 / 0.88);
+    backdrop-filter: blur(8px);
+  }
+
+  .image-lightbox[hidden] {
+    display: none !important;
+  }
+
+  .image-lightbox__close {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 2;
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border: 1px solid rgb(255 255 255 / 0.18);
+    border-radius: 999px;
+    background: rgb(15 20 34 / 0.72);
+    color: rgb(245 247 251);
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+  }
+
+  .image-lightbox__close:hover {
+    border-color: rgb(255 255 255 / 0.32);
+    background: rgb(15 20 34 / 0.92);
+  }
+
+  .image-lightbox__close svg {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  .image-lightbox__scroll {
+    overflow: auto;
+    width: 100%;
+    height: 100%;
+    padding: 4.5rem 1rem 1rem;
+  }
+
+  .image-lightbox__img {
+    display: block;
+    width: auto;
+    max-width: min(100%, 56rem);
+    height: auto;
+    margin: 0 auto;
+    border-radius: var(--radius-card);
+    box-shadow: 0 24px 64px rgb(0 0 0 / 0.35);
+  }
+
+  .image-lightbox__hint {
+    position: fixed;
+    bottom: 1rem;
+    left: 50%;
+    z-index: 2;
+    margin: 0;
+    padding: 0.45rem 0.85rem;
+    border-radius: 999px;
+    background: rgb(15 20 34 / 0.72);
+    color: rgb(230 235 245 / 0.82);
+    font-size: 0.75rem;
+    line-height: 1.4;
+    transform: translateX(-50%);
+    pointer-events: none;
+    white-space: nowrap;
+  }
+
+  @media (max-width: 640px) {
+    .image-lightbox__hint {
+      max-width: calc(100% - 2rem);
+      white-space: normal;
+      text-align: center;
+    }
+  }
+</style>
+
+<script>
+  import { initImageLightbox } from "../../lib/image-lightbox";
+
+  initImageLightbox();
+</script>

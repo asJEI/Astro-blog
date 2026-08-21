@@ -1,5 +1,5 @@
 const LIGHTBOX_ID = "image-lightbox";
-const CONTENT_SELECTOR = ".article-content img";
+const CONTENT_SELECTOR = ".article-content img, .portfolio-pages img";
 
 const getLightbox = () => document.getElementById(LIGHTBOX_ID);
 

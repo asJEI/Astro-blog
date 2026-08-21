@@ -11,6 +11,7 @@ const navItems = [
   { label: "生活", href: "/blog/life" },
   { label: "幽微", href: "/blog/moments" },
   { label: "关于", href: "/about" },
+  { label: "作品集", href: "/portfolio" },
 ];
 
 const searchPosts = sortPostsByDateDesc(await getCollection("blog", ({ data }) => !data.draft)).map((post) => ({

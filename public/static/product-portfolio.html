@@ -1,0 +1,393 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>张雨阳｜产品经理作品集</title>
+<style>
+:root {
+  --paper:#fafaf9; --paper2:#f5f5f4; --line:#e7e5e4;
+  --ink:#1c1917; --ink2:#44403c; --muted:#78716c;
+  --accent:#0f766e; --accent2:#115e59; --accentSoft:#f0fdfa;
+  --warn:#c2410c;
+  --serif:"Noto Serif SC","Songti SC","SimSun",Georgia,serif;
+  --sans:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
+  --mono:"SFMono-Regular",Consolas,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:#111;color:var(--ink);font-family:var(--sans)}
+.deck{width:100%;}
+/* Top padding clears the site navbar that floats over this iframe (same idea as site-grid--page). */
+.slide{
+  width:100%; min-height:100svh; background:var(--paper);
+  padding:7.25rem 72px 42px; position:relative; overflow:hidden;
+  display:flex; flex-direction:column; justify-content:flex-start;
+  border-bottom:14px solid #111;
+}
+.slide.dark{
+  background:linear-gradient(135deg,#f4f7f6 0%,#fafaf9 58%,#eef6f4 100%);
+  color:var(--ink);
+}
+.eyebrow{font:600 12px var(--mono);letter-spacing:.14em;color:var(--accent);text-transform:uppercase;margin-bottom:14px}
+.dark .eyebrow{color:var(--accent)}
+h1{font-family:var(--serif);font-size:46px;line-height:1.12;margin:0 0 14px;font-weight:600;letter-spacing:-.02em}
+h2{font-family:var(--serif);font-size:34px;line-height:1.2;margin:0 0 10px;font-weight:600}
+.subtitle{font-family:var(--serif);font-size:18px;color:var(--muted);font-style:italic}
+.dark .subtitle{color:var(--muted)}
+.rule{height:1px;background:var(--line);margin:26px 0}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.stat{border:1px solid var(--line);background:white;padding:18px 20px;border-radius:6px}
+.stat strong{font:500 30px var(--serif);display:block;margin-bottom:6px}
+.stat span{font-size:13px;color:var(--muted)}
+.callout{background:var(--paper2);border-left:3px solid var(--accent);padding:18px 22px;margin:22px 0}
+.callout.warn{border-left-color:var(--warn)}
+.callout b{display:block;font:600 11px var(--mono);letter-spacing:.1em;color:var(--accent);margin-bottom:8px}
+.callout.warn b{color:var(--warn)}
+.callout p{font-size:16px;line-height:1.75;margin:0;color:var(--ink2)}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:stretch}
+.col{display:flex;flex-direction:column;gap:16px}
+.visual{background:#fff;border:1px solid var(--line);border-radius:8px;padding:12px;display:flex;align-items:center;justify-content:center;min-height:0;overflow:hidden}
+.visual img{max-width:100%;max-height:100%;object-fit:contain;display:block;cursor:zoom-in}
+.visual.full{height:52vh}
+.visual.half{height:42vh}
+.visual.third{height:32vh}
+.caption{font-size:12px;color:var(--muted);margin-top:7px}
+.flow{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin:20px 0}
+.step{padding:9px 13px;border:1px solid var(--line);background:white;border-radius:4px;font-size:14px}
+.step.hot{background:var(--accentSoft);border-color:#99f6e4;color:var(--accent2)}
+.arrow{color:#a8a29e}
+.insight{font-family:var(--serif);font-size:22px;line-height:1.55;margin-top:24px;max-width:900px}
+.small{font-size:14px;line-height:1.75;color:var(--ink2)}
+.dark .small{color:var(--ink2)}
+.meta{margin-top:auto;padding-top:28px;display:flex;justify-content:space-between;color:#a8a29e;font:11px var(--mono)}
+.linkbar{display:flex;gap:22px;flex-wrap:wrap;font:12px var(--mono);color:var(--accent2)}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:18px}
+.kpi{background:white;border:1px solid var(--line);padding:18px;border-radius:6px}
+.kpi strong{display:block;font:500 27px var(--serif);color:var(--accent);margin-bottom:6px}
+.kpi span{font-size:13px;color:var(--muted)}
+.cover{justify-content:flex-start;padding-top:7.75rem}
+.cover h1{font-size:62px;max-width:760px}
+.cover .subtitle{font-size:22px;max-width:700px;line-height:1.65}
+.cover-bottom{margin-top:auto;border-top:1px solid var(--line);padding-top:24px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.section-num{font:500 14px var(--mono);color:var(--accent);letter-spacing:.12em;margin-bottom:18px}
+.dark{
+  justify-content:center;
+  padding-top:7.25rem;
+}
+.dark::before{
+  content:"";
+  position:absolute;
+  width:440px;height:440px;
+  right:7vw;top:50%;transform:translateY(-50%);
+  border:1px solid rgba(15,118,110,.15);
+  border-radius:50%;
+  box-shadow:0 0 0 70px rgba(15,118,110,.035),0 0 0 140px rgba(15,118,110,.018);
+}
+.dark::after{
+  content:"";
+  position:absolute;
+  right:10vw;bottom:13vh;
+  width:220px;height:2px;background:var(--accent);
+  box-shadow:0 10px 0 rgba(15,118,110,.35),0 20px 0 rgba(15,118,110,.16);
+}
+.dark h1{
+  color:var(--ink);
+  font-size:52px;
+  max-width:900px;
+  position:relative;
+  z-index:1;
+}
+.dark .section-desc{
+  font:21px/1.75 var(--serif);
+  color:var(--ink2);
+  max-width:760px;
+  position:relative;
+  z-index:1;
+}
+.dark .section-num{position:relative;z-index:1}
+.dark .meta{color:#a8a29e;position:relative;z-index:1}
+.dark .section-desc::after{
+  content:"";
+  display:block;
+  width:76px;height:3px;
+  background:var(--accent);
+  margin-top:30px;
+}
+.badge{display:inline-block;padding:4px 9px;border:1px solid var(--line);border-radius:4px;font-size:12px;color:var(--muted);margin-right:6px;background:white}
+.note{font-size:13px;color:var(--muted);margin-top:8px}
+/* modal */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.92);display:none;align-items:center;justify-content:center;z-index:99;padding:24px}
+.modal.open{display:flex}
+.modal img{max-width:96vw;max-height:92vh;object-fit:contain;box-shadow:0 0 0 1px rgba(255,255,255,.2)}
+.modal .close{position:fixed;top:16px;right:22px;color:white;font-size:34px;cursor:pointer}
+.zoomhint{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);font:12px var(--mono);color:#ddd}
+@media (max-width:900px){
+  .slide{padding:6.5rem 26px 30px}
+  .cover{padding-top:6.75rem}
+  .dark{padding-top:6.5rem}
+  h1{font-size:36px} .cover h1{font-size:46px}
+  .row,.grid4,.kpis{grid-template-columns:1fr}
+  .visual.full,.visual.half,.visual.third{height:auto;min-height:280px}
+}
+@media print{
+  @page{size:16in 9in;margin:0}
+  body{background:white}
+  .slide{width:16in;height:9in;min-height:0;page-break-after:always;border:0}
+  .modal{display:none!important}
+}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<section class="slide cover">
+  <div class="eyebrow">PRODUCT PORTFOLIO / 2026</div>
+  <h1>从真实问题出发，<br>把判断变成可验证的产品方案。</h1>
+  <div class="subtitle">张雨阳｜2027届｜产品经理 / AI 产品方向</div>
+  <div class="grid4" style="margin-top:40px">
+    <div class="stat"><strong>200+</strong><span>海外用户咨询与反馈</span></div>
+    <div class="stat"><strong>4</strong><span>云手机竞品研究</span></div>
+    <div class="stat"><strong>6</strong><span>测试 / 竞品报告</span></div>
+    <div class="stat"><strong>1,500+</strong><span>实习主题文章阅读</span></div>
+  </div>
+  <div class="cover-bottom">
+    <div>SeaPhone / OpenSource Mentor / Don't Ghost Me / 内容运营</div>
+    <div class="linkbar"><span>hokkai2005.online</span><span>hokkai.top</span><span>github.com/asJEI</span></div>
+  </div>
+</section>
+
+<section class="slide dark">
+  <div class="section-num">01 / REAL BUSINESS</div><div class="eyebrow" style="margin-bottom:20px">USER SIGNALS · COMPETITOR RESEARCH · PRODUCT FEEDBACK</div>
+  <h1>SeaPhone：从真实用户问题进入产品</h1>
+  <div class="section-desc">我的正式岗位是游戏测试实习生，但实际工作逐渐延伸到海外社群支持、竞品研究、需求整理与 AI 客服工具落地。</div>
+  <div class="meta"><span>协创数据 · 云计算事业部</span><span>2026.07 — 至今</span></div>
+</section>
+
+<section class="slide">
+  <div class="eyebrow">01 / USER INSIGHT</div>
+  <h2>用户给到的不是 PRD，而是碎片化表达</h2>
+  <div class="subtitle">卡顿 / 封号 / 脚本不能用 / 管理员不回复……产品需要继续追问真实场景、频率和目标。</div>
+  <div class="callout">
+    <b>PRODUCT INSIGHT</b>
+    <p>产品判断的第一步，是把用户说出的“现象”还原成具体场景，再结合测试结果、竞品行为与运营流程判断问题归因。</p>
+  </div>
+  <div class="visual full"><img src="/portfolio/pages/page-01.png" alt="Discord Bot 调研文档"></div>
+  <div class="caption">Discord Bot 需求、目标功能与整体流程调研。点击图片可放大查看。</div>
+  <div class="meta"><span>SeaPhone / 产品与社群调研</span><span>03</span></div>
+</section>
+
+<section class="slide">
+  <div class="eyebrow">01 / COMPETITOR RESEARCH</div>
+  <h2>竞品分析不是列功能，而是拆业务机制</h2>
+  <div class="subtitle">同一个功能，在不同用户工作流和业务约束下可能产生完全不同的价值。</div>
+  <div class="visual full"><img src="/portfolio/pages/page-02.png" alt="竞品分析文档"></div>
+  <div class="caption">竞品研究文档示例。点击图片可放大查看。</div>
+  <div class="meta"><span>竞品 / 产品定位 / 工作流程 / 优缺点</span><span>04</span></div>
+</section>
+
+<section class="slide dark">
+  <div class="section-num">02 / AI CUSTOMER SERVICE</div><div class="eyebrow" style="margin-bottom:20px">FAQ · MULTILINGUAL SUPPORT · BAD CASE ITERATION</div>
+  <h1>AI 客服：上线之后，问题才真正开始</h1>
+  <div class="section-desc">测试群里的“能回答”，不等于真实社群里的“能可靠回答”。真实用户表达方式，才是产品真正的数据集。</div>
+  <div class="meta"><span>WhatsApp AI 客服 Bot</span><span>从测试群到真实群聊</span></div>
+</section>
+
+<section class="slide">
+  <div class="eyebrow">02 / FIRST VERSION</div>
+  <h2>第一版：先覆盖高频、低风险的问题</h2>
+  <div class="row" style="margin-top:24px">
+    <div class="col">
+      <div class="visual half"><img src="/portfolio/pages/page-03.png" alt="Bot 入群自动欢迎"></div>
+      <div class="caption">Bot 入群自动欢迎：告诉用户可以问什么、如何获得帮助。</div>
+    </div>
+    <div class="col">
+      <div class="visual half"><img src="/portfolio/pages/page-04.png" alt="Bot FAQ 回答"></div>
+      <div class="caption">FAQ 场景：对卡顿问题给出标准化排查建议。</div>
+    </div>
+  </div>
+  <div class="callout">
+    <b>FIRST VERSION</b>
+    <p>本地模型 + 多语言 FAQ + 置信度匹配；无法可靠处理时保留人工兜底。目标不是替代客服，而是先处理高频重复问题。</p>
+  </div>
+  <div class="meta"><span>真实 WhatsApp 业务群</span><span>06</span></div>
+</section>
+
+<section class="slide">
+  <div class="eyebrow">02 / REAL BAD CASE</div>
+  <h2>用户不会按照我们的测试用例提问</h2>
+  <div class="row" style="margin-top:18px">
+    <div class="visual full"><img src="/portfolio/pages/page-05.png" alt="测试群 AI 客服完整形态"></div>
+    <div class="col">
+      <div class="callout warn" style="margin-top:0">
+        <b>WHAT WENT WRONG</b>
+        <p>简写、缩写、非标准表达、复合问题，让简单 FAQ 置信度匹配的准确度明显下降。</p>
+      </div>
+      <div>
+        <div class="eyebrow" style="margin-top:16px">NEXT ITERATION</div>
+        <div class="flow">
+          <span class="step hot">Bad Case 数据集</span><span class="arrow">→</span>
+          <span class="step">Query Rewrite</span><span class="arrow">→</span>
+          <span class="step">语义检索</span><span class="arrow">→</span>
+          <span class="step">意图路由</span><span class="arrow">→</span>
+          <span class="step">人工兜底</span>
+        </div>
+      </div>
+      <div class="insight">AI 产品真正重要的，不是 Demo 回答得多聪明，而是它是否知道自己什么时候不该回答。</div>
+    </div>
+  </div>
+  <div class="meta"><span>真实上线复盘</span><span>07</span></div>
+</section>
+
+<section class="slide dark">
+  <div class="section-num">03 / ZERO TO ONE</div><div class="eyebrow" style="margin-bottom:20px">PROBLEM DEFINITION · MVP · PRODUCT ITERATION</div>
+  <h1>OpenSource Mentor：从单点工具到完整用户路径</h1>
+  <div class="section-desc">项目从 AI PR Review 出发，最后重新定义为面向开源新人的贡献辅助平台。</div>
+  <div class="meta"><span>hokkai.top</span><span>个人 0→1 项目</span></div>
+</section>
+
+<section class="slide">
+  <div class="eyebrow">03 / PRODUCT BOUNDARY</div>
+  <h2>先重新定义问题，再决定 AI 应该出现在哪里</h2>
+  <div class="visual full"><img src="/portfolio/pages/page-06.png" alt="OpenSource Mentor 首页"></div>
+  <div class="callout">
+    <b>BOUNDARY SHIFT</b>
+    <p>最初关注“PR 怎么审”，继续梳理用户路径后发现：新手更早的问题是仓库怎么看、Issue 怎么选、下一步学什么。于是 PR Review 从“产品本身”变成完整贡献流程中的一个环节。</p>
+  </div>
+  <div class="meta"><span>AI PR Review → OpenSource Mentor</span><span>09</span></div>
+</section>
+
+<section class="slide">
+  <div class="eyebrow">03 / REPOSITORY UNDERSTANDING</div>
+  <h2>工作台：先回答“这个仓库适不适合我”</h2>
+  <div class="visual full"><img src="/portfolio/pages/page-07.png" alt="OpenSource Mentor 工作台"></div>
+  <div class="caption">仓库分析、项目难度、新手友好度、推荐 Issue 与贡献领域。点击放大查看。</div>
+  <div class="meta"><span>仓库理解</span><span>10</span></div>
+</section>
+
+<section class="slide">
+  <div class="eyebrow">03 / ISSUE MATCHING</div>
+  <h2>Issue 推荐：把“我该做什么”变成可选择的下一步</h2>
+  <div class="visual full"><img src="/portfolio/pages/page-08.png" alt="OpenSource Mentor Issue 推荐"></div>
+  <div class="caption">按匹配度、难度和新手友好程度帮助用户筛选贡献机会。</div>
+  <div class="meta"><span>Issue 推荐</span><span>11</span></div>
+</section>
+
+<section class="slide">
+  <div class="eyebrow">03 / AI MENTOR</div>
+  <h2>AI 导师：不是万能聊天框，而是围绕当前上下文引导</h2>
+  <div class="visual full"><img src="/portfolio/pages/page-09.png" alt="OpenSource Mentor AI 导师"></div>
+  <div class="callout">
+    <b>DESIGN PRINCIPLE</b>
+    <p>我把“AI 应该出现在哪里”作为设计问题，而不是默认每个页面都放一个聊天框。AI 导师围绕当前仓库、学习阶段和下一步任务提供引导。</p>
+  </div>
+  <div class="meta"><span>仓库理解 → Issue → 学习 → 开发 → PR Review</span><span>12</span></div>
+</section>
+
+<section class="slide dark">
+  <div class="section-num">04 / LEARNING ABILITY</div>
+  <h1>Don't Ghost Me：快速进入陌生领域并完成交付</h1>
+  <div class="section-desc">Web3 并不是我的主场。这个项目更能证明我面对陌生领域时，如何快速建立知识地图并围绕交付目标学习。</div>
+  <div class="meta"><span>Monad Hackathon</span><span>团队项目</span></div>
+</section>
+
+<section class="slide">
+  <div class="eyebrow">04 / PRODUCT MECHANISM</div>
+  <h2>把“成员跑路”拆成可以设计的业务机制</h2>
+  <div class="flow">
+    <span class="step">保证金</span><span class="arrow">→</span>
+    <span class="step">退出</span><span class="arrow">→</span>
+    <span class="step hot">救场悬赏</span><span class="arrow">→</span>
+    <span class="step hot">新成员补位</span><span class="arrow">→</span>
+    <span class="step">验收结算</span>
+  </div>
+  <div class="row">
+    <div class="col">
+      <div class="visual half"><img src="/portfolio/pages/page-10.png" alt="Don't Ghost Me 我的承诺"></div>
+      <div class="caption">承诺、成员、保证金与当前阶段。</div>
+    </div>
+    <div class="col">
+      <div class="visual half"><img src="/portfolio/pages/page-11.png" alt="Don't Ghost Me 个人后台"></div>
+      <div class="caption">链上身份、余额、参与项目与救场任务。</div>
+    </div>
+  </div>
+  <div class="meta"><span>机制设计 / 团队协作 / 跨领域学习</span><span>14</span></div>
+</section>
+
+<section class="slide dark">
+  <div class="section-num">05 / CONTENT & COMMUNITY</div>
+  <h1>博客与公众号：把观察变成长期输出</h1>
+  <div class="section-desc">内容不是我的“附加项”，而是我整理复杂信息、形成判断并验证表达效果的方式。</div>
+  <div class="meta"><span>个人内容产品</span><span>独立运营与长期维护</span></div>
+</section>
+
+<section class="slide">
+  <div class="eyebrow">05 / PERSONAL CONTENT PRODUCT</div>
+  <h2>一个自己长期维护的内容空间</h2>
+  <div class="visual full"><img src="/portfolio/pages/page-12.png" alt="个人博客首页"></div>
+  <div class="kpis">
+    <div class="kpi"><strong>独立完成</strong><span>设计、开发、部署与长期维护</span></div>
+    <div class="kpi"><strong>持续输出</strong><span>AI、技术实践、实习与个人成长</span></div>
+    <div class="kpi"><strong>双重角色</strong><span>内容消费者 + 内容创作者</span></div>
+  </div>
+  <div class="meta"><span>hokkai2005.online</span><span>16</span></div>
+</section>
+
+<section class="slide">
+  <div class="eyebrow">05 / ORGANIC GROWTH</div>
+  <h2>一篇实习复盘文章的自然传播</h2>
+  <div class="row">
+    <div class="visual full"><img src="/portfolio/pages/page-13.png" alt="公众号文章数据"></div>
+    <div class="col">
+      <div class="kpi"><strong>1,500+</strong><span>后续累计阅读</span></div>
+      <div class="kpi"><strong>17</strong><span>截图时新增关注</span></div>
+      <div class="kpi"><strong>11</strong><span>截图时分享</span></div>
+      <div class="insight">对兴趣社区而言，好的内容不只是传递信息，也在帮助用户找到“和我一样的人”。</div>
+    </div>
+  </div>
+  <div class="meta"><span>内容运营 / 数据复盘 / 用户共鸣</span><span>17</span></div>
+</section>
+
+<section class="slide dark">
+  <div class="section-num">06 / PRODUCT THINKING</div>
+  <h1>我如何理解产品</h1>
+  <div class="section-desc">这些经历跨度很大，但一直在训练同一套能力：理解真实问题、定义产品边界、快速落地验证，再从真实反馈继续迭代。</div>
+  <div class="flow" style="margin-top:36px">
+    <span class="step hot">Understand / 理解问题</span><span class="arrow">→</span>
+    <span class="step hot">Define / 定义边界</span><span class="arrow">→</span>
+    <span class="step hot">Build / 落地验证</span><span class="arrow">→</span>
+    <span class="step hot">Learn / 反馈迭代</span>
+  </div>
+  <div class="section-desc" style="font-size:18px;margin-top:28px">我希望继续做的产品，不只是把需求变成功能，而是在业务目标与用户体验之间寻找可持续的解法。</div>
+  <div style="margin-top:38px;padding-top:26px;border-top:1px solid #44403c;display:grid;grid-template-columns:1.15fr 1fr;gap:48px;align-items:end">
+    <div>
+      <div class="eyebrow" style="margin-bottom:12px">CONTACT</div>
+      <div style="font:500 28px var(--serif);margin-bottom:10px">张雨阳</div>
+      <div class="small">2027届 · 产品经理 / AI 产品方向 · 上海</div>
+      <div class="small" style="margin-top:12px;color:#a8a29e">电话 | 邮箱：18103726832 | 316920080dd@gmail.com</div>
+    </div>
+    <div class="linkbar" style="justify-content:flex-end;color:#99f6e4;line-height:2">
+      <span>Blog · hokkai2005.online</span>
+      <span>Project · hokkai.top</span>
+      <span>GitHub · github.com/asJEI</span>
+    </div>
+  </div>
+  <div class="meta"><span>THANKS FOR READING</span><span>END</span></div>
+</section>
+
+</div>
+
+<div class="modal" id="modal">
+  <div class="close" id="close">×</div>
+  <img id="modalImg" alt="放大预览">
+  <div class="zoomhint">点击空白处或按 Esc 关闭</div>
+</div>
+<script>
+const modal=document.getElementById('modal'), modalImg=document.getElementById('modalImg');
+document.querySelectorAll('.visual img').forEach(img=>{
+  img.addEventListener('click',()=>{modalImg.src=img.src;modal.classList.add('open')})
+});
+document.getElementById('close').onclick=()=>modal.classList.remove('open');
+modal.addEventListener('click',e=>{if(e.target===modal)modal.classList.remove('open')});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')modal.classList.remove('open')});
+</script>
+</body></html>

@@ -1,0 +1,41 @@
+---
+import "../styles/global.css";
+
+import Navbar from "../components/layout/Navbar.astro";
+import SiteHead from "../components/layout/SiteHead.astro";
+
+const portfolioHtmlHref = "/portfolio/product-portfolio.html";
+---
+
+<html lang="zh-CN">
+  <head>
+    <SiteHead title="作品集" description="张雨阳的产品经理作品集" />
+  </head>
+  <body class="min-h-screen">
+    <Navbar />
+    <main class="portfolio-shell" aria-label="作品集">
+      <iframe
+        class="portfolio-frame"
+        src={portfolioHtmlHref}
+        title="张雨阳产品经理作品集"
+      ></iframe>
+    </main>
+  </body>
+</html>
+
+<style>
+  /* Match homepage: navbar floats over content; shell fills the viewport. */
+  .portfolio-shell {
+    position: fixed;
+    inset: 0;
+    z-index: 10;
+  }
+
+  .portfolio-frame {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    background: transparent;
+  }
+</style>

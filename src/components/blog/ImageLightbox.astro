@@ -2,16 +2,19 @@
 ---
 
 <style is:global>
-  .article-content img {
+  .article-content img,
+  .portfolio-pages img {
     cursor: zoom-in;
     transition: box-shadow 0.2s ease, transform 0.2s ease;
   }
 
-  .article-content img:hover {
+  .article-content img:hover,
+  .portfolio-pages img:hover {
     box-shadow: 0 8px 24px rgb(15 23 42 / 0.12);
   }
 
-  .dark .article-content img:hover {
+  .dark .article-content img:hover,
+  .dark .portfolio-pages img:hover {
     box-shadow: 0 8px 24px rgb(0 0 0 / 0.35);
   }
 
@@ -70,7 +73,7 @@
   .image-lightbox__img {
     display: block;
     width: auto;
-    max-width: min(100%, 56rem);
+    max-width: min(100%, 72rem);
     height: auto;
     margin: 0 auto;
     border-radius: var(--radius-card);

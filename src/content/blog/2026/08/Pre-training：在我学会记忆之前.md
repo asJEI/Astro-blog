@@ -1,6 +1,6 @@
 ---
 title: Pre-training：在我学会记忆之前
-date: 2026-08-18
+date: 2026-08-25
 slug: pre-training
 description: 在学会记忆以前，训练已经开始。我们失去了训练集，却保留了权重——而权重仍在变化。
 tags: ["技术交流", "幽微"]

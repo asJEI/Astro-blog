@@ -1,73 +1,75 @@
 ---
 import { getCollection } from "astro:content";
 
-const posts = (await getCollection("blog", ({ data }) => !data.draft)).sort(
-  (a, b) => b.data.date.getTime() - a.data.date.getTime(),
+import { sortPostsByDateDesc } from "../../lib/blog";
+
+const posts = sortPostsByDateDesc(await getCollection("blog", ({ data }) => !data.draft));
+const tags = [...new Set(posts.flatMap((post) => post.data.tags))].sort((a, b) =>
+  a.localeCompare(b, "zh-CN"),
 );
-const tags = [...new Set(posts.flatMap((post) => post.data.tags))].sort((a, b) => a.localeCompare(b, "zh-CN"));
 const siteStartYear =
   posts.length > 0
     ? String(Math.min(...posts.map((post) => post.data.date.getFullYear())))
     : String(new Date().getFullYear());
 
 const siteStats = [
-  { label: "文章数量", value: String(posts.length) },
-  { label: "标签数量", value: String(tags.length) },
-  { label: "建站时间", value: siteStartYear },
+  { label: "文章", value: String(posts.length) },
+  { label: "标签", value: String(tags.length) },
+  { label: "始于", value: siteStartYear },
 ];
 
 const recentUpdates = posts.slice(0, 3).map((post) => ({
   title: post.data.title,
   href: `/blog/${post.id}/`,
+  date: post.data.date,
 }));
 
-const cardClass =
-  "rounded-card border border-border bg-card p-4 backdrop-blur-lg transition duration-200 hover:-translate-y-px hover:border-primary/30 hover:bg-white/82 dark:border-border-dark dark:bg-card-dark dark:hover:border-primary/30 dark:hover:bg-white/7";
-const sectionTitleClass =
-  "mb-3 text-xs font-bold uppercase leading-none tracking-[0.12em] text-text-muted dark:text-text-muted-dark";
-const tagClass =
-  "rounded-pill border border-primary/16 bg-primary/8 px-2 py-1 text-xs font-medium leading-tight text-text-secondary transition-colors duration-200 hover:border-accent/28 hover:bg-accent/9 hover:text-text-primary dark:border-primary/18 dark:bg-primary/10 dark:text-text-secondary-dark dark:hover:border-accent/30 dark:hover:bg-accent/12 dark:hover:text-text-primary-dark";
+const formatShortDate = (date: Date) =>
+  `${String(date.getMonth() + 1).padStart(2, "0")}.${String(date.getDate()).padStart(2, "0")}`;
+
+const blockClass = "mt-6 border-t border-border pt-6";
 ---
 
-<aside class="grid w-full content-start gap-4 text-text-primary dark:text-text-primary-dark" aria-label="网站辅助信息">
-  <section class={cardClass} aria-labelledby="site-info-title">
-    <h2 id="site-info-title" class={sectionTitleClass}>网站数据</h2>
-    <div class="grid gap-3">
+<aside class="w-full text-text-primary" aria-label="网站辅助信息">
+  <section aria-labelledby="site-info-title">
+    <h2 id="site-info-title" class="label label--cjk">档案</h2>
+    <dl class="m-0 mt-3 grid gap-2">
       {
         siteStats.map((stat) => (
           <div class="flex items-baseline justify-between gap-3">
-            <span class="text-xl font-bold leading-none tracking-[-0.04em]">{stat.value}</span>
-            <span class="text-sm text-text-secondary dark:text-text-secondary-dark">{stat.label}</span>
+            <dt class="meta">{stat.label}</dt>
+            <dd class="m-0 font-mono text-sm tabular-nums text-text-secondary">{stat.value}</dd>
           </div>
         ))
       }
-    </div>
+    </dl>
   </section>
 
-  <section class={cardClass} aria-labelledby="tag-cloud-title">
-    <h2 id="tag-cloud-title" class={sectionTitleClass}>文章标签</h2>
+  <section class={blockClass} aria-labelledby="tag-cloud-title">
+    <h2 id="tag-cloud-title" class="label label--cjk">主题</h2>
     {
       tags.length > 0 ? (
-        <div class="flex flex-wrap gap-2" aria-label="文章标签">
-          {tags.map((tag) => <span class={tagClass}>{tag}</span>)}
-        </div>
+        <ul class="m-0 mt-3 flex list-none flex-wrap gap-x-2 gap-y-1.5 p-0">
+          {tags.map((tag) => (
+            <li class="meta text-text-secondary">{tag}</li>
+          ))}
+        </ul>
       ) : (
-        <p class="m-0 text-sm leading-6 text-text-secondary dark:text-text-secondary-dark">
-          暂无标签
-        </p>
+        <p class="mt-3 text-sm leading-6 text-text-secondary">暂无标签</p>
       )
     }
   </section>
 
-  <section class={cardClass} aria-labelledby="recent-updates-title">
-    <h2 id="recent-updates-title" class={sectionTitleClass}>最新动态</h2>
+  <section class={blockClass} aria-labelledby="recent-updates-title">
+    <h2 id="recent-updates-title" class="label label--cjk">近期</h2>
     {
       recentUpdates.length > 0 ? (
-        <ul class="m-0 grid list-none gap-3 p-0">
+        <ul class="m-0 mt-3 grid list-none gap-3 p-0">
           {recentUpdates.map((item) => (
-            <li>
+            <li class="grid gap-1">
+              <span class="meta">{formatShortDate(item.date)}</span>
               <a
-                class="block text-sm leading-6 text-text-secondary no-underline transition-colors duration-200 hover:text-accent dark:text-text-secondary-dark"
+                class="text-sm leading-6 text-text-secondary no-underline transition-colors hover:text-accent"
                 href={item.href}
               >
                 {item.title}
@@ -76,9 +78,7 @@ const tagClass =
           ))}
         </ul>
       ) : (
-        <p class="m-0 text-sm leading-6 text-text-secondary dark:text-text-secondary-dark">
-          暂无动态
-        </p>
+        <p class="mt-3 text-sm leading-6 text-text-secondary">暂无动态</p>
       )
     }
   </section>

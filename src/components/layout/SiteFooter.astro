@@ -1,0 +1,37 @@
+---
+const year = new Date().getFullYear();
+
+const links = [
+  { label: "所有文章", href: "/blog" },
+  { label: "关于", href: "/about" },
+  { label: "作品集", href: "/portfolio" },
+  { label: "GitHub", href: "https://github.com/asJEI", external: true },
+];
+---
+
+<footer class="relative z-10 mt-4 border-t border-border">
+  <div
+    class="mx-auto flex w-[min(calc(100%-2.5rem),1240px)] flex-col gap-8 py-10 text-text-muted sm:flex-row sm:items-end sm:justify-between max-[640px]:w-[min(calc(100%-2rem),1240px)]"
+  >
+    <div>
+      <p class="m-0 font-serif text-base tracking-[0.14em] text-text-secondary">
+        北海虽赊，扶摇可接
+      </p>
+      <p class="meta mt-3">© {year} 北海 · hokkai2005.online</p>
+    </div>
+
+    <nav class="flex flex-wrap gap-x-5 gap-y-2" aria-label="页脚导航">
+      {
+        links.map((link) => (
+          <a
+            class="meta u-link hover:text-accent"
+            href={link.href}
+            {...(link.external ? { target: "_blank", rel: "noreferrer" } : {})}
+          >
+            {link.label}
+          </a>
+        ))
+      }
+    </nav>
+  </div>
+</footer>

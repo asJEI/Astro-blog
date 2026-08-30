@@ -6,6 +6,7 @@ import MainContent from "../components/home/MainContent.astro";
 import Navbar from "../components/layout/Navbar.astro";
 import RightAside from "../components/layout/RightAside.astro";
 import Sidebar from "../components/layout/Sidebar.astro";
+import SiteFooter from "../components/layout/SiteFooter.astro";
 import SiteHead from "../components/layout/SiteHead.astro";
 import { site } from "../lib/seo";
 ---
@@ -14,32 +15,39 @@ import { site } from "../lib/seo";
 	<head>
 		<SiteHead title="北海" description={site.defaultDescription} />
 	</head>
-	<body class="min-h-screen">
-		<Navbar />
+	<body class="flex min-h-screen flex-col">
+		<Navbar overlay />
 		<Hero />
-		<main
-			id="main-content"
-			class="site-grid site-grid--home relative z-10"
-		>
-			<div class="hidden min-w-0 min-[821px]:block min-[821px]:sticky min-[821px]:top-20">
-				<Sidebar musicHydration="desktop" />
+
+		<main id="main-content" class="site-grid site-grid--home relative z-10 flex-1">
+			<div class="rail rail--start hidden min-w-0 min-[821px]:block">
+				<div class="rail__inner">
+					<Sidebar musicHydration="desktop" />
+				</div>
 			</div>
+
 			<div class="min-w-0">
 				<MainContent />
 			</div>
-			<div class="hidden min-w-0 min-[821px]:col-start-2 min-[821px]:block min-[1101px]:sticky min-[1101px]:top-20 min-[1101px]:col-auto">
-				<RightAside />
+
+			<div class="rail rail--end hidden min-w-0 min-[821px]:col-start-2 min-[821px]:block min-[1101px]:col-auto">
+				<div class="rail__inner">
+					<RightAside />
+				</div>
 			</div>
 		</main>
+
+		<SiteFooter />
+
 		<details class="mobile-assist min-[821px]:hidden">
 			<summary class="mobile-assist__toggle" aria-label="打开辅助信息">
 				<svg class="h-5 w-5" viewBox="0 0 24 24" aria-hidden="true">
-					<path d="M5 12h14M12 5v14" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.8" />
+					<path d="M5 12h14M12 5v14" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.6" />
 				</svg>
 			</summary>
 			<div class="mobile-assist__panel scrollbar-thin">
-				<div class="grid gap-3">
-					<Sidebar musicHydration="mobile" />
+				<Sidebar musicHydration="mobile" />
+				<div class="mt-6 border-t border-border pt-6">
 					<RightAside />
 				</div>
 			</div>

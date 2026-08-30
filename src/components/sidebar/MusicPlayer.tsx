@@ -151,15 +151,6 @@ const formatTime = (seconds: number) => {
   return `${minutes}:${remainingSeconds}`;
 };
 
-const getAdaptiveTitleSize = (title: string, variant: "now-playing" | "playlist") => {
-  const length = Math.max(title.length, 1);
-  const max = variant === "now-playing" ? 1.25 : 1;
-  const min = variant === "now-playing" ? 0.6875 : 0.75;
-  const availableWidth = variant === "now-playing" ? 5.5 : 8;
-
-  return `${Math.max(min, Math.min(max, (availableWidth / length) * 0.95))}rem`;
-};
-
 export default function MusicPlayer() {
   const initialSession = useMemo(() => getInitialSession(), []);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -419,204 +410,392 @@ export default function MusicPlayer() {
   const canSeek = duration > 0;
 
   return (
-    <div className="grid min-w-0 gap-4 max-sm:gap-3" aria-label="音乐播放器">
-      <div className="grid gap-2">
-        <div className="flex items-start justify-between gap-3">
-          <p className="m-0 text-xs font-bold uppercase leading-none tracking-[0.12em] text-text-muted dark:text-text-muted-dark">
-            音乐时间
-          </p>
-          <span className="shrink-0 rounded-pill border border-primary/16 bg-primary/8 px-2.5 py-1 text-[0.68rem] font-medium leading-none text-text-muted dark:border-primary/18 dark:bg-primary/10 dark:text-text-muted-dark">
-            {isPlaying ? "播放中" : isReady ? "已暂停" : "加载中"}
-          </span>
-        </div>
-        <div className="flex min-w-0 items-center gap-3">
-          <div className="min-w-0 flex-1 overflow-hidden">
-            <p
-              className="music-player-title m-0 truncate font-bold leading-tight tracking-[-0.04em]"
-              style={{ fontSize: getAdaptiveTitleSize(currentTrack.title, "now-playing") }}
-              title={currentTrack.title}
-            >
-              {currentTrack.title}
-            </p>
-            <p className="mt-1 truncate text-xs leading-5 text-text-muted dark:text-text-muted-dark" title={currentTrack.artist}>
-              {currentTrack.artist}
-            </p>
-          </div>
-          <div className="flex w-[5.75rem] shrink-0 items-center gap-1.5 self-center">
-            <svg
-              className="h-3.5 w-3.5 shrink-0 text-text-muted dark:text-text-muted-dark"
-              viewBox="0 0 24 24"
-              aria-hidden="true"
-            >
-              <path
-                d="M11 5 6 9H3v6h3l5 4V5Zm4.73 2.5a1 1 0 0 1 1.41 0 6.5 6.5 0 0 1 0 9.19 1 1 0 1 1-1.41-1.41 4.5 4.5 0 0 0 0-6.37 1 1 0 0 1 0-1.41Zm2.12-2.12a1 1 0 0 1 1.41 0 10.5 10.5 0 0 1 0 14.84 1 1 0 1 1-1.41-1.41 8.5 8.5 0 0 0 0-12.02 1 1 0 0 1 0-1.41Z"
-                fill="currentColor"
-              />
-            </svg>
-            <input
-              className="music-progress-slider music-player-volume min-w-0 flex-1 cursor-pointer outline-none"
-              type="range"
-              min="0"
-              max="100"
-              value={volumePercent}
-              step="1"
-              onInput={(event) => setVolumeValue(Number(event.currentTarget.value))}
-              onChange={(event) => setVolumeValue(Number(event.currentTarget.value))}
-              style={{ "--music-progress": `${volumePercent}%` } as CSSProperties}
-              aria-label="音量"
-            />
-          </div>
-        </div>
+    <div className="music" aria-label="音乐播放器">
+      <div className="flex items-baseline justify-between gap-3">
+        <p className="label label--cjk">正在播放</p>
+        <span className="meta shrink-0">
+          {isPlaying ? "播放中" : isReady ? "已暂停" : "加载中"}
+        </span>
       </div>
 
-      <div className="flex items-center gap-3 max-[360px]:grid max-[360px]:grid-cols-[3.5rem_minmax(0,1fr)]">
+      <div className="music__now">
         <TrackCover
           track={currentTrack}
-          className="h-14 w-14 shrink-0 rounded-card border border-primary/18 object-cover shadow-[0_14px_32px_rgb(0_0_0_/_0.12)] dark:border-primary/20"
-          fallbackClassName="h-14 w-14 shrink-0 rounded-card border border-primary/18 shadow-[0_14px_32px_rgb(0_0_0_/_0.12)] dark:border-primary/20"
+          className="music__cover"
+          fallbackClassName="music__cover"
         />
         <div className="min-w-0 flex-1">
-          <div className="flex items-center justify-between gap-2 text-[0.68rem] font-medium leading-none text-text-muted dark:text-text-muted-dark">
-            <span>{formatTime(currentTime)}</span>
-            <span>{formatTime(duration)}</span>
-          </div>
-          <input
-            ref={rangeRef}
-            className="music-progress-slider mt-2 w-full cursor-pointer outline-none disabled:cursor-not-allowed disabled:opacity-60"
-            type="range"
-            min="0"
-            max={progressMax}
-            value={progressValue}
-            step="any"
-            disabled={!canSeek}
-            onPointerDown={beginSeek}
-            onPointerUp={(event) => endSeek(Number(event.currentTarget.value))}
-            onPointerCancel={() => {
-              isSeekingRef.current = false;
-            }}
-            onInput={(event) => seek(Number(event.currentTarget.value))}
-            onChange={(event) => endSeek(Number(event.currentTarget.value))}
-            style={{ "--music-progress": `${progress}%` } as CSSProperties}
-            aria-label="播放进度"
-          />
+          <p className="music__title" title={currentTrack.title}>
+            {currentTrack.title}
+          </p>
+          <p className="music__artist" title={currentTrack.artist}>
+            {currentTrack.artist}
+          </p>
         </div>
       </div>
 
-      <div className="grid grid-cols-[1fr_auto_1fr_auto] items-center gap-2 max-[360px]:grid-cols-4">
-        <button
-          className="grid min-h-12 touch-manipulation place-items-center rounded-card border border-transparent text-text-muted transition duration-200 hover:-translate-y-px hover:bg-primary/8 hover:text-text-primary dark:text-text-muted-dark dark:hover:bg-white/8 dark:hover:text-text-primary-dark"
-          type="button"
-          onClick={() => moveTrack(-1)}
-          aria-label="上一首"
-        >
-          <svg className="h-5 w-5" viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M6 5v14M18 6.5 9 12l9 5.5v-11Z" fill="currentColor" />
-          </svg>
-        </button>
-        <button
-          className="grid h-14 w-14 touch-manipulation place-items-center rounded-pill border border-accent/18 bg-accent/16 text-accent transition duration-200 hover:-translate-y-px hover:bg-accent/22 dark:border-accent/24 dark:bg-accent/18 max-[360px]:h-12 max-[360px]:w-12"
-          type="button"
-          onClick={togglePlay}
-          aria-label={isPlaying ? "暂停" : "播放"}
-        >
-          {isPlaying ? (
-            <svg className="h-5 w-5" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M7 5h3.5v14H7V5Zm6.5 0H17v14h-3.5V5Z" fill="currentColor" />
+      <div className="music__progress">
+        <input
+          ref={rangeRef}
+          className="music-progress-slider w-full cursor-pointer outline-none disabled:cursor-not-allowed disabled:opacity-50"
+          type="range"
+          min="0"
+          max={progressMax}
+          value={progressValue}
+          step="any"
+          disabled={!canSeek}
+          onPointerDown={beginSeek}
+          onPointerUp={(event) => endSeek(Number(event.currentTarget.value))}
+          onPointerCancel={() => {
+            isSeekingRef.current = false;
+          }}
+          onInput={(event) => seek(Number(event.currentTarget.value))}
+          onChange={(event) => endSeek(Number(event.currentTarget.value))}
+          style={{ "--music-progress": `${progress}%` } as CSSProperties}
+          aria-label="播放进度"
+        />
+        <div className="flex items-center justify-between">
+          <span className="meta">{formatTime(currentTime)}</span>
+          <span className="meta">{formatTime(duration)}</span>
+        </div>
+      </div>
+
+      <div className="music__transport">
+        <div className="music__group">
+          <button
+            className="music__btn"
+            type="button"
+            onClick={() => moveTrack(-1)}
+            aria-label="上一首"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M6 5v14M18 6.5 9 12l9 5.5v-11Z" fill="currentColor" />
             </svg>
-          ) : (
-            <svg className="ml-0.5 h-6 w-6" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M8 5.5v13l10-6.5-10-6.5Z" fill="currentColor" />
+          </button>
+          <button
+            className="music__btn music__btn--play"
+            type="button"
+            onClick={togglePlay}
+            aria-label={isPlaying ? "暂停" : "播放"}
+          >
+            {isPlaying ? (
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M7 5h3.5v14H7V5Zm6.5 0H17v14h-3.5V5Z" fill="currentColor" />
+              </svg>
+            ) : (
+              <svg className="music__btn-play-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M8 5.5v13l10-6.5-10-6.5Z" fill="currentColor" />
+              </svg>
+            )}
+          </button>
+          <button
+            className="music__btn"
+            type="button"
+            onClick={() => moveTrack(1)}
+            aria-label="下一首"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M18 5v14M6 6.5l9 5.5-9 5.5v-11Z" fill="currentColor" />
             </svg>
-          )}
-        </button>
+          </button>
+        </div>
+
         <button
-          className="grid min-h-12 touch-manipulation place-items-center rounded-card border border-transparent text-text-muted transition duration-200 hover:-translate-y-px hover:bg-primary/8 hover:text-text-primary dark:text-text-muted-dark dark:hover:bg-white/8 dark:hover:text-text-primary-dark"
-          type="button"
-          onClick={() => moveTrack(1)}
-          aria-label="下一首"
-        >
-          <svg className="h-5 w-5" viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M18 5v14M6 6.5l9 5.5-9 5.5v-11Z" fill="currentColor" />
-          </svg>
-        </button>
-        <button
-          className="grid min-h-12 touch-manipulation place-items-center rounded-card border border-transparent text-text-muted transition duration-200 hover:-translate-y-px hover:bg-primary/8 hover:text-accent dark:text-text-muted-dark dark:hover:bg-white/8 dark:hover:text-accent"
+          className="music__list-toggle"
           type="button"
           onClick={() => setIsPlaylistOpen((value) => !value)}
           aria-label={isPlaylistOpen ? "折叠播放列表" : "展开播放列表"}
           aria-expanded={isPlaylistOpen}
         >
-          <svg className="h-5 w-5" viewBox="0 0 24 24" aria-hidden="true">
+          <span className="meta">{String(tracks.length).padStart(2, "0")}</span>
+          <svg viewBox="0 0 24 24" aria-hidden="true">
             <path
-              d="M4 7h10M4 12h10M4 17h6m8-9v7.5a2.5 2.5 0 1 1-1.2-2.14V8h3.7V6H18Z"
+              d="M4 7h11M4 12h11M4 17h7"
               fill="none"
               stroke="currentColor"
               strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="1.8"
+              strokeWidth="1.6"
             />
           </svg>
         </button>
       </div>
 
+      <div className="music__volume">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path
+            d="M11 5 6 9H3v6h3l5 4V5Zm4.73 2.5a1 1 0 0 1 1.41 0 6.5 6.5 0 0 1 0 9.19 1 1 0 1 1-1.41-1.41 4.5 4.5 0 0 0 0-6.37 1 1 0 0 1 0-1.41Z"
+            fill="currentColor"
+          />
+        </svg>
+        <input
+          className="music-progress-slider music-progress-slider--mini min-w-0 flex-1 cursor-pointer outline-none"
+          type="range"
+          min="0"
+          max="100"
+          value={volumePercent}
+          step="1"
+          onInput={(event) => setVolumeValue(Number(event.currentTarget.value))}
+          onChange={(event) => setVolumeValue(Number(event.currentTarget.value))}
+          style={{ "--music-progress": `${volumePercent}%` } as CSSProperties}
+          aria-label="音量"
+        />
+      </div>
+
       {isPlaylistOpen && (
-        <div className="max-h-40 overflow-y-auto border-t border-border pt-3 pr-1 scrollbar-thin dark:border-border-dark sm:max-h-44" aria-label="播放列表">
-          <div className="grid gap-1">
-            {tracks.map((track, index) => {
-              const isActive = index === currentTrackIndex;
+        <ol className="music__list scrollbar-thin" aria-label="播放列表">
+          {tracks.map((track, index) => {
+            const isActive = index === currentTrackIndex;
 
-              return (
+            return (
+              <li key={track.src}>
                 <button
-                  className={`grid min-h-12 touch-manipulation grid-cols-[2rem_minmax(0,1fr)] items-center gap-3 rounded-card px-2 py-2 text-left transition duration-200 ${
-                    isActive
-                      ? "bg-accent/10 text-text-primary dark:bg-accent/14 dark:text-text-primary-dark"
-                      : "text-text-secondary hover:bg-primary/8 hover:text-text-primary dark:text-text-secondary-dark dark:hover:bg-white/8 dark:hover:text-text-primary-dark"
-                  }`}
+                  className="music__item"
                   type="button"
-                  key={track.src}
+                  data-active={isActive ? "true" : undefined}
+                  aria-current={isActive ? "true" : undefined}
                   onClick={() => selectTrack(index)}
+                  title={`${track.title} — ${track.artist}`}
                 >
-                  <TrackCover
-                    track={track}
-                    className="h-8 w-8 rounded-card object-cover"
-                    fallbackClassName="h-8 w-8 rounded-card"
-                  />
-                  <span className="min-w-0 overflow-hidden">
-                    <span
-                      className="music-player-title block truncate font-bold leading-tight"
-                      style={{ fontSize: getAdaptiveTitleSize(track.title, "playlist") }}
-                      title={track.title}
-                    >
-                      {track.title}
-                    </span>
-                    <span className="block truncate text-xs leading-5 text-text-muted dark:text-text-muted-dark" title={track.artist}>
-                      {track.artist}
-                    </span>
-                  </span>
+                  <span className="music__index">{String(index + 1).padStart(2, "0")}</span>
+                  <span className="music__name">{track.title}</span>
                 </button>
-              );
-            })}
-          </div>
-        </div>
+              </li>
+            );
+          })}
+        </ol>
       )}
+
       <style>{`
-        .music-player-title {
-          max-width: 100%;
+        .music__now {
+          display: flex;
+          min-width: 0;
+          align-items: center;
+          gap: 0.75rem;
+          margin-top: 0.9rem;
         }
 
-        .music-player-volume {
-          height: 1.25rem;
+        .music__cover {
+          width: 2.75rem;
+          height: 2.75rem;
+          flex-shrink: 0;
+          border: 1px solid var(--color-border);
+          border-radius: 4px;
+          object-fit: cover;
         }
 
-        .music-player-volume::-webkit-slider-thumb {
-          width: 0.75rem;
-          height: 0.75rem;
-          margin-top: -0.21875rem;
+        .music__title {
+          overflow: hidden;
+          margin: 0;
+          color: var(--color-text-primary);
+          font-size: 0.875rem;
+          font-weight: 600;
+          line-height: 1.45;
+          text-overflow: ellipsis;
+          white-space: nowrap;
         }
 
-        .music-player-volume::-moz-range-thumb {
-          width: 0.65rem;
-          height: 0.65rem;
+        .music__artist {
+          overflow: hidden;
+          margin: 0.15rem 0 0;
+          color: var(--color-text-muted);
+          font-family: var(--font-mono);
+          font-size: 0.6875rem;
+          line-height: 1.4;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+
+        .music__progress {
+          margin-top: 0.75rem;
+        }
+
+        .music__transport {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 0.5rem;
+          margin-top: 0.5rem;
+        }
+
+        .music__group {
+          display: flex;
+          align-items: center;
+          gap: 0.15rem;
+          margin-left: -0.35rem;
+        }
+
+        .music__btn {
+          display: grid;
+          width: 1.9rem;
+          height: 1.9rem;
+          place-items: center;
+          border: 0;
+          border-radius: 4px;
+          background: transparent;
+          color: var(--color-text-muted);
+          cursor: pointer;
+          touch-action: manipulation;
+          transition: color 0.2s ease, background-color 0.2s ease;
+        }
+
+        .music__btn svg {
+          width: 0.9rem;
+          height: 0.9rem;
+        }
+
+        .music__btn:hover {
+          background: color-mix(in srgb, var(--color-primary) 14%, transparent);
+          color: var(--color-text-primary);
+        }
+
+        .music__btn--play {
+          width: 2.15rem;
+          height: 2.15rem;
+          border: 1px solid color-mix(in srgb, var(--color-accent) 42%, transparent);
+          border-radius: 999px;
+          color: var(--color-accent);
+        }
+
+        .music__btn--play:hover {
+          background: color-mix(in srgb, var(--color-accent) 12%, transparent);
+          color: var(--color-accent);
+        }
+
+        .music__btn--play svg {
+          width: 0.8rem;
+          height: 0.8rem;
+        }
+
+        .music__btn-play-icon {
+          margin-left: 0.1rem;
+        }
+
+        .music__list-toggle {
+          display: flex;
+          align-items: center;
+          gap: 0.4rem;
+          border: 0;
+          border-radius: 4px;
+          background: transparent;
+          padding: 0.35rem 0.3rem;
+          color: var(--color-text-muted);
+          cursor: pointer;
+          touch-action: manipulation;
+          transition: color 0.2s ease;
+        }
+
+        .music__list-toggle svg {
+          width: 0.85rem;
+          height: 0.85rem;
+        }
+
+        .music__list-toggle:hover,
+        .music__list-toggle[aria-expanded="true"] {
+          color: var(--color-accent);
+        }
+
+        .music__list-toggle:hover .meta,
+        .music__list-toggle[aria-expanded="true"] .meta {
+          color: inherit;
+        }
+
+        .music__volume {
+          display: flex;
+          align-items: center;
+          gap: 0.55rem;
+          margin-top: 0.35rem;
+        }
+
+        .music__volume svg {
+          width: 0.8rem;
+          height: 0.8rem;
+          flex-shrink: 0;
+          color: var(--color-text-muted);
+        }
+
+        .music__list {
+          max-height: 11rem;
+          overflow-y: auto;
+          margin: 0.9rem 0 0;
+          border-top: 1px solid var(--color-border);
+          padding: 0.6rem 0 0;
+          list-style: none;
+        }
+
+        .music__item {
+          display: grid;
+          width: 100%;
+          grid-template-columns: 1.4rem minmax(0, 1fr);
+          align-items: baseline;
+          gap: 0.55rem;
+          border: 0;
+          border-radius: 4px;
+          background: transparent;
+          padding: 0.35rem 0.3rem;
+          color: var(--color-text-secondary);
+          font: inherit;
+          text-align: left;
+          cursor: pointer;
+          touch-action: manipulation;
+          transition: color 0.2s ease, background-color 0.2s ease;
+        }
+
+        .music__item:hover {
+          background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+          color: var(--color-text-primary);
+        }
+
+        .music__item[data-active="true"] {
+          color: var(--color-accent);
+        }
+
+        .music__index {
+          color: var(--color-text-muted);
+          font-family: var(--font-mono);
+          font-size: 0.6875rem;
+          font-variant-numeric: tabular-nums;
+        }
+
+        .music__item[data-active="true"] .music__index {
+          color: var(--color-accent);
+        }
+
+        .music__name {
+          overflow: hidden;
+          font-size: 0.8125rem;
+          line-height: 1.5;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+
+        /* Roomier hit areas inside the mobile assist panel. */
+        @media (max-width: 820px) {
+          .music__btn {
+            width: 2.6rem;
+            height: 2.6rem;
+          }
+
+          .music__btn--play {
+            width: 2.9rem;
+            height: 2.9rem;
+          }
+
+          .music__btn svg {
+            width: 1rem;
+            height: 1rem;
+          }
+
+          .music__list-toggle {
+            padding: 0.7rem 0.5rem;
+          }
+
+          .music__item {
+            padding: 0.6rem 0.35rem;
+          }
+
+          .music__list {
+            max-height: 14rem;
+          }
         }
       `}</style>
     </div>

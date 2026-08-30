@@ -1,187 +1,317 @@
 ---
 import heroImage from "../../assets/hero-background.png";
 import mobileHeroImage from "../../assets/mobile-hero-background.png";
+
+const links = [
+  { label: "阅读文章", href: "/blog" },
+  { label: "关于我", href: "/about" },
+  { label: "GitHub", href: "https://github.com/asJEI", external: true },
+];
 ---
 
-<section class="relative flex min-h-[100svh] items-center overflow-hidden bg-background-dark text-white" aria-labelledby="hero-title">
+<section class="hero" aria-labelledby="hero-title">
   <div
-    class="absolute inset-0 scale-[1.02] bg-cover bg-center max-[720px]:hidden"
+    class="hero__image hero__image--desktop"
     style={`background-image: url("${heroImage.src}")`}
     aria-hidden="true"
-  ></div>
+  >
+  </div>
   <div
-    class="absolute inset-0 hidden scale-[1.02] bg-cover bg-center max-[720px]:block"
+    class="hero__image hero__image--mobile"
     style={`background-image: url("${mobileHeroImage.src}")`}
     aria-hidden="true"
-  ></div>
-  <div class="hero-scrim absolute inset-0" aria-hidden="true"></div>
-  <div class="hero-fade absolute inset-x-0 bottom-0 h-[34vh]" aria-hidden="true"></div>
+  >
+  </div>
+  <div class="hero__scrim" aria-hidden="true"></div>
+  <div class="hero__fade" aria-hidden="true"></div>
 
-  <div class="relative z-10 mx-auto w-[min(calc(100%_-_3rem),1180px)] py-28 pt-36 max-sm:flex max-sm:min-h-[100svh] max-sm:w-[min(calc(100%_-_2rem),1180px)] max-sm:flex-col max-sm:items-center max-sm:justify-center max-sm:py-24 max-sm:pt-28 max-sm:text-center">
-    <p class="mb-5 text-xs font-semibold uppercase tracking-[0.32em] text-white/62 max-sm:hidden">
-      Personal Tech Blog
-    </p>
+  <div class="hero__body">
+    <p class="hero__eyebrow">Hokkai — Personal Notebook</p>
 
-    <h1 id="hero-title" class="max-w-[10ch] text-[clamp(4rem,13vw,9.5rem)] font-bold leading-[0.92] tracking-[-0.08em] text-balance max-sm:hidden">
-      北海
-    </h1>
+    <h1 id="hero-title" class="hero__name">北海</h1>
 
-    <p class="mt-8 max-w-[12ch] text-[clamp(1.55rem,8vw,3rem)] font-semibold leading-[1.08] tracking-[-0.045em] max-sm:mx-auto max-sm:mt-0 max-sm:max-w-none max-sm:text-sm max-sm:font-medium max-sm:leading-6 max-sm:tracking-[0.18em]">
-      <span class="typewriter-text">欢迎来到北海的博客</span>
-    </p>
+    <p class="hero__motto">北海虽赊，扶摇可接</p>
 
-    <p class="mt-5 max-w-2xl text-base leading-8 text-white/76 max-sm:hidden sm:text-lg">
-      记录生活，分享思考，探索技术的无限可能
-    </p>
+    <p class="hero__tagline">记录生活，分享思考，探索技术的无限可能</p>
 
-    <div class="mt-10 flex flex-wrap gap-3 max-sm:hidden" aria-label="Hero actions">
-      <a
-        class="inline-flex min-h-12 items-center justify-center rounded-pill border border-white/75 bg-white/90 px-6 py-3 text-sm font-semibold leading-none text-background-dark no-underline shadow-[0_14px_34px_rgb(0_0_0_/_0.18)] transition duration-200 hover:-translate-y-px hover:bg-white"
-        href="/blog"
-      >
-        探索博客
-      </a>
-      <a
-        class="inline-flex min-h-12 items-center justify-center rounded-pill border border-white/18 bg-white/12 px-6 py-3 text-sm font-semibold leading-none text-white no-underline backdrop-blur-md transition duration-200 hover:-translate-y-px hover:border-white/38 hover:bg-white/18"
-        href="https://github.com/asJEI"
-        target="_blank"
-        rel="noreferrer"
-      >
-        前往GitHub
-      </a>
-    </div>
+    <nav class="hero__links" aria-label="快速入口">
+      {
+        links.map((link) => (
+          <a
+            class="hero__link"
+            href={link.href}
+            {...(link.external ? { target: "_blank", rel: "noreferrer" } : {})}
+          >
+            {link.label}
+          </a>
+        ))
+      }
+    </nav>
   </div>
 
-  <a class="scroll-cue" href="#main-content" aria-label="下滑查看更多内容">
-    <span class="scroll-cue__chevron" aria-hidden="true"></span>
+  <a class="hero__scroll" href="#main-content" aria-label="向下查看内容">
+    <span class="hero__scroll-line" aria-hidden="true"></span>
+    <span class="hero__scroll-chevron" aria-hidden="true"></span>
   </a>
 </section>
 
 <style>
-  .hero-scrim {
-    background:
-      radial-gradient(circle at 20% 52%, rgb(142 164 200 / 0.12), transparent 30%),
-      linear-gradient(90deg, rgb(3 7 18 / 0.44) 0%, rgb(3 7 18 / 0.22) 34%, rgb(3 7 18 / 0.04) 68%, transparent 100%);
-  }
-
-  .hero-fade {
-    background: linear-gradient(180deg, rgb(246 247 250 / 0) 0%, rgb(246 247 250 / 0.34) 68%, var(--color-background) 100%);
-  }
-
-  :global(.dark) .hero-fade {
-    background: linear-gradient(180deg, rgb(9 13 24 / 0) 0%, rgb(9 13 24 / 0.38) 72%, var(--color-background-dark) 100%);
-  }
-
-  .typewriter-text {
-    display: inline-block;
-    width: 0;
-    max-width: max-content;
+  .hero {
+    position: relative;
+    display: flex;
+    min-height: 100svh;
+    align-items: center;
     overflow: hidden;
-    border-right: 0.06em solid currentColor;
-    white-space: nowrap;
-    animation:
-      typewriter 1.15s steps(18, end) 0.2s forwards,
-      typewriter-caret 0.58s step-end infinite;
+    background: var(--color-background-dark);
+    color: white;
   }
 
-  .scroll-cue {
+  .hero__image {
     position: absolute;
-    bottom: max(2.25rem, env(safe-area-inset-bottom));
+    inset: 0;
+    background-position: center;
+    background-size: cover;
+    scale: 1.02;
+  }
+
+  .hero__image--mobile {
+    display: none;
+  }
+
+  .hero__scrim {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      100deg,
+      rgb(6 9 16 / 0.72) 0%,
+      rgb(6 9 16 / 0.48) 30%,
+      rgb(6 9 16 / 0.16) 62%,
+      transparent 100%
+    );
+  }
+
+  /* Dissolves the photograph into the page surface below it. */
+  .hero__fade {
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    height: 32vh;
+    background: linear-gradient(
+      180deg,
+      rgb(244 245 248 / 0) 0%,
+      rgb(244 245 248 / 0.3) 66%,
+      var(--color-background) 100%
+    );
+  }
+
+  :global(.dark) .hero__fade {
+    background: linear-gradient(
+      180deg,
+      rgb(11 14 21 / 0) 0%,
+      rgb(11 14 21 / 0.36) 70%,
+      var(--color-background-dark) 100%
+    );
+  }
+
+  .hero__body {
+    position: relative;
+    z-index: 10;
+    width: min(calc(100% - 2.5rem), 1240px);
+    margin-inline: auto;
+    padding-block: 7rem 6rem;
+    animation: hero-enter 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .hero__eyebrow {
+    margin: 0 0 1.75rem;
+    color: rgb(255 255 255 / 0.58);
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+  }
+
+  /*
+   * CJK glyphs are already full-width squares — they want a little air at
+   * display sizes, not the negative tracking Latin display type asks for.
+   */
+  .hero__name {
+    margin: 0;
+    font-size: clamp(4rem, 12vw, 8.5rem);
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: 0.06em;
+    text-indent: 0.06em;
+  }
+
+  .hero__motto {
+    margin: 1.5rem 0 0;
+    color: rgb(255 255 255 / 0.9);
+    font-family: var(--font-serif);
+    font-size: clamp(1.15rem, 2.4vw, 1.6rem);
+    font-weight: 400;
+    line-height: 1.6;
+    letter-spacing: 0.14em;
+  }
+
+  .hero__tagline {
+    margin: 1.25rem 0 0;
+    max-width: 34rem;
+    color: rgb(255 255 255 / 0.7);
+    font-size: 0.9375rem;
+    line-height: 1.9;
+    letter-spacing: 0.02em;
+  }
+
+  .hero__links {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 2.75rem;
+    gap: 1.75rem;
+  }
+
+  .hero__link {
+    position: relative;
+    padding-bottom: 0.45rem;
+    color: rgb(255 255 255 / 0.82);
+    font-size: 0.875rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .hero__link::after {
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    height: 1px;
+    background: currentColor;
+    opacity: 0.3;
+    content: "";
+    transition: opacity 0.2s ease;
+  }
+
+  .hero__link:hover {
+    color: white;
+  }
+
+  .hero__link:hover::after {
+    opacity: 1;
+  }
+
+  .hero__scroll {
+    position: absolute;
+    bottom: max(2rem, env(safe-area-inset-bottom));
     left: 50%;
     z-index: 20;
     display: grid;
-    width: 2.75rem;
-    height: 2.75rem;
-    translate: -50% 0;
-    place-items: center;
-    color: white;
+    justify-items: center;
+    gap: 0.5rem;
+    /* It lands inside the fade, where the photo has become the page surface. */
+    color: var(--color-text-muted);
     text-decoration: none;
-    opacity: 0;
-    animation: scroll-cue-enter 0.6s ease 1.45s forwards;
+    translate: -50% 0;
+    transition: color 0.2s ease, translate 0.2s ease;
   }
 
-  .scroll-cue__chevron {
-    width: 1.35rem;
-    height: 1.35rem;
-    border-right: 0.22rem solid currentColor;
-    border-bottom: 0.22rem solid currentColor;
+  .hero__scroll:hover {
+    color: var(--color-text-primary);
+    translate: -50% 0.2rem;
+  }
+
+  .hero__scroll-line {
+    width: 1px;
+    height: 2.25rem;
+    background: linear-gradient(180deg, transparent, currentColor);
+  }
+
+  .hero__scroll-chevron {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-right: 1px solid currentColor;
+    border-bottom: 1px solid currentColor;
+    margin-top: -0.25rem;
     rotate: 45deg;
-    animation: scroll-cue-bob 1.35s ease-in-out infinite;
-    filter: drop-shadow(0 0.5rem 1rem rgb(0 0 0 / 0.28));
   }
 
-  @keyframes typewriter {
+  @keyframes hero-enter {
     from {
-      width: 0;
-    }
-
-    to {
-      width: 9em;
-    }
-  }
-
-  @keyframes typewriter-caret {
-    50% {
-      border-color: transparent;
-    }
-  }
-
-  @keyframes scroll-cue-enter {
-    to {
-      opacity: 0.86;
-    }
-  }
-
-  @keyframes scroll-cue-bob {
-    0%,
-    100% {
-      translate: 0 -0.2rem;
-    }
-
-    50% {
-      translate: 0 0.25rem;
+      opacity: 0;
+      translate: 0 1.25rem;
     }
   }
 
   @media (max-width: 720px) {
-    .hero-scrim {
-      background:
-        radial-gradient(circle at 28% 42%, rgb(142 164 200 / 0.12), transparent 34%),
-        linear-gradient(90deg, rgb(3 7 18 / 0.42), rgb(3 7 18 / 0.08));
+    .hero {
+      align-items: flex-end;
     }
 
-    .hero-fade {
-      height: 28vh;
-      background: linear-gradient(180deg, rgb(246 247 250 / 0) 0%, rgb(246 247 250 / 0.4) 70%, var(--color-background) 100%);
+    .hero__image--desktop {
+      display: none;
     }
 
-    :global(.dark) .hero-fade {
-      background: linear-gradient(180deg, rgb(9 13 24 / 0) 0%, rgb(9 13 24 / 0.44) 72%, var(--color-background-dark) 100%);
-    }
-  }
-
-  @media (max-width: 640px) {
-    .typewriter-text {
-      animation:
-        typewriter 1.05s steps(18, end) 0.2s forwards,
-        typewriter-caret 0.58s step-end infinite;
+    .hero__image--mobile {
+      display: block;
     }
 
-    .scroll-cue {
-      bottom: max(4.75rem, env(safe-area-inset-bottom));
+    /*
+     * The mobile artwork is a near-white wall, so light text needs a much
+     * heavier scrim than the desktop crop — anchored at the bottom.
+     */
+    .hero__scrim {
+      background: linear-gradient(
+        180deg,
+        rgb(6 9 16 / 0.16) 0%,
+        rgb(6 9 16 / 0.08) 32%,
+        rgb(6 9 16 / 0.74) 70%,
+        rgb(6 9 16 / 0.93) 100%
+      );
+    }
+
+    .hero__fade {
+      height: 16vh;
+      background: linear-gradient(180deg, rgb(6 9 16 / 0) 0%, var(--color-background) 100%);
+    }
+
+    :global(.dark) .hero__fade {
+      background: linear-gradient(180deg, rgb(6 9 16 / 0) 0%, var(--color-background-dark) 100%);
+    }
+
+    .hero__body {
+      width: min(calc(100% - 2rem), 1240px);
+      padding-block: 0 22vh;
+    }
+
+    .hero__eyebrow {
+      margin-bottom: 1.25rem;
+      letter-spacing: 0.22em;
+    }
+
+    .hero__motto {
+      margin-top: 1rem;
+    }
+
+    .hero__tagline {
+      margin-top: 0.9rem;
+      font-size: 0.875rem;
+      line-height: 1.85;
+    }
+
+    .hero__links {
+      margin-top: 2rem;
+      gap: 1.25rem;
+    }
+
+    .hero__scroll {
+      display: none;
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .typewriter-text {
-      width: auto;
-      border-right: 0;
-      animation: none;
-    }
-
-    .scroll-cue,
-    .scroll-cue__chevron {
-      opacity: 0.86;
+    .hero__body {
       animation: none;
     }
   }

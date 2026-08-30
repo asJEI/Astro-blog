@@ -3,24 +3,66 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --color-background: #f6f7fa;
-  --color-background-dark: #090d18;
-  --color-card: rgb(255 255 255 / 0.76);
-  --color-card-dark: rgb(15 20 34 / 0.72);
-  --color-border: rgb(70 86 115 / 0.14);
-  --color-border-dark: rgb(226 232 240 / 0.12);
-  --color-primary: #8ea4c8;
-  --color-accent: #d47b8f;
-  --color-warm: #e7c7a6;
-  --color-text-primary: rgb(22 28 40);
-  --color-text-primary-dark: rgb(245 247 251);
-  --color-text-secondary: rgb(58 68 86 / 0.78);
-  --color-text-secondary-dark: rgb(230 235 245 / 0.72);
-  --color-text-muted: rgb(74 86 110 / 0.54);
-  --color-text-muted-dark: rgb(230 235 245 / 0.5);
+  /* 雾 — surfaces */
+  --color-background: #f4f5f8;
+  --color-background-dark: #0b0e15;
+  --color-card: rgb(255 255 255 / 0.62);
+  --color-card-dark: rgb(22 28 41 / 0.55);
 
-  --radius-card: 0.75rem;
+  /* 线 — hairlines */
+  --color-border: rgb(24 32 48 / 0.13);
+  --color-border-dark: rgb(222 232 248 / 0.13);
+
+  /* 色 */
+  --color-primary: #7d94b8;
+  --color-accent: #ac4a5e;
+  --color-warm: #bf9670;
+
+  /* 墨 — text */
+  --color-text-primary: #171c26;
+  --color-text-primary-dark: #edf0f6;
+  --color-text-secondary: rgb(45 56 75 / 0.86);
+  --color-text-secondary-dark: rgb(220 229 244 / 0.74);
+  /* Muted still carries 12px metadata, so it stays above 4.5:1. */
+  --color-text-muted: rgb(58 71 94 / 0.8);
+  --color-text-muted-dark: rgb(212 223 242 / 0.58);
+
+  --radius-card: 0.5rem;
   --radius-pill: 999px;
+
+  --font-sans:
+    ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Text", "Segoe UI",
+    Inter, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei UI", "Microsoft YaHei",
+    "Source Han Sans SC", "Noto Sans CJK SC", sans-serif;
+  --font-mono:
+    "JetBrains Mono", ui-monospace, SFMono-Regular, "SF Mono", "Cascadia Mono", Consolas,
+    "Liberation Mono", Menlo, monospace;
+  --font-serif:
+    "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "Songti SC",
+    "Source Han Serif SC", "Noto Serif CJK SC", serif;
+}
+
+/*
+ * Dark mode re-points the base tokens instead of duplicating every utility,
+ * so `text-text-secondary` / `border-border` resolve correctly in both themes.
+ */
+.dark {
+  --color-background: #0b0e15;
+  --color-card: rgb(22 28 41 / 0.55);
+  --color-border: rgb(222 232 248 / 0.13);
+  --color-primary: #93a9cc;
+  --color-accent: #e2909f;
+  --color-text-primary: #edf0f6;
+  --color-text-secondary: rgb(220 229 244 / 0.74);
+  --color-text-muted: rgb(212 223 242 / 0.58);
+}
+
+:root {
+  /* Comfortable CJK line length: ~40 characters at the article size. */
+  --measure: 44rem;
+  --nav-height: 3.5rem;
+  --rail-width: 13.5rem;
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23g)' opacity='0.045'/%3E%3C/svg%3E");
 }
 
 @layer base {
@@ -30,6 +72,7 @@
 
   html {
     color-scheme: light;
+    scroll-behavior: smooth;
   }
 
   html.dark {
@@ -38,48 +81,179 @@
 
   body {
     margin: 0;
-    background:
-      radial-gradient(circle at 18% 0%, rgb(142 164 200 / 0.18), transparent 34rem),
-      radial-gradient(circle at 82% 8%, rgb(231 199 166 / 0.12), transparent 30rem),
-      var(--color-background);
+    background-color: var(--color-background);
+    background-image: var(--grain);
     color: var(--color-text-primary);
-    font-family:
-      Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-      sans-serif;
+    font-family: var(--font-sans);
+    font-variant-numeric: tabular-nums;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
-  }
-
-  .dark body {
-    background:
-      radial-gradient(circle at 18% 0%, rgb(142 164 200 / 0.16), transparent 34rem),
-      radial-gradient(circle at 82% 8%, rgb(212 123 143 / 0.12), transparent 28rem),
-      var(--color-background-dark);
-    color: var(--color-text-primary-dark);
+    -moz-osx-font-smoothing: grayscale;
   }
 
   a {
     color: inherit;
   }
+
+  ::selection {
+    background: color-mix(in srgb, var(--color-accent) 22%, transparent);
+  }
+
+  :focus-visible {
+    border-radius: 3px;
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    /* Scroll-driven elements read the scroll position, not the clock. */
+    *:not([data-scroll-driven]),
+    *:not([data-scroll-driven])::before,
+    *:not([data-scroll-driven])::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
 }
 
 @layer components {
+  /* ---------------------------------------------------------------- layout */
+
   .site-grid {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
-    align-items: start;
-    width: min(calc(100% - 2rem), 1600px);
+    align-items: stretch;
+    width: min(calc(100% - 2.5rem), 1240px);
     margin-inline: auto;
-    gap: 1rem;
+    gap: 2.5rem;
   }
 
   .site-grid--home {
-    padding-block: 4rem;
+    padding-block: 4.5rem 5rem;
   }
 
   .site-grid--page {
-    padding-block: 7rem;
+    padding-block: 8rem 5rem;
   }
+
+  /* Column dividers replace card borders as the structural device. */
+  .rail__inner {
+    position: sticky;
+    top: calc(var(--nav-height) + 2rem);
+  }
+
+  .measure {
+    max-width: var(--measure);
+  }
+
+  /* ------------------------------------------------------------ primitives */
+
+  .label {
+    display: block;
+    margin: 0;
+    color: var(--color-text-muted);
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  /* CJK labels: uppercase is a no-op, tracking does the work instead. */
+  .label--cjk {
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    letter-spacing: 0.22em;
+    text-transform: none;
+  }
+
+  .meta {
+    color: var(--color-text-muted);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.02em;
+  }
+
+  /* No negative tracking: CJK glyphs are full-width and crowd immediately. */
+  .heading {
+    letter-spacing: normal;
+    text-wrap: balance;
+  }
+
+  /* Underline that draws in on hover, rather than a colour flash. */
+  .u-link {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-repeat: no-repeat;
+    background-position: 0 100%;
+    background-size: 0% 1px;
+    text-decoration: none;
+    transition: background-size 0.32s cubic-bezier(0.4, 0, 0.2, 1), color 0.2s ease;
+  }
+
+  .u-link:hover,
+  .u-link:focus-visible {
+    background-size: 100% 1px;
+  }
+
+  .tag {
+    display: inline-block;
+    color: var(--color-text-muted);
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    line-height: 1.4;
+    letter-spacing: 0.01em;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .tag:hover {
+    color: var(--color-accent);
+  }
+
+  /* A ruled index: hairlines between rows, none at the ends. */
+  .index-list > * + * {
+    border-top: 1px solid var(--color-border);
+  }
+
+  .entry {
+    display: block;
+    padding-block: 1.25rem;
+    text-decoration: none;
+  }
+
+  .entry__title {
+    margin: 0;
+    color: var(--color-text-primary);
+    font-size: 1.0625rem;
+    font-weight: 600;
+    line-height: 1.6;
+    transition: color 0.2s ease;
+  }
+
+  .entry:hover .entry__title {
+    color: var(--color-accent);
+  }
+
+  .entry__summary {
+    display: -webkit-box;
+    overflow: hidden;
+    margin: 0.4rem 0 0;
+    color: var(--color-text-secondary);
+    font-size: 0.875rem;
+    line-height: 1.75;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+  }
+
+  /* ---------------------------------------------------------- mobile panel */
 
   .mobile-assist {
     position: fixed;
@@ -90,20 +264,25 @@
 
   .mobile-assist__toggle {
     display: inline-flex;
-    min-width: 3.25rem;
-    min-height: 3.25rem;
+    min-width: 3rem;
+    min-height: 3rem;
     align-items: center;
     justify-content: center;
-    border: 1px solid rgb(255 255 255 / 0.28);
+    border: 1px solid rgb(255 255 255 / 0.22);
     border-radius: var(--radius-pill);
-    background: rgb(15 23 42 / 0.58);
+    background: rgb(11 14 21 / 0.68);
     color: white;
-    box-shadow: 0 1rem 2.5rem rgb(0 0 0 / 0.22);
+    box-shadow: 0 0.75rem 2rem rgb(0 0 0 / 0.24);
     cursor: pointer;
     list-style: none;
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
     touch-action: manipulation;
+    transition: transform 0.2s ease;
+  }
+
+  .mobile-assist[open] .mobile-assist__toggle {
+    transform: rotate(45deg);
   }
 
   .mobile-assist__toggle::-webkit-details-marker {
@@ -114,55 +293,120 @@
     position: absolute;
     left: 0;
     bottom: calc(100% + 0.75rem);
-    width: min(calc(100vw - 1.5rem), 22rem);
+    width: min(calc(100vw - 1.5rem), 21rem);
     max-height: min(70svh, 36rem);
     overflow-y: auto;
     border: 1px solid var(--color-border);
-    border-radius: 1.25rem;
-    background: rgb(246 247 250 / 0.9);
-    padding: 0.75rem;
-    box-shadow: 0 1.5rem 4rem rgb(15 23 42 / 0.24);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
+    border-radius: 0.75rem;
+    background: color-mix(in srgb, var(--color-background) 94%, transparent);
+    padding: 1.25rem;
+    box-shadow: 0 1.5rem 4rem rgb(11 14 21 / 0.22);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
   }
 
-  .dark .mobile-assist__panel {
-    border-color: var(--color-border-dark);
-    background: rgb(9 13 24 / 0.9);
-  }
+  /* -------------------------------------------------------- article typography */
 
   .article-content {
     overflow-wrap: anywhere;
+    max-width: var(--measure);
     color: var(--color-text-primary);
-    font-size: 1rem;
+    font-size: 1.0625rem;
     line-height: 1.9;
+    text-spacing-trim: space-first;
   }
 
-  .dark .article-content {
-    color: var(--color-text-primary-dark);
+  .article-content > :first-child {
+    margin-top: 0;
+  }
+
+  .article-content :where(p, ul, ol, blockquote, figure, table, pre, details) {
+    margin: 1.35em 0;
+  }
+
+  .article-content p {
+    text-wrap: pretty;
   }
 
   .article-content :where(h2, h3, h4) {
-    margin: 2rem 0 0.75rem;
-    line-height: 1.35;
-    letter-spacing: -0.04em;
-    scroll-margin-top: 6rem;
+    color: var(--color-text-primary);
+    line-height: 1.5;
+    scroll-margin-top: calc(var(--nav-height) + 2.5rem);
+    text-wrap: balance;
   }
 
   .article-content h2 {
-    font-size: clamp(1.35rem, 5vw, 1.5rem);
+    position: relative;
+    margin: 3.25rem 0 1.25rem;
+    padding-top: 1.5rem;
+    font-size: 1.375rem;
+    font-weight: 650;
+  }
+
+  /* Short accent rule above each section keeps long posts navigable. */
+  .article-content h2::before {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1.75rem;
+    height: 2px;
+    background: var(--color-accent);
+    content: "";
   }
 
   .article-content h3 {
-    font-size: clamp(1.18rem, 4vw, 1.25rem);
+    margin: 2.25rem 0 0.85rem;
+    font-size: 1.125rem;
+    font-weight: 650;
   }
 
-  .article-content :where(p, ul, ol, blockquote, figure, table, pre) {
-    margin: 1rem 0;
+  .article-content h4 {
+    margin: 1.75rem 0 0.6rem;
+    font-size: 1rem;
+    font-weight: 650;
   }
 
   .article-content :where(ul, ol) {
+    padding-left: 1.4em;
+  }
+
+  .article-content li {
+    margin-block: 0.35em;
+    padding-left: 0.2em;
+  }
+
+  .article-content li::marker {
+    color: var(--color-text-muted);
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+  }
+
+  .article-content blockquote {
+    border-left: 2px solid color-mix(in srgb, var(--color-accent) 55%, transparent);
     padding-left: 1.25rem;
+    color: var(--color-text-secondary);
+  }
+
+  .article-content blockquote :where(p):first-child {
+    margin-top: 0;
+  }
+
+  .article-content blockquote :where(p):last-child {
+    margin-bottom: 0;
+  }
+
+  /* An ornament reads better than a rule at a section break. */
+  .article-content hr {
+    border: 0;
+    margin: 3rem 0;
+    color: var(--color-text-muted);
+    font-family: var(--font-mono);
+    letter-spacing: 0.6em;
+    text-align: center;
+  }
+
+  .article-content hr::before {
+    content: "· · ·";
   }
 
   .article-content :where(img, video, iframe) {
@@ -171,6 +415,7 @@
 
   .article-content :where(img, video) {
     height: auto;
+    border: 1px solid var(--color-border);
     border-radius: var(--radius-card);
   }
 
@@ -184,66 +429,94 @@
     max-width: 100%;
     overflow-x: auto;
     border-spacing: 0;
+    font-size: 0.9375rem;
     white-space: nowrap;
   }
 
   .article-content :where(th, td) {
     border-bottom: 1px solid var(--color-border);
-    padding: 0.5rem 0.75rem;
+    padding: 0.6rem 1rem 0.6rem 0;
     text-align: left;
   }
 
-  .dark .article-content :where(th, td) {
-    border-color: var(--color-border-dark);
-  }
-
-  .article-content blockquote {
-    border-left: 3px solid var(--color-accent);
-    padding-left: 1rem;
-    color: var(--color-text-secondary);
-  }
-
-  .dark .article-content blockquote {
-    color: var(--color-text-secondary-dark);
+  .article-content th {
+    color: var(--color-text-muted);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
   }
 
   .article-content a {
     color: var(--color-accent);
-    text-decoration: none;
     overflow-wrap: anywhere;
+    text-decoration: underline;
+    text-decoration-color: color-mix(in srgb, var(--color-accent) 35%, transparent);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+    transition: text-decoration-color 0.2s ease;
   }
 
   .article-content a:hover {
-    text-decoration: underline;
+    text-decoration-color: currentColor;
   }
 
   .article-content code {
-    border-radius: 0.35rem;
-    background: rgb(142 164 200 / 0.12);
-    padding: 0.12rem 0.28rem;
-    font-size: 0.92em;
+    border-radius: 3px;
+    background: color-mix(in srgb, var(--color-primary) 14%, transparent);
+    padding: 0.1em 0.35em;
+    font-family: var(--font-mono);
+    font-size: 0.85em;
   }
 
   .article-content pre {
     max-width: 100%;
     overflow-x: auto;
+    border: 1px solid var(--color-border);
     border-radius: var(--radius-card);
-    background: rgb(15 23 42 / 0.92);
-    padding: 1rem;
-    color: rgb(248 250 252);
+    background: color-mix(in srgb, var(--color-text-primary) 4%, transparent);
+    padding: 1.1rem 1.25rem;
+    font-size: 0.85rem;
+    line-height: 1.7;
     -webkit-overflow-scrolling: touch;
+  }
+
+  .dark .article-content pre {
+    background: rgb(255 255 255 / 0.035);
   }
 
   .article-content pre code {
     background: transparent;
     padding: 0;
     color: inherit;
+    font-size: 1em;
     white-space: pre;
   }
 
+  /* Shiki emits both themes; swap the variable set with the colour scheme. */
+  .article-content .astro-code,
+  .article-content .astro-code span {
+    background: transparent !important;
+  }
+
+  .dark .article-content .astro-code,
+  .dark .article-content .astro-code span {
+    color: var(--shiki-dark) !important;
+    font-style: var(--shiki-dark-font-style) !important;
+    font-weight: var(--shiki-dark-font-weight) !important;
+    text-decoration: var(--shiki-dark-text-decoration) !important;
+  }
+
+  /* ------------------------------------------------------------- utilities */
+
+  /* A hairline that fills with accent — same vocabulary as the column rules. */
   .music-progress-slider {
     --music-progress: 0%;
-    height: 1.75rem;
+    --music-track: 2px;
+    --music-thumb: 0.625rem;
+
+    height: 1.4rem;
     -webkit-appearance: none;
     appearance: none;
     background: transparent;
@@ -251,86 +524,72 @@
     user-select: none;
   }
 
+  .music-progress-slider--mini {
+    --music-thumb: 0.5rem;
+
+    height: 1rem;
+  }
+
   .music-progress-slider::-webkit-slider-runnable-track {
-    height: 0.375rem;
+    height: var(--music-track);
     border-radius: var(--radius-pill);
     cursor: pointer;
     background: linear-gradient(
       90deg,
       var(--color-accent) 0%,
       var(--color-accent) var(--music-progress),
-      rgb(142 164 200 / 0.16) var(--music-progress),
-      rgb(142 164 200 / 0.16) 100%
+      color-mix(in srgb, var(--color-primary) 26%, transparent) var(--music-progress),
+      color-mix(in srgb, var(--color-primary) 26%, transparent) 100%
     );
   }
 
   .music-progress-slider::-webkit-slider-thumb {
-    width: 1rem;
-    height: 1rem;
-    margin-top: -0.3125rem;
+    width: var(--music-thumb);
+    height: var(--music-thumb);
+    margin-top: calc((var(--music-track) - var(--music-thumb)) / 2);
     -webkit-appearance: none;
     appearance: none;
-    border: 2px solid rgb(255 255 255 / 0.82);
+    border: 0;
     border-radius: var(--radius-pill);
     background: var(--color-accent);
-    box-shadow: 0 0.35rem 1rem rgb(0 0 0 / 0.16);
     cursor: grab;
+    transition: transform 0.15s ease;
   }
 
   .music-progress-slider:active::-webkit-slider-thumb {
     cursor: grabbing;
-    transform: scale(1.08);
+    transform: scale(1.2);
   }
 
   .music-progress-slider::-moz-range-track {
-    height: 0.375rem;
+    height: var(--music-track);
     border-radius: var(--radius-pill);
     cursor: pointer;
-    background: rgb(142 164 200 / 0.16);
+    background: color-mix(in srgb, var(--color-primary) 26%, transparent);
   }
 
   .music-progress-slider::-moz-range-progress {
-    height: 0.375rem;
+    height: var(--music-track);
     border-radius: var(--radius-pill);
     background: var(--color-accent);
   }
 
   .music-progress-slider::-moz-range-thumb {
-    width: 0.85rem;
-    height: 0.85rem;
-    border: 2px solid rgb(255 255 255 / 0.82);
+    width: var(--music-thumb);
+    height: var(--music-thumb);
+    border: 0;
     border-radius: var(--radius-pill);
     background: var(--color-accent);
-    box-shadow: 0 0.35rem 1rem rgb(0 0 0 / 0.16);
     cursor: grab;
   }
 
-  .music-progress-slider:active::-moz-range-thumb {
-    cursor: grabbing;
-    transform: scale(1.08);
-  }
-
-  .dark .music-progress-slider::-webkit-slider-runnable-track {
-    background: linear-gradient(
-      90deg,
-      var(--color-accent) 0%,
-      var(--color-accent) var(--music-progress),
-      rgb(255 255 255 / 0.12) var(--music-progress),
-      rgb(255 255 255 / 0.12) 100%
-    );
-  }
-
-  .dark .music-progress-slider::-moz-range-track {
-    background: rgb(255 255 255 / 0.12);
-  }
-
   .scrollbar-thin {
-    scrollbar-color: rgb(142 164 200 / 0.34) transparent;
+    scrollbar-color: color-mix(in srgb, var(--color-primary) 40%, transparent) transparent;
     scrollbar-width: thin;
   }
 
   .scrollbar-thin::-webkit-scrollbar {
-    width: 0.35rem;
+    width: 0.3rem;
   }
 
   .scrollbar-thin::-webkit-scrollbar-track {
@@ -339,31 +598,33 @@
 
   .scrollbar-thin::-webkit-scrollbar-thumb {
     border-radius: var(--radius-pill);
-    background: rgb(142 164 200 / 0.28);
-  }
-
-  .dark .scrollbar-thin {
-    scrollbar-color: rgb(255 255 255 / 0.22) transparent;
-  }
-
-  .dark .scrollbar-thin::-webkit-scrollbar-thumb {
-    background: rgb(255 255 255 / 0.2);
+    background: color-mix(in srgb, var(--color-primary) 34%, transparent);
   }
 }
 
 @media (max-width: 640px) {
   @layer components {
     .site-grid {
-      width: min(calc(100% - 1rem), 1600px);
-      gap: 0.75rem;
+      width: min(calc(100% - 2rem), 1240px);
+      gap: 2rem;
     }
 
     .site-grid--home {
-      padding-block: 3rem;
+      padding-block: 3rem 3.5rem;
     }
 
     .site-grid--page {
-      padding-block: 6rem 3rem;
+      padding-block: 6rem 3.5rem;
+    }
+
+    .article-content {
+      font-size: 1.03125rem;
+      line-height: 1.85;
+    }
+
+    .article-content h2 {
+      margin-top: 2.5rem;
+      font-size: 1.25rem;
     }
   }
 }
@@ -371,7 +632,12 @@
 @media (min-width: 821px) {
   @layer components {
     .site-grid {
-      grid-template-columns: minmax(0, 14rem) minmax(0, 1fr);
+      grid-template-columns: minmax(0, var(--rail-width)) minmax(0, 1fr);
+    }
+
+    .rail--start {
+      border-inline-end: 1px solid var(--color-border);
+      padding-inline-end: 2.25rem;
     }
   }
 }
@@ -379,7 +645,13 @@
 @media (min-width: 1101px) {
   @layer components {
     .site-grid {
-      grid-template-columns: minmax(0, 14rem) minmax(0, 1fr) minmax(0, 14rem);
+      grid-template-columns: minmax(0, var(--rail-width)) minmax(0, 1fr) minmax(0, 12.5rem);
+      gap: 3rem;
+    }
+
+    .rail--end {
+      border-inline-start: 1px solid var(--color-border);
+      padding-inline-start: 2.25rem;
     }
   }
 }

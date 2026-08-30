@@ -6,6 +6,7 @@ import "../../styles/global.css";
 import Navbar from "../layout/Navbar.astro";
 import RightAside from "../layout/RightAside.astro";
 import Sidebar from "../layout/Sidebar.astro";
+import SiteFooter from "../layout/SiteFooter.astro";
 import SiteHead from "../layout/SiteHead.astro";
 
 interface Props {
@@ -18,96 +19,125 @@ interface Props {
 
 const { posts, title, eyebrow, description, pageTitle = `${title} | 北海` } = Astro.props;
 
-const formatDate = (date: Date) =>
-  new Intl.DateTimeFormat("zh-CN", {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).format(date);
+/** Grouped by month so the archive reads like a journal rather than a feed. */
+const groups = posts.reduce<{ key: string; label: string; posts: BlogPost[] }[]>((acc, post) => {
+  const year = post.data.date.getFullYear();
+  const month = String(post.data.date.getMonth() + 1).padStart(2, "0");
+  const key = `${year}-${month}`;
+  const group = acc.find((item) => item.key === key);
 
-const cardClass =
-  "rounded-card border border-border bg-card p-4 backdrop-blur-lg transition duration-200 hover:-translate-y-px hover:border-primary/30 hover:bg-white/82 dark:border-border-dark dark:bg-card-dark dark:hover:border-primary/30 dark:hover:bg-white/7 sm:p-5";
-const tagClass =
-  "rounded-pill border border-primary/16 bg-primary/8 px-2 py-1 text-xs font-medium leading-tight text-text-secondary transition-colors duration-200 hover:border-accent/28 hover:bg-accent/9 hover:text-text-primary dark:border-primary/18 dark:bg-primary/10 dark:text-text-secondary-dark dark:hover:border-accent/30 dark:hover:bg-accent/12 dark:hover:text-text-primary-dark";
+  if (group) {
+    group.posts.push(post);
+  } else {
+    acc.push({ key, label: `${year} / ${month}`, posts: [post] });
+  }
+
+  return acc;
+}, []);
+
+const formatDay = (date: Date) =>
+  `${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
 ---
 
 <html lang="zh-CN">
   <head>
-    <SiteHead title={title} description={description} />
+    <SiteHead title={pageTitle} description={description} />
   </head>
-  <body class="min-h-screen">
+  <body class="flex min-h-screen flex-col">
     <Navbar />
-    <main
-      class="site-grid site-grid--page relative z-10 text-text-primary dark:text-text-primary-dark"
-    >
-      <div class="hidden min-w-0 min-[821px]:block min-[821px]:sticky min-[821px]:top-20">
-        <Sidebar musicHydration="desktop" />
+    <main class="site-grid site-grid--page relative z-10 flex-1 text-text-primary">
+      <div class="rail rail--start hidden min-w-0 min-[821px]:block">
+        <div class="rail__inner">
+          <Sidebar musicHydration="desktop" />
+        </div>
       </div>
+
       <div class="min-w-0">
-        <header class="mb-10">
-          <p class="m-0 text-xs font-bold uppercase leading-none tracking-[0.16em] text-text-muted dark:text-text-muted-dark">
-            {eyebrow}
-          </p>
-          <h1 class="mt-3 text-3xl font-bold leading-tight tracking-[-0.06em] sm:text-5xl">{title}</h1>
-          <p class="mt-4 max-w-2xl text-base leading-8 text-text-secondary dark:text-text-secondary-dark">
+        <header class="border-b border-border pb-8">
+          <p class="label">{eyebrow}</p>
+          <h1 class="heading mt-4 text-3xl font-semibold leading-tight sm:text-4xl">{title}</h1>
+          <p class="measure mt-5 text-[0.9375rem] leading-8 text-text-secondary">
             {description}
           </p>
         </header>
 
         {
           posts.length > 0 ? (
-            <section class="grid gap-4" aria-label={`${title}列表`}>
-              {posts.map((post) => (
-                <article class={`${cardClass} grid gap-3`}>
-                  <div class="grid gap-2 sm:flex sm:items-start sm:justify-between sm:gap-4">
-                    <h2 class="m-0 text-xl font-bold leading-8 tracking-[-0.04em]">
-                      <a class="no-underline transition-colors duration-200 hover:text-accent" href={`/blog/${post.id}/`}>
-                        {post.data.title}
-                      </a>
-                    </h2>
-                    <time
-                      class="shrink-0 text-xs leading-6 text-text-muted dark:text-text-muted-dark"
-                      datetime={post.data.date.toISOString()}
-                    >
-                      {formatDate(post.data.date)}
-                    </time>
+            <div class="grid gap-14 pt-10">
+              {groups.map((group) => (
+                <section aria-label={group.label}>
+                  <div class="flex items-baseline justify-between gap-4 border-b border-border pb-2">
+                    <h2 class="label m-0">{group.label}</h2>
+                    <span class="meta">{String(group.posts.length).padStart(2, "0")}</span>
                   </div>
-                  <p class="m-0 text-sm leading-7 text-text-secondary dark:text-text-secondary-dark">
-                    {post.data.description ?? "这篇文章暂无摘要，点击标题阅读全文。"}
-                  </p>
-                  {post.data.tags.length > 0 && (
-                    <div class="flex flex-wrap gap-2">
-                      {post.data.tags.map((tag) => (
-                        <span class={tagClass}>#{tag}</span>
-                      ))}
-                    </div>
-                  )}
-                </article>
+
+                  <ol class="index-list m-0 list-none p-0">
+                    {group.posts.map((post) => (
+                      <li>
+                        <a
+                          class="entry group grid gap-x-5 gap-y-1 sm:grid-cols-[4rem_minmax(0,1fr)]"
+                          href={`/blog/${post.id}/`}
+                        >
+                          <time
+                            class="meta pt-1.5 transition-colors group-hover:text-accent"
+                            datetime={post.data.date.toISOString()}
+                          >
+                            {formatDay(post.data.date)}
+                          </time>
+                          <div class="min-w-0">
+                            <h3 class="entry__title">{post.data.title}</h3>
+                            <p class="entry__summary max-w-[48ch]">
+                              {post.data.description ?? "这篇文章暂无摘要，点击标题阅读全文。"}
+                            </p>
+                            {post.data.tags.length > 0 && (
+                              <p class="m-0 mt-2.5 flex flex-wrap gap-x-3 gap-y-1">
+                                {post.data.tags.map((tag) => (
+                                  <span class="tag">#{tag}</span>
+                                ))}
+                              </p>
+                            )}
+                          </div>
+                        </a>
+                      </li>
+                    ))}
+                  </ol>
+                </section>
               ))}
-            </section>
+            </div>
           ) : (
-            <section class={cardClass}>
-              <h2 class="m-0 text-xl font-bold tracking-[-0.04em]">暂无文章</h2>
-              <p class="mt-3 text-sm leading-7 text-text-secondary dark:text-text-secondary-dark">
-                当前分类下还没有文章。
+            <section class="pt-12">
+              <h2 class="heading m-0 text-lg font-semibold">暂无文章</h2>
+              <p class="mt-3 text-sm leading-7 text-text-secondary">
+                当前分类下还没有文章，换个入口看看？
+              </p>
+              <p class="m-0 mt-5">
+                <a class="meta u-link hover:text-accent" href="/blog">
+                  返回所有文章 →
+                </a>
               </p>
             </section>
           )
         }
       </div>
-      <div class="hidden min-w-0 min-[821px]:col-start-2 min-[821px]:block min-[1101px]:sticky min-[1101px]:top-20 min-[1101px]:col-auto">
-        <RightAside />
+
+      <div class="rail rail--end hidden min-w-0 min-[821px]:col-start-2 min-[821px]:block min-[1101px]:col-auto">
+        <div class="rail__inner">
+          <RightAside />
+        </div>
       </div>
     </main>
+
+    <SiteFooter />
+
     <details class="mobile-assist min-[821px]:hidden">
       <summary class="mobile-assist__toggle" aria-label="打开辅助信息">
         <svg class="h-5 w-5" viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M5 12h14M12 5v14" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.8" />
+          <path d="M5 12h14M12 5v14" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.6" />
         </svg>
       </summary>
       <div class="mobile-assist__panel scrollbar-thin">
-        <div class="grid gap-3">
-          <Sidebar musicHydration="mobile" />
+        <Sidebar musicHydration="mobile" />
+        <div class="mt-6 border-t border-border pt-6">
           <RightAside />
         </div>
       </div>

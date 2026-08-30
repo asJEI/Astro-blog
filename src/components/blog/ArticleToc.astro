@@ -1,0 +1,83 @@
+---
+import type { MarkdownHeading } from "astro";
+
+interface Props {
+  headings: MarkdownHeading[];
+  idPrefix?: string;
+}
+
+const { headings, idPrefix = "" } = Astro.props;
+const titleId = `${idPrefix}article-toc-title`;
+---
+
+<nav class="w-full text-text-primary" aria-labelledby={titleId}>
+  <h2 id={titleId} class="label label--cjk">目录</h2>
+
+  {
+    headings.length > 0 ? (
+      <ol class="toc m-0 mt-4 grid list-none gap-0.5 p-0">
+        {headings.map((heading) => (
+          <li>
+            <a
+              class="toc__link"
+              data-toc-link={heading.slug}
+              data-depth={heading.depth}
+              href={`#${heading.slug}`}
+            >
+              {heading.text}
+            </a>
+          </li>
+        ))}
+      </ol>
+    ) : (
+      <p class="mt-3 text-sm leading-6 text-text-secondary">这篇文章没有小标题。</p>
+    )
+  }
+</nav>
+
+<style>
+  .toc__link {
+    position: relative;
+    display: block;
+    padding: 0.3rem 0 0.3rem 0.85rem;
+    color: var(--color-text-muted);
+    font-size: 0.8125rem;
+    line-height: 1.6;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .toc__link[data-depth="3"] {
+    padding-left: 1.7rem;
+    font-size: 0.78125rem;
+  }
+
+  /* A single travelling marker in the gutter, instead of a highlighted pill. */
+  .toc__link::before {
+    position: absolute;
+    top: 0.55rem;
+    left: 0;
+    width: 2px;
+    height: 0.85rem;
+    background: var(--color-accent);
+    content: "";
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  .toc__link[data-depth="3"]::before {
+    left: 0.85rem;
+  }
+
+  .toc__link:hover {
+    color: var(--color-text-primary);
+  }
+
+  .toc__link[data-active] {
+    color: var(--color-accent);
+  }
+
+  .toc__link[data-active]::before {
+    opacity: 1;
+  }
+</style>

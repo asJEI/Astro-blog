@@ -4,6 +4,15 @@ import { getCollection } from "astro:content";
 import siteIcon from "../../assets/site-icon.png";
 import { sortPostsByDateDesc } from "../../lib/blog";
 
+interface Props {
+  /** Home lays the bar over the hero photograph until the reader scrolls past it. */
+  overlay?: boolean;
+  /** Pages that never scroll (the embedded portfolio) need a permanent surface. */
+  solid?: boolean;
+}
+
+const { overlay = false, solid = false } = Astro.props;
+
 const navItems = [
   { label: "首页", href: "/" },
   { label: "所有文章", href: "/blog" },
@@ -14,113 +23,123 @@ const navItems = [
   { label: "作品集", href: "/portfolio" },
 ];
 
-const searchPosts = sortPostsByDateDesc(await getCollection("blog", ({ data }) => !data.draft)).map((post) => ({
+const categoryPaths = ["/blog/tech", "/blog/life", "/blog/moments"];
+const currentPath = Astro.url.pathname.replace(/\/+$/, "") || "/";
+
+const isActive = (href: string) => {
+  if (href === "/") return currentPath === "/";
+  if (href === "/blog") {
+    return (
+      currentPath === "/blog" ||
+      (currentPath.startsWith("/blog/") && !categoryPaths.includes(currentPath))
+    );
+  }
+  return currentPath === href;
+};
+
+const searchPosts = sortPostsByDateDesc(
+  await getCollection("blog", ({ data }) => !data.draft),
+).map((post) => ({
   title: post.data.title,
   description: post.data.description ?? "",
   tags: post.data.tags,
   href: `/blog/${post.id}/`,
 }));
-
-const actionClass =
-  "relative flex h-10 w-10 touch-manipulation items-center justify-center rounded-card text-white/70 transition duration-200 hover:-translate-y-px hover:bg-white/10 hover:text-white";
 ---
 
-<header class="fixed inset-x-0 top-0 z-50 px-2 py-3 text-white sm:px-4 sm:py-4" data-navbar>
-  <nav
-    class="mx-auto grid min-h-14 w-full max-w-6xl grid-cols-[1fr_auto] items-center gap-2 rounded-[1.25rem] border border-white/12 bg-slate-950/28 p-2 shadow-[0_18px_48px_rgb(0_0_0_/_0.18)] backdrop-blur-2xl sm:gap-4 md:grid-cols-[1fr_auto_1fr]"
-    aria-label="Primary navigation"
-  >
-    <a class="flex items-center gap-2 pl-1 no-underline" href="/" aria-label="北海首页">
-      <img class="h-8 w-8 rounded-full object-cover" src={siteIcon.src} alt="" width="32" height="32" />
-      <span class="text-base font-semibold tracking-[-0.03em]">北海</span>
+<header
+  class="navbar"
+  data-navbar
+  data-overlay={String(overlay)}
+  data-solid={solid ? "true" : undefined}
+  data-scrolled={solid ? "" : undefined}
+>
+  <div class="navbar__inner">
+    <a class="navbar__brand" href="/" aria-label="北海首页">
+      <img src={siteIcon.src} alt="" width="26" height="26" />
+      <span>北海</span>
     </a>
 
-    <div class="hidden items-center gap-1 md:flex" aria-label="Main links">
+    <nav class="navbar__links" aria-label="主导航">
       {
         navItems.map((item) => (
-          <a
-            class="relative rounded-card px-3 py-2 text-sm font-medium text-white/74 no-underline transition duration-200 after:absolute after:inset-x-3 after:bottom-1 after:h-px after:scale-x-75 after:bg-current after:opacity-0 after:transition after:duration-200 hover:-translate-y-px hover:bg-white/9 hover:text-white hover:after:scale-x-100 hover:after:opacity-32"
-            href={item.href}
-          >
+          <a class="navbar__link" href={item.href} data-active={isActive(item.href) ? "true" : undefined}>
             {item.label}
           </a>
         ))
       }
-    </div>
+    </nav>
 
-    <div class="flex justify-end gap-1">
-      <div class="relative" data-search-root>
-        <button class={actionClass} type="button" aria-label="搜索" data-search-toggle>
-          <svg class="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
+    <div class="navbar__actions">
+      <div class="navbar__search" data-search-root>
+        <button class="navbar__icon" type="button" aria-label="搜索文章" data-search-toggle>
+          <svg viewBox="0 0 24 24" aria-hidden="true">
             <path
               d="m21 21-4.35-4.35m1.35-5.65a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"
               fill="none"
               stroke="currentColor"
               stroke-linecap="round"
               stroke-linejoin="round"
-              stroke-width="1.8"
+              stroke-width="1.7"
             />
           </svg>
         </button>
 
-        <div
-          class="pointer-events-none fixed left-2 right-2 top-20 hidden w-auto origin-top-right translate-y-1 opacity-0 transition duration-200 data-[open=true]:pointer-events-auto data-[open=true]:grid data-[open=true]:translate-y-0 data-[open=true]:opacity-100 sm:absolute sm:left-auto sm:right-0 sm:top-[calc(100%_+_0.75rem)] sm:w-[min(22rem,calc(100vw_-_2rem))]"
-          data-search-panel
-        >
-          <div class="overflow-hidden rounded-[1.15rem] border border-white/45 bg-white/88 text-slate-950 shadow-[0_18px_48px_rgb(15_23_42_/_0.22)] backdrop-blur-2xl dark:border-white/12 dark:bg-slate-950/88 dark:text-white">
+        <div class="search-panel" data-search-panel>
+          <div class="search-panel__box">
             <label class="sr-only" for="site-search-input">搜索文章</label>
-            <div class="flex items-center gap-2 border-b border-slate-950/8 bg-white/42 px-3 py-2 dark:border-white/10 dark:bg-white/6">
-              <svg class="h-4 w-4 shrink-0 text-slate-500 dark:text-white/55" viewBox="0 0 24 24" aria-hidden="true">
+            <div class="search-panel__field">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path
                   d="m21 21-4.35-4.35m1.35-5.65a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"
                   fill="none"
                   stroke="currentColor"
                   stroke-linecap="round"
                   stroke-linejoin="round"
-                  stroke-width="1.8"
+                  stroke-width="1.7"
                 />
               </svg>
               <input
                 id="site-search-input"
-                class="h-10 min-w-0 flex-1 border-0 bg-transparent text-sm text-slate-900 outline-none placeholder:text-slate-500 dark:text-white dark:placeholder:text-white/45"
                 type="search"
-                placeholder="搜索标题、摘要或标签..."
+                placeholder="搜索标题、摘要或标签"
                 autocomplete="off"
                 data-search-input
               />
+              <kbd>Esc</kbd>
             </div>
-            <div class="grid max-h-[min(24rem,calc(100vh_-_8rem))] gap-1 overflow-y-auto p-2 scrollbar-thin" data-search-results>
-              <p class="m-0 px-3 py-3 text-sm text-slate-500 dark:text-white/58">输入关键词开始搜索。</p>
+            <div class="search-panel__results scrollbar-thin" data-search-results>
+              <p class="search-panel__empty">按 / 唤起搜索，输入关键词开始。</p>
             </div>
           </div>
         </div>
       </div>
 
-      <button class={actionClass} type="button" aria-label="切换暗黑模式" data-theme-toggle>
-        <svg class="h-4 w-4 dark:hidden" viewBox="0 0 24 24" aria-hidden="true">
+      <button class="navbar__icon" type="button" aria-label="切换深色模式" data-theme-toggle>
+        <svg class="navbar__icon-sun" viewBox="0 0 24 24" aria-hidden="true">
           <path
             d="M12 4V2m0 20v-2m8-8h2M2 12h2m13.66-5.66 1.41-1.41M4.93 19.07l1.41-1.41m0-11.32L4.93 4.93m14.14 14.14-1.41-1.41M12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"
             fill="none"
             stroke="currentColor"
             stroke-linecap="round"
             stroke-linejoin="round"
-            stroke-width="1.7"
+            stroke-width="1.6"
           />
         </svg>
-        <svg class="hidden h-4 w-4 dark:block" viewBox="0 0 24 24" aria-hidden="true">
+        <svg class="navbar__icon-moon" viewBox="0 0 24 24" aria-hidden="true">
           <path
             d="M20.3 14.4A7.8 7.8 0 0 1 9.6 3.7 8.8 8.8 0 1 0 20.3 14.4Z"
             fill="none"
             stroke="currentColor"
             stroke-linecap="round"
             stroke-linejoin="round"
-            stroke-width="1.7"
+            stroke-width="1.6"
           />
         </svg>
       </button>
 
-      <a class={actionClass} href="https://github.com/asJEI" target="_blank" rel="noreferrer" aria-label="GitHub">
-        <svg class="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
+      <a class="navbar__icon" href="https://github.com/asJEI" target="_blank" rel="noreferrer" aria-label="GitHub">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
           <path
             d="M12 2C6.48 2 2 6.58 2 12.24c0 4.52 2.87 8.35 6.84 9.7.5.1.68-.22.68-.5v-1.9c-2.78.62-3.37-1.22-3.37-1.22-.45-1.18-1.11-1.5-1.11-1.5-.91-.64.07-.63.07-.63 1 .07 1.53 1.06 1.53 1.06.9 1.57 2.36 1.12 2.93.85.09-.66.35-1.12.64-1.37-2.22-.26-4.56-1.14-4.56-5.06 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.7 0 0 .84-.28 2.75 1.05A9.3 9.3 0 0 1 12 6.92c.85 0 1.7.12 2.5.35 1.9-1.33 2.74-1.05 2.74-1.05.55 1.4.2 2.44.1 2.7.64.72 1.03 1.63 1.03 2.75 0 3.93-2.34 4.8-4.57 5.06.36.32.68.95.68 1.92v2.8c0 .28.18.6.69.5A10.17 10.17 0 0 0 22 12.24C22 6.58 17.52 2 12 2Z"
             fill="currentColor"
@@ -129,138 +148,499 @@ const actionClass =
       </a>
 
       <button
-        class={`${actionClass} md:hidden`}
+        class="navbar__icon navbar__icon--menu"
         type="button"
         aria-label="打开导航菜单"
         aria-controls="mobile-menu"
         aria-expanded="false"
         data-mobile-menu-toggle
       >
-        <svg class="h-5 w-5" viewBox="0 0 24 24" aria-hidden="true">
-          <path
-            d="M4 7h16M4 12h16M4 17h16"
-            fill="none"
-            stroke="currentColor"
-            stroke-linecap="round"
-            stroke-width="1.8"
-          />
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 8h16M4 16h16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.6" />
         </svg>
       </button>
     </div>
+  </div>
 
-    <div
-      id="mobile-menu"
-      class="col-span-2 hidden origin-top translate-y-1 opacity-0 transition duration-200 data-[open=true]:grid data-[open=true]:translate-y-0 data-[open=true]:opacity-100 md:hidden"
-      data-mobile-menu
-    >
-      <div class="grid gap-1 border-t border-white/10 pt-2">
-        {
-          navItems.map((item) => (
-            <a
-              class="rounded-card px-3 py-3 text-sm font-semibold text-white/78 no-underline transition duration-200 hover:bg-white/10 hover:text-white"
-              href={item.href}
-              data-mobile-menu-link
-            >
-              {item.label}
-            </a>
-          ))
-        }
-      </div>
-    </div>
-  </nav>
+  <div id="mobile-menu" class="navbar__mobile" data-mobile-menu>
+    <nav class="navbar__mobile-inner" aria-label="移动导航">
+      {
+        navItems.map((item) => (
+          <a
+            class="navbar__mobile-link"
+            href={item.href}
+            data-active={isActive(item.href) ? "true" : undefined}
+            data-mobile-menu-link
+          >
+            {item.label}
+          </a>
+        ))
+      }
+    </nav>
+  </div>
 </header>
 
+<style>
+  .navbar {
+    --nav-fg: var(--color-text-secondary);
+    --nav-fg-strong: var(--color-text-primary);
+
+    position: fixed;
+    inset-inline: 0;
+    top: 0;
+    z-index: 50;
+    border-bottom: 1px solid transparent;
+    color: var(--nav-fg);
+    transition: background-color 0.3s ease, border-color 0.3s ease, backdrop-filter 0.3s ease;
+  }
+
+  .navbar[data-scrolled] {
+    border-bottom-color: var(--color-border);
+    background: color-mix(in srgb, var(--color-background) 82%, transparent);
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+  }
+
+  /* Over the hero photograph the bar is pure type on the image. */
+  .navbar[data-overlay="true"]:not([data-scrolled]) {
+    --nav-fg: rgb(255 255 255 / 0.72);
+    --nav-fg-strong: rgb(255 255 255);
+  }
+
+  .navbar__inner {
+    display: flex;
+    min-height: var(--nav-height);
+    width: min(calc(100% - 2.5rem), 1240px);
+    align-items: center;
+    gap: 1.5rem;
+    margin-inline: auto;
+  }
+
+  .navbar__brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    color: var(--nav-fg-strong);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-decoration: none;
+  }
+
+  .navbar__brand img {
+    width: 1.625rem;
+    height: 1.625rem;
+    border-radius: 999px;
+    object-fit: cover;
+  }
+
+  .navbar__links {
+    display: none;
+    flex: 1;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .navbar__link {
+    position: relative;
+    padding-block: 0.35rem;
+    color: var(--nav-fg);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .navbar__link::after {
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    height: 1px;
+    background: currentColor;
+    content: "";
+    scale: 0 1;
+    transform-origin: 0 50%;
+    transition: scale 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .navbar__link:hover {
+    color: var(--nav-fg-strong);
+  }
+
+  .navbar__link:hover::after {
+    scale: 1 1;
+  }
+
+  .navbar__link[data-active] {
+    color: var(--nav-fg-strong);
+  }
+
+  .navbar__link[data-active]::after {
+    background: var(--color-accent);
+    scale: 1 1;
+  }
+
+  .navbar[data-overlay="true"]:not([data-scrolled]) .navbar__link[data-active]::after {
+    background: currentColor;
+  }
+
+  .navbar__actions {
+    display: flex;
+    margin-left: auto;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .navbar__icon {
+    display: inline-grid;
+    width: 2.25rem;
+    height: 2.25rem;
+    place-items: center;
+    border: 0;
+    border-radius: 5px;
+    background: transparent;
+    color: var(--nav-fg);
+    cursor: pointer;
+    touch-action: manipulation;
+    transition: color 0.2s ease, background-color 0.2s ease;
+  }
+
+  .navbar__icon:hover {
+    background: color-mix(in srgb, currentColor 10%, transparent);
+    color: var(--nav-fg-strong);
+  }
+
+  .navbar__icon svg {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .navbar__icon-moon,
+  :global(.dark) .navbar__icon-sun {
+    display: none;
+  }
+
+  :global(.dark) .navbar__icon-moon {
+    display: block;
+  }
+
+  /* ------------------------------------------------------------- search */
+
+  .navbar__search {
+    position: relative;
+  }
+
+  .search-panel {
+    position: fixed;
+    inset-inline: 1rem;
+    top: calc(var(--nav-height) + 0.5rem);
+    display: none;
+    opacity: 0;
+    translate: 0 -0.35rem;
+    transition: opacity 0.2s ease, translate 0.2s ease;
+  }
+
+  .search-panel[data-open] {
+    display: block;
+    opacity: 1;
+    translate: 0 0;
+  }
+
+  .search-panel__box {
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+    border-radius: 0.6rem;
+    background: color-mix(in srgb, var(--color-background) 96%, transparent);
+    box-shadow: 0 1.25rem 3.5rem rgb(11 14 21 / 0.18);
+    color: var(--color-text-primary);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+  }
+
+  .search-panel__field {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    border-bottom: 1px solid var(--color-border);
+    padding-inline: 0.9rem;
+  }
+
+  .search-panel__field svg {
+    width: 0.9rem;
+    height: 0.9rem;
+    flex-shrink: 0;
+    color: var(--color-text-muted);
+  }
+
+  .search-panel__field input {
+    min-width: 0;
+    height: 2.75rem;
+    flex: 1;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font-family: inherit;
+    font-size: 0.875rem;
+    outline: none;
+  }
+
+  .search-panel__field input::placeholder {
+    color: var(--color-text-muted);
+  }
+
+  .search-panel__field kbd {
+    flex-shrink: 0;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    padding: 0.1rem 0.35rem;
+    color: var(--color-text-muted);
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+  }
+
+  .search-panel__results {
+    display: grid;
+    max-height: min(22rem, calc(100vh - 9rem));
+    overflow-y: auto;
+    padding: 0.4rem;
+  }
+
+  .search-panel__empty {
+    margin: 0;
+    padding: 0.9rem;
+    color: var(--color-text-muted);
+    font-size: 0.8125rem;
+  }
+
+  /* ------------------------------------------------------- mobile menu */
+
+  .navbar__mobile {
+    display: none;
+    border-top: 1px solid var(--color-border);
+    background: color-mix(in srgb, var(--color-background) 96%, transparent);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+  }
+
+  .navbar__mobile[data-open] {
+    display: block;
+  }
+
+  .navbar__mobile-inner {
+    display: grid;
+    width: min(calc(100% - 2rem), 1240px);
+    margin-inline: auto;
+    padding-block: 0.5rem 1rem;
+  }
+
+  .navbar__mobile-link {
+    border-bottom: 1px solid var(--color-border);
+    padding-block: 0.85rem;
+    color: var(--color-text-secondary);
+    font-size: 0.875rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-decoration: none;
+  }
+
+  .navbar__mobile-link:last-child {
+    border-bottom: 0;
+  }
+
+  .navbar__mobile-link[data-active] {
+    color: var(--color-accent);
+  }
+
+  @media (max-width: 640px) {
+    .navbar__inner {
+      width: min(calc(100% - 2rem), 1240px);
+    }
+  }
+
+  @media (min-width: 900px) {
+    .navbar__links {
+      display: flex;
+    }
+
+    .navbar__icon--menu {
+      display: none;
+    }
+
+    .search-panel {
+      position: absolute;
+      inset-inline: auto 0;
+      top: calc(100% + 0.6rem);
+      width: min(24rem, calc(100vw - 3rem));
+    }
+  }
+</style>
+
+<style is:global>
+  .search-result {
+    display: grid;
+    gap: 0.2rem;
+    border-radius: 5px;
+    padding: 0.55rem 0.75rem;
+    color: var(--color-text-primary);
+    text-decoration: none;
+    transition: background-color 0.15s ease;
+  }
+
+  .search-result:hover,
+  .search-result:focus-visible {
+    background: color-mix(in srgb, var(--color-primary) 14%, transparent);
+  }
+
+  .search-result__title {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    line-height: 1.5;
+  }
+
+  .search-result__meta {
+    display: -webkit-box;
+    overflow: hidden;
+    color: var(--color-text-muted);
+    font-size: 0.71875rem;
+    line-height: 1.5;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+</style>
+
 <script define:vars={{ searchPosts }}>
-  const searchToggle = document.querySelector("[data-search-toggle]");
-  const searchRoot = document.querySelector("[data-search-root]");
-  const searchPanel = document.querySelector("[data-search-panel]");
-  const searchInput = document.querySelector("[data-search-input]");
-  const searchResults = document.querySelector("[data-search-results]");
-  const navbar = document.querySelector("[data-navbar]");
-  const mobileMenuToggle = document.querySelector("[data-mobile-menu-toggle]");
-  const mobileMenu = document.querySelector("[data-mobile-menu]");
-  const mobileMenuLinks = document.querySelectorAll("[data-mobile-menu-link]");
+  window.__blogSearchPosts = searchPosts;
 
-  const setMobileMenuOpen = (isOpen) => {
-    mobileMenu?.setAttribute("data-open", String(isOpen));
-    mobileMenuToggle?.setAttribute("aria-expanded", String(isOpen));
-  };
+  if (!window.__navbarBound) {
+    window.__navbarBound = true;
 
-  const escapeHtml = (value) =>
-    value.replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" })[char]);
+    const q = (selector) => document.querySelector(selector);
 
-  const renderSearchResults = (query) => {
-    if (!searchResults) return;
+    const escapeHtml = (value) =>
+      value.replace(
+        /[&<>"']/g,
+        (char) =>
+          ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" })[char],
+      );
 
-    const keyword = query.trim().toLowerCase();
+    const setMenuOpen = (isOpen) => {
+      const menu = q("[data-mobile-menu]");
+      const toggle = q("[data-mobile-menu-toggle]");
+      menu?.toggleAttribute("data-open", isOpen);
+      toggle?.setAttribute("aria-expanded", String(isOpen));
+    };
 
-    if (!keyword) {
-      searchResults.innerHTML = '<p class="m-0 px-3 py-3 text-sm text-slate-500 dark:text-white/58">输入关键词开始搜索。</p>';
-      return;
-    }
+    const setSearchOpen = (isOpen) => {
+      const panel = q("[data-search-panel]");
+      panel?.toggleAttribute("data-open", isOpen);
 
-    const results = searchPosts
-      .filter((post) => {
-        const haystack = [post.title, post.description, ...post.tags].join(" ").toLowerCase();
-        return haystack.includes(keyword);
-      })
-      .slice(0, 8);
+      if (isOpen) {
+        setMenuOpen(false);
+        requestAnimationFrame(() => q("[data-search-input]")?.focus());
+      }
+    };
 
-    if (results.length === 0) {
-      searchResults.innerHTML = '<p class="m-0 px-3 py-3 text-sm text-slate-500 dark:text-white/58">没有找到相关文章。</p>';
-      return;
-    }
+    const renderResults = (query) => {
+      const results = q("[data-search-results]");
+      if (!results) return;
 
-    searchResults.innerHTML = results
-      .map(
-        (post) => `
-          <a class="grid gap-1 rounded-card px-3 py-2 text-slate-800 no-underline transition duration-200 hover:bg-slate-950/6 hover:text-slate-950 dark:text-white/82 dark:hover:bg-white/10 dark:hover:text-white" href="${post.href}">
-            <span class="text-sm font-semibold leading-6">${escapeHtml(post.title)}</span>
-            <span class="line-clamp-2 text-xs leading-5 text-slate-500 dark:text-white/55">${escapeHtml(post.description || post.tags.map((tag) => `#${tag}`).join(" "))}</span>
-          </a>
-        `,
-      )
-      .join("");
-  };
+      const keyword = query.trim().toLowerCase();
 
-  searchToggle?.addEventListener("click", () => {
-    const isOpen = searchPanel?.getAttribute("data-open") === "true";
-    searchPanel?.setAttribute("data-open", String(!isOpen));
-    setMobileMenuOpen(false);
+      if (!keyword) {
+        results.innerHTML =
+          '<p class="search-panel__empty">按 / 唤起搜索，输入关键词开始。</p>';
+        return;
+      }
 
-    if (!isOpen) {
-      requestAnimationFrame(() => searchInput?.focus());
-    }
-  });
+      const matches = (window.__blogSearchPosts ?? [])
+        .filter((post) =>
+          [post.title, post.description, ...post.tags].join(" ").toLowerCase().includes(keyword),
+        )
+        .slice(0, 8);
 
-  mobileMenuToggle?.addEventListener("click", () => {
-    const isOpen = mobileMenu?.getAttribute("data-open") === "true";
-    setMobileMenuOpen(!isOpen);
-    searchPanel?.setAttribute("data-open", "false");
-  });
+      if (matches.length === 0) {
+        results.innerHTML = '<p class="search-panel__empty">没有找到相关文章。</p>';
+        return;
+      }
 
-  mobileMenuLinks.forEach((link) => {
-    link.addEventListener("click", () => setMobileMenuOpen(false));
-  });
+      results.innerHTML = matches
+        .map(
+          (post) => `
+            <a class="search-result" href="${post.href}">
+              <span class="search-result__title">${escapeHtml(post.title)}</span>
+              <span class="search-result__meta">${escapeHtml(
+                post.description || post.tags.map((tag) => `#${tag}`).join("  "),
+              )}</span>
+            </a>`,
+        )
+        .join("");
+    };
 
-  searchInput?.addEventListener("input", (event) => {
-    renderSearchResults(event.currentTarget.value);
-  });
+    const syncScrolled = () => {
+      const navbar = q("[data-navbar]");
+      if (!navbar || navbar.dataset.solid === "true") return;
 
-  document.addEventListener("pointerdown", (event) => {
-    if (!searchRoot?.contains(event.target)) {
-      searchPanel?.setAttribute("data-open", "false");
-    }
+      const threshold =
+        navbar.dataset.overlay === "true" ? window.innerHeight * 0.7 : 8;
+      navbar.toggleAttribute("data-scrolled", window.scrollY > threshold);
+    };
 
-    if (!navbar?.contains(event.target)) {
-      setMobileMenuOpen(false);
-    }
-  });
+    document.addEventListener("click", (event) => {
+      const target = event.target;
+      if (!(target instanceof Element)) return;
 
-  document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape") {
-      searchPanel?.setAttribute("data-open", "false");
-      setMobileMenuOpen(false);
-    }
-  });
+      if (target.closest("[data-search-toggle]")) {
+        setSearchOpen(!q("[data-search-panel]")?.hasAttribute("data-open"));
+        return;
+      }
+
+      if (target.closest("[data-mobile-menu-toggle]")) {
+        setMenuOpen(!q("[data-mobile-menu]")?.hasAttribute("data-open"));
+        return;
+      }
+
+      if (target.closest("[data-mobile-menu-link]")) {
+        setMenuOpen(false);
+      }
+    });
+
+    document.addEventListener("input", (event) => {
+      if (event.target instanceof HTMLInputElement && event.target.matches("[data-search-input]")) {
+        renderResults(event.target.value);
+      }
+    });
+
+    document.addEventListener("pointerdown", (event) => {
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+
+      if (!target.closest("[data-search-root]")) setSearchOpen(false);
+      if (!target.closest("[data-navbar]")) setMenuOpen(false);
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") {
+        setSearchOpen(false);
+        setMenuOpen(false);
+        return;
+      }
+
+      const inField =
+        event.target instanceof HTMLElement &&
+        (event.target.isContentEditable || ["INPUT", "TEXTAREA", "SELECT"].includes(event.target.tagName));
+
+      if (inField) return;
+
+      if (event.key === "/" || ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k")) {
+        event.preventDefault();
+        setSearchOpen(true);
+      }
+    });
+
+    window.addEventListener("scroll", syncScrolled, { passive: true });
+    window.addEventListener("resize", syncScrolled);
+    document.addEventListener("astro:page-load", syncScrolled);
+    syncScrolled();
+  }
 </script>

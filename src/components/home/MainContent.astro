@@ -2,6 +2,7 @@
 import { getCollection, getEntry } from "astro:content";
 
 const featuredPostIds = ["vibe-coding-guide", "attention"];
+const fallbackSummary = "这篇文章暂无摘要，点击标题阅读全文。";
 
 const featuredProjects = (
   await Promise.all(featuredPostIds.map((id) => getEntry("blog", id)))
@@ -10,98 +11,93 @@ const featuredProjects = (
   .map((post) => ({
     title: post.data.title,
     href: `/blog/${post.id}/`,
-    summary: post.data.description ?? "这篇文章暂无摘要，点击标题阅读全文。",
+    summary: post.data.description ?? fallbackSummary,
     tags: post.data.tags,
   }));
 
 const latestArticles = (await getCollection("blog", ({ data }) => !data.draft))
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
-  .slice(0, 5)
+  .slice(0, 6)
   .map((post) => ({
     title: post.data.title,
     date: post.data.date,
     href: `/blog/${post.id}/`,
     tags: post.data.tags,
-    summary: post.data.description ?? "这篇文章暂无摘要，点击标题阅读全文。",
+    summary: post.data.description ?? fallbackSummary,
   }));
 
 const formatDate = (date: Date) =>
-  new Intl.DateTimeFormat("zh-CN", {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).format(date);
-
-const cardClass =
-  "rounded-card border border-border bg-card p-4 backdrop-blur-lg transition duration-200 hover:-translate-y-px hover:border-primary/30 hover:bg-white/82 dark:border-border-dark dark:bg-card-dark dark:hover:border-primary/30 dark:hover:bg-white/7 sm:p-5";
-const eyebrowClass =
-  "m-0 text-xs font-bold uppercase leading-none tracking-[0.12em] text-text-muted dark:text-text-muted-dark";
-const sectionTitleClass = "mt-2 text-2xl font-bold leading-tight tracking-[-0.05em]";
-const tagClass =
-  "rounded-pill border border-primary/16 bg-primary/8 px-2 py-1 text-xs font-medium leading-tight text-text-secondary transition-colors duration-200 hover:border-accent/28 hover:bg-accent/9 hover:text-text-primary dark:border-primary/18 dark:bg-primary/10 dark:text-text-secondary-dark dark:hover:border-accent/30 dark:hover:bg-accent/12 dark:hover:text-text-primary-dark";
+  `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(
+    date.getDate(),
+  ).padStart(2, "0")}`;
 ---
 
-<section class="grid min-w-0 gap-8 text-text-primary dark:text-text-primary-dark" aria-label="博客主内容">
-  <section class="grid gap-4" aria-labelledby="featured-projects-title">
-    <div>
-      <p class={eyebrowClass}>Featured</p>
-      <h2 id="featured-projects-title" class={sectionTitleClass}>精选项目</h2>
-    </div>
+<div class="grid min-w-0 gap-16 text-text-primary">
+  <section aria-labelledby="featured-projects-title">
+    <header class="flex items-baseline justify-between gap-4 border-b border-border pb-3">
+      <h2 id="featured-projects-title" class="heading m-0 text-base font-semibold tracking-[0.18em]">
+        精选
+      </h2>
+      <span class="label">Selected</span>
+    </header>
 
-    <div class="grid gap-4 md:grid-cols-2">
+    <ol class="index-list m-0 list-none p-0">
       {
-        featuredProjects.map((project) => (
-          <article class={cardClass}>
-            <div class="mb-4 flex flex-wrap gap-2">
-              {project.tags.map((tag) => <span class={tagClass}>#{tag}</span>)}
-            </div>
-            <h3 class="m-0 text-lg font-bold leading-7 tracking-[-0.04em]">
-              <a class="no-underline transition-colors duration-200 hover:text-accent" href={project.href}>
-                {project.title}
-              </a>
-            </h3>
-            <p class="mt-3 text-sm leading-7 text-text-secondary dark:text-text-secondary-dark">
-              {project.summary}
-            </p>
-          </article>
+        featuredProjects.map((project, index) => (
+          <li>
+            <a class="entry group grid gap-x-5 gap-y-2 sm:grid-cols-[2.75rem_minmax(0,1fr)]" href={project.href}>
+              <span class="meta pt-1.5 transition-colors group-hover:text-accent">
+                {String(index + 1).padStart(2, "0")}
+              </span>
+              <div class="min-w-0">
+                <h3 class="entry__title heading text-xl">{project.title}</h3>
+                <p class="entry__summary max-w-[46ch]">{project.summary}</p>
+                {project.tags.length > 0 && (
+                  <p class="m-0 mt-3 flex flex-wrap gap-x-3 gap-y-1">
+                    {project.tags.map((tag) => (
+                      <span class="tag">#{tag}</span>
+                    ))}
+                  </p>
+                )}
+              </div>
+            </a>
+          </li>
         ))
       }
-    </div>
+    </ol>
   </section>
 
-  <section class="grid gap-4" aria-labelledby="latest-articles-title">
-    <div>
-      <p class={eyebrowClass}>Latest</p>
-      <h2 id="latest-articles-title" class={sectionTitleClass}>最新文章</h2>
-    </div>
+  <section aria-labelledby="latest-articles-title">
+    <header class="flex items-baseline justify-between gap-4 border-b border-border pb-3">
+      <h2 id="latest-articles-title" class="heading m-0 text-base font-semibold tracking-[0.18em]">
+        最新
+      </h2>
+      <span class="label">Recent</span>
+    </header>
 
-    <div class="grid gap-4">
+    <ol class="index-list m-0 list-none p-0">
       {
         latestArticles.map((article) => (
-          <article class={`${cardClass} grid gap-3`}>
-            <div class="grid gap-2 sm:flex sm:items-start sm:justify-between sm:gap-4">
-              <h3 class="m-0 text-lg font-bold leading-7 tracking-[-0.04em]">
-                <a class="no-underline transition-colors duration-200 hover:text-accent" href={article.href}>
-                  {article.title}
-                </a>
-              </h3>
-              <time class="shrink-0 text-xs leading-6 text-text-muted dark:text-text-muted-dark" datetime={article.date.toISOString()}>
+          <li>
+            <a class="entry group grid gap-x-5 gap-y-1 sm:grid-cols-[6rem_minmax(0,1fr)]" href={article.href}>
+              <time
+                class="meta pt-1.5 transition-colors group-hover:text-accent"
+                datetime={article.date.toISOString()}
+              >
                 {formatDate(article.date)}
               </time>
-            </div>
-            <p class="m-0 text-sm leading-7 text-text-secondary dark:text-text-secondary-dark">
-              {article.summary}
-            </p>
-            {
-              article.tags.length > 0 && (
-                <div class="flex flex-wrap gap-2">
-                  {article.tags.map((tag) => <span class={tagClass}>#{tag}</span>)}
-                </div>
-              )
-            }
-          </article>
+              <div class="min-w-0">
+                <h3 class="entry__title">{article.title}</h3>
+                <p class="entry__summary max-w-[48ch]">{article.summary}</p>
+              </div>
+            </a>
+          </li>
         ))
       }
-    </div>
+    </ol>
+
+    <p class="m-0 border-t border-border pt-5">
+      <a class="meta u-link hover:text-accent" href="/blog">查看全部文章 →</a>
+    </p>
   </section>
-</section>
+</div>

@@ -2,6 +2,7 @@
 import { getCollection, render } from "astro:content";
 
 import "../../styles/global.css";
+import { categories } from "../../lib/categories";
 
 import BlogPostNav from "../../components/blog/BlogPostNav.astro";
 import ImageLightbox from "../../components/blog/ImageLightbox.astro";
@@ -75,8 +76,13 @@ const formatDate = (date: Date) =>
             </p>
 
             {
-              post.data.tags.length > 0 && (
+              (post.data.category || post.data.tags.length > 0) && (
                 <p class="m-0 mt-3 flex flex-wrap gap-x-3 gap-y-1">
+                  {post.data.category ? (
+                    <a class="meta u-link hover:text-accent" href={categories[post.data.category].href}>
+                      {categories[post.data.category].label}
+                    </a>
+                  ) : <span class="meta">Archive</span>}
                   {post.data.tags.map((tag) => (
                     <span class="tag">#{tag}</span>
                   ))}

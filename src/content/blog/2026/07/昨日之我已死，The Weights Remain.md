@@ -3,7 +3,8 @@ title: 昨日之我已死，The Weights Remain
 date: 2026-07-23
 slug: weights
 description: 人是否是过去经历的总和？那些塑造我们的家庭、关系与记忆，如同模型中的权重，影响着我们理解世界的方式。但过去留下的参数，并不决定未来的输出。
-tags: ["技术交流", "幽微"]
+category: youwei
+tags: ["自我认知", "成长与选择"]
 ---
 
 <p style="text-align: center;">

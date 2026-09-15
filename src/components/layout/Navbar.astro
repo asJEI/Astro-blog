@@ -3,6 +3,7 @@ import { getCollection } from "astro:content";
 
 import siteIcon from "../../assets/site-icon.png";
 import { sortPostsByDateDesc } from "../../lib/blog";
+import { categories, categoryIds } from "../../lib/categories";
 
 interface Props {
   /** Home lays the bar over the hero photograph until the reader scrolls past it. */
@@ -16,17 +17,16 @@ const { overlay = false, solid = false } = Astro.props;
 const navItems = [
   { label: "首页", href: "/" },
   { label: "所有文章", href: "/blog" },
-  { label: "技术", href: "/blog/tech" },
-  { label: "生活", href: "/blog/life" },
-  { label: "幽微", href: "/blog/moments" },
+  ...categoryIds.map((id) => ({ label: categories[id].label, href: categories[id].href })),
   { label: "关于", href: "/about" },
   { label: "作品集", href: "/portfolio" },
 ];
 
-const categoryPaths = ["/blog/tech", "/blog/life", "/blog/moments"];
+const categoryPaths = categoryIds.map((id) => categories[id].href.replace(/\/+$/, ""));
 const currentPath = Astro.url.pathname.replace(/\/+$/, "") || "/";
 
 const isActive = (href: string) => {
+  href = href.replace(/\/+$/, "") || "/";
   if (href === "/") return currentPath === "/";
   if (href === "/blog") {
     return (
@@ -43,6 +43,8 @@ const searchPosts = sortPostsByDateDesc(
   title: post.data.title,
   description: post.data.description ?? "",
   tags: post.data.tags,
+  category: post.data.category ?? "archive",
+  categoryLabel: post.data.category ? categories[post.data.category].label : "Archive",
   href: `/blog/${post.id}/`,
 }));
 ---
@@ -555,7 +557,7 @@ const searchPosts = sortPostsByDateDesc(
 
       const matches = (window.__blogSearchPosts ?? [])
         .filter((post) =>
-          [post.title, post.description, ...post.tags].join(" ").toLowerCase().includes(keyword),
+          [post.title, post.description, post.category, post.categoryLabel, ...post.tags].join(" ").toLowerCase().includes(keyword),
         )
         .slice(0, 8);
 

@@ -1,0 +1,18 @@
+---
+import { getCollection } from "astro:content";
+import BlogListLayout from "../../components/blog/BlogListLayout.astro";
+import { sortPostsByDateDesc } from "../../lib/blog";
+import { categories } from "../../lib/categories";
+
+const category = categories.youwei;
+const posts = sortPostsByDateDesc(
+  await getCollection("blog", ({ data }) => !data.draft && data.category === "youwei"),
+);
+---
+
+<BlogListLayout
+  posts={posts}
+  title={category.label}
+  eyebrow={category.eyebrow}
+  description={category.description}
+/>

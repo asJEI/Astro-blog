@@ -1,0 +1,7 @@
+# Permanent legacy category redirects for Cloudflare Pages.
+/blog/life /blog/experience/ 301
+/blog/life/ /blog/experience/ 301
+/blog/moments /blog/youwei/ 301
+/blog/moments/ /blog/youwei/ 301
+/blog/tech /blog/observations/ 301
+/blog/tech/ /blog/observations/ 301

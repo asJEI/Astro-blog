@@ -10,9 +10,38 @@
 
 内容分类：
 
-- **技术** — AI / 工程 / 产品思考
-- **生活** — 日常与随笔
-- **幽微** — 更碎片的记录
+- **经历** (`experience`) — 我经历了什么：个人成长、学校、实习、城市生活与人生阶段。
+- **幽微** (`youwei`) — 我如何理解自己：以 AI 与技术概念为隐喻，讨论内心、自我认识和成长。
+- **观察** (`observations`) — 我如何理解外部世界：从真实经历与问题出发，形成对技术、产品、商业和工作的判断。
+
+### 文章元数据
+
+```yaml
+title: 文章标题
+date: 2026-09-15
+slug: stable-article-slug
+description: 文章摘要
+category: experience
+tags: ["工作与职业", "用户需求"]
+draft: false
+```
+
+`category` 必填，为三个稳定英文标识之一；每篇文章只属于一个核心栏目。
+6 篇历史或功能性存档显式使用 `category: null`，以 Archive 展示，仍收录在所有文章和搜索中。
+新文章原则上选择核心栏目。`tags` 是长期主题，每篇 1—3 个，优先选择 1—2 个，可跨栏目复用。
+默认词表：自我认知、成长与选择、人际关系、校园生活、工作与职业、写作与表达、AI 编程、AI 产品、产品设计、用户需求、Web3、技术趋势、商业思考。
+先复用再新增；新增主题应能关联至少 2 篇文章，并有持续写作空间。不从标题自动提取算法、工具或活动名，不用栏目名、Archive 或“其他”等泛化标签。
+
+栏目定义、首页各栏目精选文章集中维护于 `src/lib/categories.ts`。
+栏目 URL 为 `/blog/experience/`、`/blog/youwei/`、`/blog/observations/`。
+文章 URL 始终为 `/blog/{slug}/`，与栏目和存放目录无关；已发布文章不要修改 slug。
+
+### 旧栏目重定向
+
+`public/_redirects` 为 Cloudflare Pages 配置 HTTP 301，覆盖旧栏目地址有、无末尾斜杠两种形式：
+`life → experience`、`moments → youwei`、`tech → observations`。
+旧 Astro 页面同时保留跳转，静态预览使用 HTML 跳转；部署到 Pages 后由 `_redirects` 返回真正的 HTTP 301。
+其他托管平台需要配置同等的服务端重定向。
 
 ## 技术栈
 

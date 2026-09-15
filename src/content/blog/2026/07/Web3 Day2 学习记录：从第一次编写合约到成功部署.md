@@ -3,7 +3,8 @@ title: Web3 Day2 学习记录：从第一次编写合约到成功部署
 date: 2026-07-07
 slug: web3-notes-03
 description: Monad Builder Camp Day 2，用 AI 生成 Onchain Todo 合约并完成人工审查，随后在 Remix 编译、部署到 Monad Testnet，完成 read / write 交互与浏览器验证。
-tags: ["技术交流", "经验分享"]
+category: experience
+tags: ["Web3", "AI 编程"]
 ---
 
 ## 引言

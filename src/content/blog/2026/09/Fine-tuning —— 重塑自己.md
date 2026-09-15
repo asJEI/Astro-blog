@@ -3,7 +3,8 @@ title: Fine-tuning —— 重塑自己
 date: 2026-09-08
 slug: fine-tuning
 description: Pre-training 之后，改变往往不是 Reset，而是 Fine-tuning。从 Dataset、Feedback 到 Reward 与 Alignment，写一点关于「微调自己」的想法。
-tags: ["技术交流", "幽微"]
+category: youwei
+tags: ["自我认知", "成长与选择"]
 ---
 
 > **「人不一定要先知道自己最终会成为什么样子，才有资格开始改变。」**

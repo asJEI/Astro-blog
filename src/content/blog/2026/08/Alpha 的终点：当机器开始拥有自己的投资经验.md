@@ -3,7 +3,8 @@ title: Alpha 的终点：当机器开始拥有自己的投资经验
 date: 2026-08-01
 slug: alpha-endpoint
 description: 从基本面研究到量化交易，再到 AI Agent，人类正在把经验、判断与创造力交给机器。当 AI 开始学习如何思考，未来的投资者会是什么样？
-tags: ["技术交流", "经验分享"]
+category: observations
+tags: ["技术趋势", "商业思考"]
 ---
 
 > 一个优秀的投资者，真正的价值是什么？

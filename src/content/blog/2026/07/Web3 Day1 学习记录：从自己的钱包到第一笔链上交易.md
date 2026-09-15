@@ -3,7 +3,8 @@ title: Web3 Day1 学习记录：从自己的钱包到第一笔链上交易
 date: 2026-07-06
 slug: web3-notes-02
 description: Monad Builder Camp 正式开课的第一天，我没有急着碰资产，而是先把「钱包」和「链上认知」这两块地基打好。本文记录了课程专用钱包的准备、Monad Testnet 的配置、区块浏览器的第一次打开，以及完成第一笔测试网转账后的完整复盘——包括 from / to、value、gas 这些字段各自代表什么，以及链上产品和普通互联网产品在结构上的根本差异。
-tags: ["技术交流", "经验分享"]
+category: experience
+tags: ["Web3"]
 ---
 
 ## 引言

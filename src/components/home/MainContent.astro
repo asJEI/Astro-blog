@@ -1,7 +1,9 @@
 ---
 import { getCollection, getEntry } from "astro:content";
 
-const featuredPostIds = ["vibe-coding-guide", "attention"];
+import { categories, categoryIds } from "../../lib/categories";
+
+const featuredPostIds = categoryIds.map((id) => categories[id].featuredSlug);
 const fallbackSummary = "这篇文章暂无摘要，点击标题阅读全文。";
 
 const featuredProjects = (
@@ -9,6 +11,7 @@ const featuredProjects = (
 )
   .filter((post) => post && !post.data.draft)
   .map((post) => ({
+    category: post.data.category ? categories[post.data.category] : null,
     title: post.data.title,
     href: `/blog/${post.id}/`,
     summary: post.data.description ?? fallbackSummary,
@@ -19,6 +22,7 @@ const latestArticles = (await getCollection("blog", ({ data }) => !data.draft))
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
   .slice(0, 6)
   .map((post) => ({
+    category: post.data.category ? categories[post.data.category] : null,
     title: post.data.title,
     date: post.data.date,
     href: `/blog/${post.id}/`,
@@ -45,6 +49,13 @@ const formatDate = (date: Date) =>
       {
         featuredProjects.map((project, index) => (
           <li>
+            {project.category && (
+              <p class="m-0 pt-5 sm:pl-16">
+                <a class="meta u-link hover:text-accent" href={project.category.href}>
+                  {project.category.label} →
+                </a>
+              </p>
+            )}
             <a class="entry group grid gap-x-5 gap-y-2 sm:grid-cols-[2.75rem_minmax(0,1fr)]" href={project.href}>
               <span class="meta pt-1.5 transition-colors group-hover:text-accent">
                 {String(index + 1).padStart(2, "0")}

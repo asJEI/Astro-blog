@@ -3,7 +3,8 @@ title: 一个 AI 功能从 Demo 到真的给用户用，中间差了什么？
 date: 2026-08-27
 slug: demo-to-product
 description: Demo 能跑，和一个东西真的能给人用，中间可能隔着整个产品。从 OpenSource Mentor 到真实客服 Bot，我开始重新理解 Demo 与产品之间的距离。
-tags: ["技术交流", "经验分享"]
+category: observations
+tags: ["AI 产品", "产品设计", "用户需求"]
 ---
 
 > Demo 能跑，和一个东西真的能给人用，中间可能隔着整个产品。

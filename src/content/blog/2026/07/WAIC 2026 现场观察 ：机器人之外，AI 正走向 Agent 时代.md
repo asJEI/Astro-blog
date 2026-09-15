@@ -3,7 +3,8 @@ title: WAIC 2026 现场观察：机器人之外，AI 正走向 Agent 时代
 date: 2026-07-20
 slug: waic01
 description: 今年第一次参加 WAIC。机器人是现场最抢眼的存在，但逛完一天后我更想问：真正决定 AI 能力上限的，是不是另有其事？本文记录现场观察，以及从大模型走向 Agent 的三点判断——Agent OS、新智能终端，以及 Agent 之间的协作网络。
-tags: ["技术交流", "日常分享"]
+category: observations
+tags: ["技术趋势", "AI 产品"]
 ---
 
 今年是我第一次参加 WAIC。走进上海世博展览馆之后，最直观的感受就是：**怎么到处都是机器人。**

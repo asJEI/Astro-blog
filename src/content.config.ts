@@ -1,6 +1,7 @@
 import { defineCollection } from "astro:content";
 import { glob } from "astro/loaders";
 import { z } from "astro/zod";
+import { categoryIds } from "./lib/categories";
 
 const tagsSchema = z.preprocess((value) => {
   if (Array.isArray(value)) {
@@ -28,6 +29,7 @@ const blog = defineCollection({
     date: z.coerce.date(),
     slug: z.string(),
     description: z.string().optional(),
+    category: z.enum(categoryIds).nullable(),
     tags: tagsSchema.default([]),
     draft: z.boolean().default(false),
   }),

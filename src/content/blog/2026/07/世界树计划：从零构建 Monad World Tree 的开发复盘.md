@@ -3,7 +3,8 @@ title: 世界树计划：从零构建 Monad World Tree 的开发复盘
 date: 2026-07-12
 slug: web3-notes-04
 description: Monad Builder Camp 期间，我将 Day 2 的 Onchain Todo 经验延伸为完整 DApp——Monad World Tree，一棵由社区留言共同滋养的链上世界树。文章用 Web2 视角拆解 WorldTree 与 LeafBoard 合约设计、沉浸式前端与 SVG 动效实现，记录确定性随机、黄金角分布和 NaN 等开发踩坑，并分享「哪些数据值得上链」的 Web3 产品思考。
-tags: ["项目讲解", "经验分享"]
+category: observations
+tags: ["Web3", "产品设计"]
 ---
 
 # 从零构建一棵链上世界树：Monad World Tree 开发全记录

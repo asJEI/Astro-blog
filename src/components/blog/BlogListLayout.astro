@@ -2,6 +2,7 @@
 import type { BlogPost } from "../../lib/blog";
 
 import "../../styles/global.css";
+import { categories } from "../../lib/categories";
 
 import Navbar from "../layout/Navbar.astro";
 import RightAside from "../layout/RightAside.astro";
@@ -89,8 +90,9 @@ const formatDay = (date: Date) =>
                             <p class="entry__summary max-w-[48ch]">
                               {post.data.description ?? "这篇文章暂无摘要，点击标题阅读全文。"}
                             </p>
-                            {post.data.tags.length > 0 && (
+                            {(post.data.category || post.data.tags.length > 0) && (
                               <p class="m-0 mt-2.5 flex flex-wrap gap-x-3 gap-y-1">
+                                <span class="meta">{post.data.category ? categories[post.data.category].label : "Archive"}</span>
                                 {post.data.tags.map((tag) => (
                                   <span class="tag">#{tag}</span>
                                 ))}

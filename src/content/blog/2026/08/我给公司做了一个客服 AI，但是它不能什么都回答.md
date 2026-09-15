@@ -3,7 +3,8 @@ title: 我给公司做了一个客服 AI，但是它不能什么都回答
 date: 2026-08-20
 slug: internship-02
 description: 做一个客服 AI，最难的不是让它回答问题，而是让它知道什么时候不该回答。从 FAQ Demo 到真实业务，我开始重新理解 AI 产品的边界。
-tags: ["技术交流", "经验分享"]
+category: observations
+tags: ["AI 产品", "用户需求", "工作与职业"]
 ---
 
 > 做一个客服 AI，最难的不是让它回答问题，而是让它知道什么时候不该回答。

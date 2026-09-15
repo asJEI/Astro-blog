@@ -3,7 +3,8 @@ title: AI 创业，真正难的不是 Agent 而是找到“真需求”
 date: 2026-07-13
 slug: talk-with-ai-founder
 description: 一次与 AI 创业者的交流，让我开始思考 AI 产品的本质。真正重要的不是 Agent、模型或技术，而是如何找到真实需求（PMF），并持续与用户一起打磨产品。
-tags: ["技术交流", "经验分享"]
+category: observations
+tags: ["AI 产品", "用户需求", "商业思考"]
 ---
 
 > **真正困难的不是把 Agent 做出来，而是找到真正值得解决的问题。**

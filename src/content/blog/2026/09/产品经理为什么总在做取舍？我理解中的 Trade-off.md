@@ -3,7 +3,8 @@ title: 产品经理为什么总在做取舍？我理解中的 Trade-off
 date: 2026-09-03
 slug: trade-off
 description: 从广告到 Agent 工作流，产品设计从来不是寻找「标准答案」，而是在用户体验、商业价值、成本与延迟之间做权衡。这篇文章记录我对 Trade-off 的理解。
-tags: ["经验分享", "技术交流"]
+category: observations
+tags: ["产品设计", "商业思考"]
 ---
 
 > **产品设计不是"我全都要"，而是知道现在这个阶段我该要什么。**

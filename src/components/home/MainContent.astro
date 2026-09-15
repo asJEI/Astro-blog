@@ -1,114 +1,63 @@
 ---
-import { getCollection, getEntry } from "astro:content";
-
+import { getCollection } from "astro:content";
 import { categories, categoryIds } from "../../lib/categories";
-
-const featuredPostIds = categoryIds.map((id) => categories[id].featuredSlug);
-const fallbackSummary = "这篇文章暂无摘要，点击标题阅读全文。";
-
-const featuredProjects = (
-  await Promise.all(featuredPostIds.map((id) => getEntry("blog", id)))
-)
-  .filter((post) => post && !post.data.draft)
-  .map((post) => ({
-    category: post.data.category ? categories[post.data.category] : null,
-    title: post.data.title,
-    href: `/blog/${post.id}/`,
-    summary: post.data.description ?? fallbackSummary,
-    tags: post.data.tags,
-  }));
-
-const latestArticles = (await getCollection("blog", ({ data }) => !data.draft))
-  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
-  .slice(0, 6)
-  .map((post) => ({
-    category: post.data.category ? categories[post.data.category] : null,
-    title: post.data.title,
-    date: post.data.date,
-    href: `/blog/${post.id}/`,
-    tags: post.data.tags,
-    summary: post.data.description ?? fallbackSummary,
-  }));
-
-const formatDate = (date: Date) =>
-  `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(
-    date.getDate(),
-  ).padStart(2, "0")}`;
+import Sidebar from "../layout/Sidebar.astro";
+const posts = (await getCollection("blog", ({ data }) => !data.draft)).sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+const featured = posts.find((post) => post.id === "fine-tuning") ?? posts[0];
+const perspectives = ["我走过的地方", "我内心的变化", "我对世界的理解"];
+const formatDate = (date: Date) => `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, "0")}.${String(date.getDate()).padStart(2, "0")}`;
 ---
-
-<div class="grid min-w-0 gap-16 text-text-primary">
-  <section aria-labelledby="featured-projects-title">
-    <header class="flex items-baseline justify-between gap-4 border-b border-border pb-3">
-      <h2 id="featured-projects-title" class="heading m-0 text-base font-semibold tracking-[0.18em]">
-        精选
-      </h2>
-      <span class="label">Selected</span>
-    </header>
-
-    <ol class="index-list m-0 list-none p-0">
-      {
-        featuredProjects.map((project, index) => (
-          <li>
-            {project.category && (
-              <p class="m-0 pt-5 sm:pl-16">
-                <a class="meta u-link hover:text-accent" href={project.category.href}>
-                  {project.category.label} →
-                </a>
-              </p>
-            )}
-            <a class="entry group grid gap-x-5 gap-y-2 sm:grid-cols-[2.75rem_minmax(0,1fr)]" href={project.href}>
-              <span class="meta pt-1.5 transition-colors group-hover:text-accent">
-                {String(index + 1).padStart(2, "0")}
-              </span>
-              <div class="min-w-0">
-                <h3 class="entry__title heading text-xl">{project.title}</h3>
-                <p class="entry__summary max-w-[46ch]">{project.summary}</p>
-                {project.tags.length > 0 && (
-                  <p class="m-0 mt-3 flex flex-wrap gap-x-3 gap-y-1">
-                    {project.tags.map((tag) => (
-                      <span class="tag">#{tag}</span>
-                    ))}
-                  </p>
-                )}
-              </div>
-            </a>
-          </li>
-        ))
-      }
-    </ol>
+<div class="notebook">
+  <section class="opening-note" aria-labelledby="welcome-title">
+    <div class="section-caption"><span>01 / 初次见面</span><span>A NOTE TO YOU</span></div>
+    <div class="opening-note__grid">
+      <div>
+        <p class="note-kicker">写给偶然走到这里的你</p>
+        <h2 id="welcome-title">人始终可以，<br />再成为自己一点。</h2>
+        <p class="opening-note__text">这里有关于技术的探索，也有一些难以归类的心事。<br class="desktop-break" />把它们写下来，留给未来，也留给此刻的你。</p>
+        <a class="text-link" href="/about">认识北海 <span aria-hidden="true">↗</span></a>
+      </div>
+      {featured && <a class="first-reading" href={`/blog/${featured.id}/`}>
+        <span class="bookmark" aria-hidden="true"></span>
+        <span class="note-kicker">如果只读一篇</span>
+        <h3>{featured.data.title}</h3>
+        <p>从过去留下的权重，到参与改变自己的可能。</p>
+        <div class="first-reading__foot"><time datetime={featured.data.date.toISOString()}>{formatDate(featured.data.date)}</time><span>翻开这一页 ↗</span></div>
+      </a>}
+    </div>
   </section>
-
-  <section aria-labelledby="latest-articles-title">
-    <header class="flex items-baseline justify-between gap-4 border-b border-border pb-3">
-      <h2 id="latest-articles-title" class="heading m-0 text-base font-semibold tracking-[0.18em]">
-        最新
-      </h2>
-      <span class="label">Recent</span>
-    </header>
-
-    <ol class="index-list m-0 list-none p-0">
-      {
-        latestArticles.map((article) => (
-          <li>
-            <a class="entry group grid gap-x-5 gap-y-1 sm:grid-cols-[6rem_minmax(0,1fr)]" href={article.href}>
-              <time
-                class="meta pt-1.5 transition-colors group-hover:text-accent"
-                datetime={article.date.toISOString()}
-              >
-                {formatDate(article.date)}
-              </time>
-              <div class="min-w-0">
-                <h3 class="entry__title">{article.title}</h3>
-                <p class="entry__summary max-w-[48ch]">{article.summary}</p>
-              </div>
-            </a>
-          </li>
-        ))
-      }
-    </ol>
-
-    <p class="m-0 border-t border-border pt-5">
-      <a class="meta u-link hover:text-accent" href="/blog">查看全部文章 →</a>
-    </p>
+  <section class="perspectives" aria-labelledby="perspectives-title">
+    <div class="section-caption"><h2 id="perspectives-title">02 / 三个方向，同一个我</h2><span>WAYS OF SEEING</span></div>
+    <div class="perspectives__grid">
+      {categoryIds.map((id, index) => {
+        const category = categories[id];
+        const selected = posts.find((post) => post.id === category.featuredSlug) ?? posts.find((post) => post.data.category === id);
+        return <article class={`perspective perspective--${id}`}>
+          <a class="perspective__heading" href={category.href}><span class="perspective__mark" aria-hidden="true">{["↗", "◌", "⌁"][index]}</span><div><h3>{category.label}</h3><p>{perspectives[index]}</p></div><span class="perspective__arrow" aria-hidden="true">↗</span></a>
+          {selected && <a class="perspective__article" href={`/blog/${selected.id}/`}>{selected.data.title}<span>从这里读起 →</span></a>}
+        </article>;
+      })}
+    </div>
+  </section>
+  <div class="notebook__lower">
+    <section aria-labelledby="recent-title">
+      <div class="section-caption"><h2 id="recent-title">03 / 最近写下</h2><a href="/blog">全部文章 ↗</a></div>
+      <ol class="recent-pages">
+        {posts.slice(0, 6).map((post) => <li><a class="recent-page" href={`/blog/${post.id}/`}>
+          <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date).slice(5)}</time>
+          <div><span class="note-kicker">{post.data.category ? categories[post.data.category].label : "手记"}</span><h3>{post.data.title}</h3><p>{post.data.description}</p></div><span class="recent-page__arrow" aria-hidden="true">↗</span>
+        </a></li>)}
+      </ol>
+      <a class="archive-link" href="/blog">回到某个时候 <span>浏览时间归档 ↗</span></a>
+    </section>
+    <aside class="desk" aria-labelledby="desk-title">
+      <div class="section-caption"><h2 id="desk-title">桌边</h2><span>AT MY DESK</span></div>
+      <Sidebar musicHydration="all" />
+      <div class="desk__note"><span class="note-kicker">留在这里的一句话</span><p>博客会迁移，框架会迭代。<br />真正一直在更新的，<br />应该是屏幕前的自己。</p><a class="text-link" href="/blog/rethink-blog/">关于这个空间 ↗</a></div>
+    </aside>
+  </div>
+  <section class="work-note" aria-labelledby="work-title">
+    <div><p class="note-kicker">从想法，到现实 / SELECTED WORK</p><h2 id="work-title">也动手做一些东西。</h2><p>把问题拆开，把想法做出来，再到真实世界里寻找反馈。</p></div>
+    <a class="work-note__link" href="/portfolio">看看我的作品 <span aria-hidden="true">↗</span></a>
   </section>
 </div>

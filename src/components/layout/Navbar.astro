@@ -16,8 +16,7 @@ const { overlay = false, solid = false } = Astro.props;
 
 const navItems = [
   { label: "首页", href: "/" },
-  { label: "所有文章", href: "/blog" },
-  ...categoryIds.map((id) => ({ label: categories[id].label, href: categories[id].href })),
+  { label: "文章", href: "/blog" },
   { label: "关于", href: "/about" },
   { label: "作品集", href: "/portfolio" },
 ];
@@ -59,7 +58,7 @@ const searchPosts = sortPostsByDateDesc(
   <div class="navbar__inner">
     <a class="navbar__brand" href="/" aria-label="北海首页">
       <img src={siteIcon.src} alt="" width="26" height="26" />
-      <span>北海</span>
+      <span>北海 <small class="brand-edition">/ 未完成时</small></span>
     </a>
 
     <nav class="navbar__links" aria-label="主导航">
@@ -74,7 +73,7 @@ const searchPosts = sortPostsByDateDesc(
 
     <div class="navbar__actions">
       <div class="navbar__search" data-search-root>
-        <button class="navbar__icon" type="button" aria-label="搜索文章" data-search-toggle>
+        <button class="navbar__icon" type="button" aria-label="搜索文章" aria-expanded="false" aria-controls="site-search-panel" data-search-toggle>
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path
               d="m21 21-4.35-4.35m1.35-5.65a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"
@@ -87,7 +86,7 @@ const searchPosts = sortPostsByDateDesc(
           </svg>
         </button>
 
-        <div class="search-panel" data-search-panel>
+        <div id="site-search-panel" class="search-panel" data-search-panel>
           <div class="search-panel__box">
             <label class="sr-only" for="site-search-input">搜索文章</label>
             <div class="search-panel__field">
@@ -110,7 +109,7 @@ const searchPosts = sortPostsByDateDesc(
               />
               <kbd>Esc</kbd>
             </div>
-            <div class="search-panel__results scrollbar-thin" data-search-results>
+            <div class="search-panel__results scrollbar-thin" aria-live="polite" data-search-results>
               <p class="search-panel__empty">按 / 唤起搜索，输入关键词开始。</p>
             </div>
           </div>
@@ -212,7 +211,7 @@ const searchPosts = sortPostsByDateDesc(
   .navbar__inner {
     display: flex;
     min-height: var(--nav-height);
-    width: min(calc(100% - 2.5rem), 1240px);
+    width: min(calc(100% - 5rem), 1120px);
     align-items: center;
     gap: 1.5rem;
     margin-inline: auto;
@@ -536,6 +535,7 @@ const searchPosts = sortPostsByDateDesc(
     const setSearchOpen = (isOpen) => {
       const panel = q("[data-search-panel]");
       panel?.toggleAttribute("data-open", isOpen);
+      q("[data-search-toggle]")?.setAttribute("aria-expanded", String(isOpen));
 
       if (isOpen) {
         setMenuOpen(false);
@@ -584,7 +584,7 @@ const searchPosts = sortPostsByDateDesc(
       if (!navbar || navbar.dataset.solid === "true") return;
 
       const threshold =
-        navbar.dataset.overlay === "true" ? window.innerHeight * 0.7 : 8;
+        navbar.dataset.overlay === "true" ? Math.max(8, (q(".hero")?.getBoundingClientRect().height ?? window.innerHeight) - 100) : 8;
       navbar.toggleAttribute("data-scrolled", window.scrollY > threshold);
     };
 
@@ -623,8 +623,10 @@ const searchPosts = sortPostsByDateDesc(
 
     document.addEventListener("keydown", (event) => {
       if (event.key === "Escape") {
+        const searchWasOpen = q("[data-search-panel]")?.hasAttribute("data-open");
         setSearchOpen(false);
         setMenuOpen(false);
+        if (searchWasOpen) q("[data-search-toggle]")?.focus();
         return;
       }
 

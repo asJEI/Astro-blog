@@ -155,7 +155,6 @@ export default function MusicPlayer() {
   const initialSession = useMemo(() => getInitialSession(), []);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const rangeRef = useRef<HTMLInputElement | null>(null);
-  const hasAutoPlayedRef = useRef(false);
   const shouldAutoPlayRef = useRef(false);
   const shouldResumeRef = useRef(initialSession?.isPlaying ?? false);
   const pendingSeekRef = useRef<number | null>(initialSession?.currentTime ?? null);
@@ -167,7 +166,7 @@ export default function MusicPlayer() {
   const [isReady, setIsReady] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
-  const [isPlaylistOpen, setIsPlaylistOpen] = useState(true);
+  const [isPlaylistOpen, setIsPlaylistOpen] = useState(false);
 
   const currentTrack = tracks[currentTrackIndex];
   const progress = useMemo(() => {
@@ -194,7 +193,7 @@ export default function MusicPlayer() {
 
   useEffect(() => {
     const audio = new Audio(currentTrack.src);
-    audio.preload = "auto";
+    audio.preload = "metadata";
     audio.volume = volumeRef.current;
     audioRef.current = audio;
     setIsReady(false);
@@ -264,10 +263,6 @@ export default function MusicPlayer() {
         return;
       }
 
-      if (!hasAutoPlayedRef.current && currentTrackIndex === 0 && !initialSession) {
-        hasAutoPlayedRef.current = true;
-        tryPlay();
-      }
     };
     const handleTimeUpdate = () => {
       if (isSeekingRef.current) {

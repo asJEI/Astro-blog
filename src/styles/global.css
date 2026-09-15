@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "./notebook.css";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
@@ -47,19 +48,19 @@
  * so `text-text-secondary` / `border-border` resolve correctly in both themes.
  */
 .dark {
-  --color-background: #0b0e15;
+  --color-background: #111720;
   --color-card: rgb(22 28 41 / 0.55);
   --color-border: rgb(222 232 248 / 0.13);
   --color-primary: #93a9cc;
-  --color-accent: #e2909f;
-  --color-text-primary: #edf0f6;
-  --color-text-secondary: rgb(220 229 244 / 0.74);
-  --color-text-muted: rgb(212 223 242 / 0.58);
+  --color-accent: #dfa1b2;
+  --color-text-primary: #e9e7e2;
+  --color-text-secondary: #b8bfc7;
+  --color-text-muted: #9aa7b6;
 }
 
 :root {
   /* Comfortable CJK line length: ~40 characters at the article size. */
-  --measure: 44rem;
+  --measure: 720px;
   --nav-height: 3.5rem;
   --rail-width: 13.5rem;
   --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23g)' opacity='0.045'/%3E%3C/svg%3E");

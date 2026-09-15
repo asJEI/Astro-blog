@@ -3,9 +3,8 @@ import heroImage from "../../assets/hero-background.png";
 import mobileHeroImage from "../../assets/mobile-hero-background.png";
 
 const links = [
-  { label: "阅读文章", href: "/blog" },
-  { label: "关于我", href: "/about" },
-  { label: "GitHub", href: "https://github.com/asJEI", external: true },
+  { label: "开始阅读 ↗", href: "#main-content", external: false },
+  { label: "关于我", href: "/about", external: false },
 ];
 ---
 
@@ -26,13 +25,13 @@ const links = [
   <div class="hero__fade" aria-hidden="true"></div>
 
   <div class="hero__body">
-    <p class="hero__eyebrow">Hokkai — Personal Notebook</p>
+    <p class="hero__eyebrow">HOKKAI / A LIFE IN PROGRESS</p>
 
-    <h1 id="hero-title" class="hero__name">北海</h1>
+    <h1 id="hero-title" class="hero__name">北海<span class="hero__edition">未完成时</span></h1>
 
     <p class="hero__motto">北海虽赊，扶摇可接</p>
 
-    <p class="hero__tagline">记录生活，分享思考，探索技术的无限可能</p>
+    <p class="hero__tagline">在这里，记录我如何理解世界，<br />也记录世界如何改变我。</p>
 
     <nav class="hero__links" aria-label="快速入口">
       {
@@ -59,7 +58,7 @@ const links = [
   .hero {
     position: relative;
     display: flex;
-    min-height: 100svh;
+    min-height: 82svh;
     align-items: center;
     overflow: hidden;
     background: var(--color-background-dark);
@@ -98,8 +97,8 @@ const links = [
     height: 32vh;
     background: linear-gradient(
       180deg,
-      rgb(244 245 248 / 0) 0%,
-      rgb(244 245 248 / 0.3) 66%,
+      rgb(246 244 239 / 0) 0%,
+      rgb(246 244 239 / 0.3) 66%,
       var(--color-background) 100%
     );
   }
@@ -116,7 +115,7 @@ const links = [
   .hero__body {
     position: relative;
     z-index: 10;
-    width: min(calc(100% - 2.5rem), 1240px);
+    width: min(calc(100% - 5rem), 1120px);
     margin-inline: auto;
     padding-block: 7rem 6rem;
     animation: hero-enter 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
@@ -140,7 +139,8 @@ const links = [
   .hero__name {
     margin: 0;
     font-size: clamp(4rem, 12vw, 8.5rem);
-    font-weight: 600;
+    font-family: var(--font-serif);
+    font-weight: 400;
     line-height: 1;
     letter-spacing: 0.06em;
     text-indent: 0.06em;
@@ -154,6 +154,18 @@ const links = [
     font-weight: 400;
     line-height: 1.6;
     letter-spacing: 0.14em;
+  }
+
+  .hero__edition {
+    display: inline-block;
+    margin-left: 1.4rem;
+    padding-left: 1rem;
+    border-left: 1px solid rgb(255 255 255 / 0.45);
+    font-size: 0.85rem;
+    line-height: 1.9;
+    letter-spacing: 0.25em;
+    writing-mode: vertical-rl;
+    vertical-align: middle;
   }
 
   .hero__tagline {
@@ -264,8 +276,8 @@ const links = [
     .hero__scrim {
       background: linear-gradient(
         180deg,
-        rgb(6 9 16 / 0.16) 0%,
-        rgb(6 9 16 / 0.08) 32%,
+        rgb(6 9 16 / 0.42) 0%,
+        rgb(6 9 16 / 0.36) 32%,
         rgb(6 9 16 / 0.74) 70%,
         rgb(6 9 16 / 0.93) 100%
       );

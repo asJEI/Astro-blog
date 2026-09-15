@@ -32,6 +32,15 @@ const blog = defineCollection({
     category: z.enum(categoryIds).nullable(),
     tags: tagsSchema.default([]),
     draft: z.boolean().default(false),
+    afterwords: z.array(z.object({
+      date: z.coerce.date(),
+      text: z.string(),
+      heading: z.string().optional(),
+    })).default([]),
+    related: z.array(z.object({
+      slug: z.string(),
+      reason: z.string(),
+    })).default([]),
   }),
 });
 

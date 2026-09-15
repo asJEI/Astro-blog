@@ -14,6 +14,7 @@ import SiteHead from "../../components/layout/SiteHead.astro";
 import { getAdjacentPosts } from "../../lib/blog";
 import { readingStats } from "../../lib/reading";
 import { site } from "../../lib/seo";
+import { readingTrails } from "../../lib/reading-trails";
 
 export async function getStaticPaths() {
   const posts = await getCollection("blog", ({ data }) => !data.draft);
@@ -23,11 +24,14 @@ export async function getStaticPaths() {
     props: {
       post,
       adjacent: getAdjacentPosts(post, posts),
+      relatedPosts: (post.data.related.length ? post.data.related : readingTrails[post.id] ?? [])
+        .map((link) => ({ ...link, post: posts.find((candidate) => candidate.id === link.slug && candidate.id !== post.id) }))
+        .filter((link) => link.post),
     },
   }));
 }
 
-const { post, adjacent } = Astro.props;
+const { post, adjacent, relatedPosts } = Astro.props;
 const { Content, headings } = await render(post);
 const tocHeadings = headings.filter((heading) => heading.depth >= 2 && heading.depth <= 3);
 const { words, minutes } = readingStats(post.body ?? "");
@@ -52,13 +56,7 @@ const formatDate = (date: Date) =>
     <Navbar />
 
     <main class="site-grid site-grid--page relative z-10 flex-1 text-text-primary">
-      <div class="rail rail--start hidden min-w-0 min-[821px]:block">
-        <div class="rail__inner">
-          <Sidebar musicHydration="desktop" />
-        </div>
-      </div>
-
-      <div class="min-w-0">
+<div class="min-w-0">
         <article>
           <header class="measure border-b border-border pb-8">
             <a class="meta u-link hover:text-accent" href="/blog">← 所有文章</a>
@@ -103,6 +101,21 @@ const formatDate = (date: Date) =>
             <Content />
           </div>
 
+          {post.data.afterwords.length > 0 && <section class="afterwords" aria-labelledby="afterwords-title">
+            <h2 id="afterwords-title">后来，我又想了想</h2>
+            {post.data.afterwords.map((note) => <details open>
+              <summary><time datetime={note.date.toISOString()}>{formatDate(note.date)}</time> · {note.heading ?? "一则后记"}</summary>
+              <p>{note.text}</p>
+            </details>)}
+          </section>}
+
+          {relatedPosts.length > 0 && <nav class="reading-trail" aria-labelledby="trail-title">
+            <h2 id="trail-title">思考的来路</h2>
+            {relatedPosts.map((link) => <a href={`/blog/${link.post!.id}/`}>
+              {link.post!.data.title} <span aria-hidden="true">↗</span><small>{link.reason}</small>
+            </a>)}
+          </nav>}
+
           <BlogPostNav adjacent={adjacent} />
         </article>
       </div>
@@ -110,6 +123,7 @@ const formatDate = (date: Date) =>
       <div class="rail rail--end hidden min-w-0 min-[821px]:col-start-2 min-[821px]:block min-[1101px]:col-auto">
         <div class="rail__inner">
           <ArticleToc headings={tocHeadings} />
+          <div class="mt-8 border-t border-border pt-6"><Sidebar musicHydration="desktop" /></div>
         </div>
       </div>
     </main>
@@ -117,10 +131,8 @@ const formatDate = (date: Date) =>
     <SiteFooter />
 
     <details class="mobile-assist min-[821px]:hidden">
-      <summary class="mobile-assist__toggle" aria-label="打开辅助信息">
-        <svg class="h-5 w-5" viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M5 12h14M12 5v14" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.6" />
-        </svg>
+      <summary class="mobile-assist__toggle" aria-label="打开目录与音乐">
+        <span class="text-xs">目录</span>
       </summary>
       <div class="mobile-assist__panel scrollbar-thin">
         <ArticleToc headings={tocHeadings} idPrefix="mobile-" />

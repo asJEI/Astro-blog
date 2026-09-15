@@ -21,7 +21,8 @@ import { ClientRouter } from "astro:transitions";
 
 <script>
   const applyTheme = () => {
-    const storedTheme = localStorage.getItem("theme");
+    let storedTheme: string | null = null;
+    try { storedTheme = localStorage.getItem("theme"); } catch { /* System theme remains available. */ }
     const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
 
     document.documentElement.classList.toggle(
@@ -34,11 +35,10 @@ import { ClientRouter } from "astro:transitions";
   document.addEventListener("astro:page-load", applyTheme);
 
   const cleanupOrphanedMusicPlayers = () => {
-    const sidebar = document.querySelector('aside[aria-label="个人信息侧边栏"]');
     const players = document.querySelectorAll('[aria-label="音乐播放器"]');
 
     players.forEach((player) => {
-      if (sidebar?.contains(player)) {
+      if (player.closest('aside[aria-label="个人信息侧边栏"]')) {
         return;
       }
 
@@ -56,6 +56,6 @@ import { ClientRouter } from "astro:transitions";
     }
 
     const isDark = document.documentElement.classList.toggle("dark");
-    localStorage.setItem("theme", isDark ? "dark" : "light");
+    try { localStorage.setItem("theme", isDark ? "dark" : "light"); } catch { /* Theme still works for this page. */ }
   });
 </script>

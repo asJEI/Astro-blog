@@ -1,41 +1,62 @@
 ---
 import "../styles/global.css";
-
 import Navbar from "../components/layout/Navbar.astro";
 import SiteHead from "../components/layout/SiteHead.astro";
-
-const portfolioHtmlHref = "/portfolio/product-portfolio.html";
+import SiteFooter from "../components/layout/SiteFooter.astro";
+const projects = [
+  {
+    name: "OpenSource Mentor", subtitle: "让第一次开源贡献，有路可循。", type: "个人项目 / AI · 开源", number: "01",
+    problem: "首次参与开源时，理解仓库、筛选 Issue 和准备知识的成本很高。",
+    choice: "将贡献过程拆解为仓库理解、Issue 推荐、学习准备、开发与 PR Review，串联为完整的学习路径。",
+    result: "独立完成 MVP 与部署，并根据开发者反馈，将早期独立的代码审查工具整合进完整贡献流程。",
+    links: [{ label: "在线 Demo", href: "https://hokkai.top/" }, { label: "GitHub", href: "https://github.com/asJEI/opensource-mentor" }],
+  },
+  {
+    name: "Don't Ghost Me", subtitle: "当有人离开，协作仍能继续。", type: "团队项目 / WEB3 · 协作", number: "02",
+    problem: "短期团队协作中，成员临时退出，往往意味着工作无人承接。",
+    choice: "设计保证金、退出、救场悬赏、补位与验收结算的闭环，将违约成本转化为补位激励。",
+    result: "参与产品设计、核心交互与合约联调，与团队完成可交互 Demo 和测试网部署。",
+    links: [{ label: "在线 Demo", href: "https://dont-ghost-me.vercel.app/" }, { label: "GitHub", href: "https://github.com/Gos0lis/dont-ghost-me" }],
+  },
+  {
+    name: "AI 客服 Bot", subtitle: "知道如何回答，也知道何时交给人。", type: "实习实践 / AI · 用户支持", number: "03",
+    problem: "海外业务社群中，大量重复咨询占用人工支持时间，用户的语言与问法又各不相同。",
+    choice: "基于本地模型与多语言 FAQ 实现问题识别、自动回复和低置信度转人工，为回答划定边界。",
+    result: "接入真实业务社群，根据缩写、复杂问法等实际输入，持续迭代 FAQ 匹配与回答策略。",
+    links: [{ label: "阅读项目复盘", href: "/blog/internship-02/" }],
+  },
+];
 ---
-
 <html lang="zh-CN">
-  <head>
-    <SiteHead title="作品集" description="张雨阳的产品经理作品集" />
-  </head>
-  <body class="min-h-screen">
-    <Navbar solid />
-    <main class="portfolio-shell" aria-label="作品集">
-      <iframe
-        class="portfolio-frame"
-        src={portfolioHtmlHref}
-        title="张雨阳产品经理作品集"
-      ></iframe>
+  <head><SiteHead title="作品 · 北海" description="从问题出发，在真实反馈中迭代。北海的产品与 AI 实践。" /></head>
+  <body class="flex min-h-screen flex-col">
+    <Navbar />
+    <main class="portfolio-notebook">
+      <header class="portfolio-intro"><p class="note-kicker">SELECTED WORK / 在实践中思考</p><h1>把想法，<br />放进真实世界。</h1><p>一些独立完成的尝试，一些与伙伴共同走过的路。<br />记录解决的问题，也记录每一次取舍。</p><a class="text-link" href="/portfolio/product-portfolio.html" target="_blank" rel="noopener">打开完整作品集 ↗</a><a class="text-link" href="/about#resume">查看简历 ↗</a></header>
+      <div class="project-notes">
+        {projects.map((project) => <article class="project-note">
+          <div class="project-note__title"><span class="project-number">{project.number}</span><p class="note-kicker">{project.type}</p><h2>{project.name}</h2><p>{project.subtitle}</p><div class="project-links">{project.links.map((link) => <a class="text-link" href={link.href} {...(link.href.startsWith("https:") ? { target: "_blank", rel: "noopener" } : {})}>{link.label} ↗</a>)}</div></div>
+          <dl class="project-note__story"><div><dt>问题</dt><dd>{project.problem}</dd></div><div><dt>选择</dt><dd>{project.choice}</dd></div><div><dt>反馈与交付</dt><dd>{project.result}</dd></div></dl>
+        </article>)}
+      </div>
+      <div class="work-note"><div><p class="note-kicker">THE WORK CONTINUES</p><h2>这个博客，也是作品之一。</h2></div><a class="text-link" href="/blog/rethink-blog/">读读它的来历 ↗</a></div>
     </main>
+    <SiteFooter />
   </body>
 </html>
-
 <style>
-  /* Sits below the fixed bar so the embedded document is never clipped. */
-  .portfolio-shell {
-    position: fixed;
-    inset: var(--nav-height) 0 0;
-    z-index: 10;
-  }
-
-  .portfolio-frame {
-    display: block;
-    width: 100%;
-    height: 100%;
-    border: 0;
-    background: transparent;
-  }
+  .portfolio-notebook { width: min(calc(100% - 5rem), 1040px); margin: 0 auto; padding: 8rem 0 5rem; }
+  .portfolio-intro { margin-bottom: 4rem; }
+  .portfolio-intro h1 { font: 400 clamp(2.5rem,5vw,4rem)/1.45 var(--font-serif); letter-spacing: .04em; margin: 1.5rem 0; }
+  .portfolio-intro > p:not(.note-kicker) { font-size: .95rem; line-height: 2; color: var(--color-text-secondary); }
+  .portfolio-intro > a { margin-right: 2rem; }
+  .project-note { display: grid; grid-template-columns: 1fr 1.2fr; gap: 5rem; padding: 3rem 0; border-top: 1px solid var(--color-border); }
+  .project-number { display: block; margin-bottom: 1.5rem; font: 2rem var(--font-serif); color: var(--color-primary); }
+  .project-note h2 { font: 400 1.8rem/1.5 var(--font-serif); margin: .8rem 0; overflow-wrap: anywhere; }
+  .project-note__title > p:not(.note-kicker) { color: var(--color-text-secondary); font-size: .85rem; line-height: 1.8; }
+  .project-links { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+  .project-note__story { margin: .5rem 0 0; display: grid; gap: 1.5rem; }
+  .project-note__story dt { font-size: .72rem; color: var(--color-accent); margin-bottom: .5rem; }
+  .project-note__story dd { margin: 0; font-size: .9rem; line-height: 1.95; color: var(--color-text-secondary); }
+  @media(max-width:700px) { .portfolio-notebook { width: calc(100% - 3rem); padding-top: 6rem; } .project-note { grid-template-columns: minmax(0,1fr); gap: 1rem; padding: 2rem 0; } }
 </style>

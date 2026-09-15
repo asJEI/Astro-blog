@@ -63,17 +63,13 @@ const contacts = [
     <Navbar />
 
     <main class="site-grid site-grid--page relative z-10 flex-1 text-text-primary">
-      <div class="rail rail--start hidden min-w-0 min-[821px]:block">
-        <div class="rail__inner">
-          <Sidebar musicHydration="desktop" />
-        </div>
-      </div>
-
-      <div class="min-w-0">
+<div class="min-w-0">
         <article>
           <header class="measure border-b border-border pb-8">
             <p class="label">About</p>
-            <h1 class="heading mt-4 text-3xl font-semibold leading-tight sm:text-4xl">关于</h1>
+            <h1 class="heading mt-4 text-3xl font-semibold leading-tight sm:text-4xl">你好，我是北海。</h1>
+            <p class="mt-5 text-sm leading-7 text-text-secondary">在技术、文字与生活之间，慢慢找到自己的方向。</p>
+            <a class="text-link" href="#resume">查看简历 ↗</a>
             <time class="meta mt-5 block" datetime={pageDate.toISOString()}>
               更新于 {formatDate(pageDate)}
             </time>
@@ -151,6 +147,7 @@ const contacts = [
               }
             </ol>
           </nav>
+          <div class="mt-8 border-t border-border pt-6"><Sidebar musicHydration="desktop" /></div>
         </div>
       </div>
     </main>

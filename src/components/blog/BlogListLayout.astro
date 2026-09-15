@@ -2,7 +2,7 @@
 import type { BlogPost } from "../../lib/blog";
 
 import "../../styles/global.css";
-import { categories } from "../../lib/categories";
+import { categories, categoryIds } from "../../lib/categories";
 
 import Navbar from "../layout/Navbar.astro";
 import RightAside from "../layout/RightAside.astro";
@@ -47,19 +47,18 @@ const formatDay = (date: Date) =>
   <body class="flex min-h-screen flex-col">
     <Navbar />
     <main class="site-grid site-grid--page relative z-10 flex-1 text-text-primary">
-      <div class="rail rail--start hidden min-w-0 min-[821px]:block">
-        <div class="rail__inner">
-          <Sidebar musicHydration="desktop" />
-        </div>
-      </div>
-
-      <div class="min-w-0">
+<div class="min-w-0">
         <header class="border-b border-border pb-8">
           <p class="label">{eyebrow}</p>
           <h1 class="heading mt-4 text-3xl font-semibold leading-tight sm:text-4xl">{title}</h1>
           <p class="measure mt-5 text-[0.9375rem] leading-8 text-text-secondary">
             {description}
           </p>
+          <nav class="archive-filters" aria-label="文章分类">
+            {[{ label: "全部", href: "/blog/" }, ...categoryIds.map((id) => categories[id])].map((category) =>
+              <a href={category.href} aria-current={Astro.url.pathname.replace(/\/+$/, "") === category.href.replace(/\/+$/, "") ? "page" : undefined}>{category.label}</a>
+            )}
+          </nav>
         </header>
 
         {
@@ -124,7 +123,7 @@ const formatDay = (date: Date) =>
 
       <div class="rail rail--end hidden min-w-0 min-[821px]:col-start-2 min-[821px]:block min-[1101px]:col-auto">
         <div class="rail__inner">
-          <RightAside />
+          <Sidebar musicHydration="desktop" />
         </div>
       </div>
     </main>

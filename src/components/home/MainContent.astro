@@ -8,7 +8,7 @@ const perspectives = ["我走过的地方", "我内心的变化", "我对世界�
 const formatDate = (date: Date) => `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, "0")}.${String(date.getDate()).padStart(2, "0")}`;
 ---
 <div class="notebook">
-  <section class="opening-note" aria-labelledby="welcome-title">
+  <section class="opening-note" data-reveal aria-labelledby="welcome-title">
     <div class="section-caption"><span>01 / 初次见面</span><span>A NOTE TO YOU</span></div>
     <div class="opening-note__grid">
       <div>
@@ -32,7 +32,7 @@ const formatDate = (date: Date) => `${date.getFullYear()}.${String(date.getMonth
       {categoryIds.map((id, index) => {
         const category = categories[id];
         const selected = posts.find((post) => post.id === category.featuredSlug) ?? posts.find((post) => post.data.category === id);
-        return <article class={`perspective perspective--${id}`}>
+        return <article class={`perspective perspective--${id}`} data-reveal style={index ? `--reveal-delay: ${index * 50}ms` : undefined}>
           <a class="perspective__heading" href={category.href}><span class="perspective__mark" aria-hidden="true">{["↗", "◌", "⌁"][index]}</span><div><h3>{category.label}</h3><p>{perspectives[index]}</p></div><span class="perspective__arrow" aria-hidden="true">↗</span></a>
           {selected && <a class="perspective__article" href={`/blog/${selected.id}/`}>{selected.data.title}<span>从这里读起 →</span></a>}
         </article>;
@@ -40,7 +40,7 @@ const formatDate = (date: Date) => `${date.getFullYear()}.${String(date.getMonth
     </div>
   </section>
   <div class="notebook__lower">
-    <section aria-labelledby="recent-title">
+    <section aria-labelledby="recent-title" data-reveal>
       <div class="section-caption"><h2 id="recent-title">03 / 最近写下</h2><a href="/blog">全部文章 ↗</a></div>
       <ol class="recent-pages">
         {posts.slice(0, 6).map((post) => <li><a class="recent-page" href={`/blog/${post.id}/`}>
@@ -56,7 +56,7 @@ const formatDate = (date: Date) => `${date.getFullYear()}.${String(date.getMonth
       <div class="desk__note"><span class="note-kicker">留在这里的一句话</span><p>博客会迁移，框架会迭代。<br />真正一直在更新的，<br />应该是屏幕前的自己。</p><a class="text-link" href="/blog/rethink-blog/">关于这个空间 ↗</a></div>
     </aside>
   </div>
-  <section class="work-note" aria-labelledby="work-title">
+  <section class="work-note" data-reveal aria-labelledby="work-title">
     <div><p class="note-kicker">从想法，到现实 / SELECTED WORK</p><h2 id="work-title">也动手做一些东西。</h2><p>把问题拆开，把想法做出来，再到真实世界里寻找反馈。</p></div>
     <a class="work-note__link" href="/portfolio">看看我的作品 <span aria-hidden="true">↗</span></a>
   </section>

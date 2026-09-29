@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "./notebook.css";
+@import "./motion.css";
 
 @custom-variant dark (&:where(.dark, .dark *));
 

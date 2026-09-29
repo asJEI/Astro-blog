@@ -87,6 +87,15 @@ npm run dev
 | `npm run preview` | 预览构建结果 |
 | `npm run astro ...` | 运行 Astro CLI 命令 |
 
+## 动效
+
+首页氛围叫「风起时」：微光、分层入场、桌面轻视差，以及经历 / 幽微 / 观察各自的悬停反馈。阅读页只保留短过渡。
+
+- 参数：`src/lib/motion-config.ts`
+- 节奏：`src/styles/motion.css`
+- 首页角落可切换「动态：开 / 关」，选择记在本地。系统开启「减少动态效果」时，按钮显示「已遵循系统」，装饰运动停止。
+- 若持续绘制影响性能，可把 `motion-config.ts` 里的 `particle.enabled` 或 `parallax.enabled` 设为 `false` 后重新构建。
+
 ## 相关链接
 
 - 博客：[https://www.hokkai2005.online](https://www.hokkai2005.online)

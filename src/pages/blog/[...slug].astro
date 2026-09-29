@@ -55,7 +55,7 @@ const formatDate = (date: Date) =>
     <div class="read-progress" data-scroll-driven aria-hidden="true"></div>
     <Navbar />
 
-    <main class="site-grid site-grid--page relative z-10 flex-1 text-text-primary">
+    <main class="site-grid site-grid--page relative z-10 flex-1 text-text-primary" transition:name="page" transition:animate="fade">
 <div class="min-w-0">
         <article>
           <header class="measure border-b border-border pb-8">
@@ -240,6 +240,23 @@ const formatDate = (date: Date) =>
       if (current === activeId) return;
       activeId = current;
       links.forEach((link) => link.toggleAttribute("data-active", link.dataset.tocLink === current));
+
+      document.querySelectorAll<HTMLElement>(".toc-wrap").forEach((wrap) => {
+        const marker = wrap.querySelector<HTMLElement>("[data-toc-marker]");
+        const active = wrap.querySelector<HTMLElement>(".toc__link[data-active]");
+        if (!marker || !active) return;
+
+        const x = active.dataset.depth === "3" ? 14 : 0;
+        const y = active.offsetTop + 8;
+        const first = !wrap.hasAttribute("data-toc-ready");
+        if (first) marker.style.transition = "none";
+        marker.style.translate = `${x}px ${y}px`;
+        if (!first) return;
+        wrap.setAttribute("data-toc-ready", "");
+        requestAnimationFrame(() => {
+          marker.style.transition = "";
+        });
+      });
     };
 
     const onScroll = () => {

@@ -34,12 +34,15 @@ const createLightbox = () => {
 
 let isInitialized = false;
 
-const closeLightbox = () => {
-  const lightbox = getLightbox();
-  if (!lightbox || lightbox.hidden) {
-    return;
-  }
+let closeToken = 0;
 
+const finishClose = (token: number) => {
+  if (token !== closeToken) return;
+
+  const lightbox = getLightbox();
+  if (!lightbox || lightbox.hidden) return;
+
+  lightbox.classList.remove("is-open", "is-closing");
   lightbox.hidden = true;
   document.body.classList.remove("image-lightbox-open");
 
@@ -50,6 +53,33 @@ const closeLightbox = () => {
   }
 };
 
+const motionIsStill = () =>
+  document.documentElement.dataset.motionActive === "still" ||
+  window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+const closeLightbox = () => {
+  const lightbox = getLightbox();
+  if (!lightbox || lightbox.hidden || lightbox.classList.contains("is-closing")) return;
+
+  const token = ++closeToken;
+  if (motionIsStill()) {
+    finishClose(token);
+    return;
+  }
+
+  lightbox.classList.remove("is-open");
+  lightbox.classList.add("is-closing");
+
+  const done = (event: Event) => {
+    if (event.target !== lightbox) return;
+    lightbox.removeEventListener("animationend", done);
+    finishClose(token);
+  };
+
+  lightbox.addEventListener("animationend", done);
+  window.setTimeout(() => finishClose(token), 260);
+};
+
 const openLightbox = (source: HTMLImageElement) => {
   const lightbox = createLightbox();
   const image = lightbox.querySelector<HTMLImageElement>(".image-lightbox__img");
@@ -58,9 +88,11 @@ const openLightbox = (source: HTMLImageElement) => {
     return;
   }
 
+  closeToken += 1;
   image.src = source.currentSrc || source.src;
   image.alt = source.alt;
-
+  lightbox.classList.remove("is-closing");
+  lightbox.classList.toggle("is-open", !motionIsStill());
   lightbox.hidden = false;
   document.body.classList.add("image-lightbox-open");
   lightbox.querySelector<HTMLButtonElement>(".image-lightbox__close")?.focus();

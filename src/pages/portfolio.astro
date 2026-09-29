@@ -31,7 +31,7 @@ const projects = [
   <head><SiteHead title="作品 · 北海" description="从问题出发，在真实反馈中迭代。北海的产品与 AI 实践。" /></head>
   <body class="flex min-h-screen flex-col">
     <Navbar />
-    <main class="portfolio-notebook">
+    <main class="portfolio-notebook" transition:name="page" transition:animate="fade">
       <header class="portfolio-intro"><p class="note-kicker">SELECTED WORK / 在实践中思考</p><h1>把想法，<br />放进真实世界。</h1><p>一些独立完成的尝试，一些与伙伴共同走过的路。<br />记录解决的问题，也记录每一次取舍。</p><a class="text-link" href="/portfolio/product-portfolio.html" target="_blank" rel="noopener">打开完整作品集 ↗</a><a class="text-link" href="/about#resume">查看简历 ↗</a></header>
       <div class="project-notes">
         {projects.map((project) => <article class="project-note">

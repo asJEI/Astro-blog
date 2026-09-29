@@ -1,0 +1,124 @@
+<button class="hero__motion" type="button" data-motion-toggle aria-pressed="true">
+  <span class="hero__motion-wind" aria-hidden="true"><i></i><i></i><i></i></span>
+  <span class="hero__motion-copy">
+    <span>动态：</span>
+    <span class="hero__motion-value hero__motion-value--on">开</span>
+    <span class="hero__motion-value hero__motion-value--off">关</span>
+    <span class="hero__motion-value hero__motion-value--system">已遵循系统</span>
+  </span>
+</button>
+<canvas class="hero__atmosphere" data-hero-canvas aria-hidden="true"></canvas>
+<script is:inline>
+  (function () {
+    var button = document.querySelector("[data-motion-toggle]");
+    if (!button) return;
+    var root = document.documentElement;
+    var system = root.dataset.motionSystem === "reduce";
+    var on = root.dataset.motionActive === "on";
+    button.setAttribute("aria-pressed", on ? "true" : "false");
+    button.setAttribute("aria-disabled", system ? "true" : "false");
+  })();
+</script>
+
+<style>
+  .hero__atmosphere {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+
+  .hero__motion {
+    position: absolute;
+    z-index: 20;
+    left: max(1.5rem, env(safe-area-inset-left));
+    bottom: max(1.35rem, env(safe-area-inset-bottom));
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    min-width: 44px;
+    min-height: 44px;
+    padding: 0 0.9rem;
+    border: 1px solid rgb(255 255 255 / 0.22);
+    border-radius: 999px;
+    background: rgb(8 12 20 / 0.42);
+    color: rgb(255 255 255 / 0.86);
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.14em;
+    line-height: 1;
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+  }
+
+  .hero__motion[aria-disabled="true"] {
+    cursor: default;
+  }
+
+  .hero__motion:hover {
+    color: white;
+    border-color: rgb(255 255 255 / 0.4);
+  }
+
+  .hero__motion[aria-disabled="true"]:hover {
+    color: rgb(255 255 255 / 0.86);
+    border-color: rgb(255 255 255 / 0.22);
+  }
+
+  .hero__motion-wind {
+    display: grid;
+    width: 0.85rem;
+    gap: 3px;
+  }
+
+  .hero__motion-wind i {
+    display: block;
+    height: 1px;
+    background: currentColor;
+  }
+
+  .hero__motion-wind i:nth-child(1) {
+    width: 100%;
+  }
+
+  .hero__motion-wind i:nth-child(2) {
+    width: 68%;
+  }
+
+  .hero__motion-wind i:nth-child(3) {
+    width: 42%;
+  }
+
+  .hero__motion-copy {
+    display: inline-flex;
+    gap: 0.35rem;
+  }
+
+  .hero__motion-value {
+    display: none;
+  }
+
+  :global(html:not([data-motion-active])) .hero__motion-value--on,
+  :global(html[data-motion-active="on"]) .hero__motion-value--on {
+    display: inline;
+  }
+
+  :global(html[data-motion-active="still"]:not([data-motion-system="reduce"])) .hero__motion-value--off {
+    display: inline;
+  }
+
+  :global(html[data-motion-system="reduce"]) .hero__motion-value--system {
+    display: inline;
+  }
+
+  @media (max-width: 720px) {
+    .hero__motion {
+      top: calc(var(--nav-height) + 0.65rem);
+      right: auto;
+      bottom: auto;
+      left: max(1rem, env(safe-area-inset-left));
+    }
+  }
+</style>

@@ -408,7 +408,13 @@ export default function MusicPlayer() {
     <div className="music" aria-label="音乐播放器">
       <div className="flex items-baseline justify-between gap-3">
         <p className="label label--cjk">正在播放</p>
-        <span className="meta shrink-0">
+        <span className="meta music__status shrink-0">
+          <span className="music__bars" data-playing={isPlaying ? "true" : undefined} aria-hidden="true">
+            <span />
+            <span />
+            <span />
+            <span />
+          </span>
           {isPlaying ? "播放中" : isReady ? "已暂停" : "加载中"}
         </span>
       </div>

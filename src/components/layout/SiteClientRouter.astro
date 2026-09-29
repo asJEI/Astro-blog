@@ -6,20 +6,46 @@ import { ClientRouter } from "astro:transitions";
 
 <script is:inline>
   (function () {
+    var root = document.documentElement;
     try {
-      const storedTheme = localStorage.getItem("theme");
-      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-
+      var storedTheme = localStorage.getItem("theme");
+      var prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
       if (storedTheme === "dark" || (!storedTheme && prefersDark)) {
-        document.documentElement.classList.add("dark");
+        root.classList.add("dark");
       }
-    } catch {
-      // Ignore storage access errors.
+    } catch (e) {}
+
+    var reduce = false;
+    var motion = null;
+    try {
+      reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      motion = localStorage.getItem("beihai-motion");
+    } catch (e) {}
+
+    var still = reduce || motion === "off";
+    root.dataset.motion = motion === "off" ? "off" : "on";
+    root.dataset.motionActive = still ? "still" : "on";
+    if (reduce) root.dataset.motionSystem = "reduce";
+
+    var path = location.pathname.replace(/\/+$/, "") || "/";
+    if (path !== "/") return;
+
+    var entrance = still ? "none" : "full";
+    if (!still) {
+      try {
+        if (sessionStorage.getItem("beihai-hero-seen") === "1") entrance = "short";
+        else sessionStorage.setItem("beihai-hero-seen", "1");
+      } catch (e) {}
     }
+    root.dataset.heroEntrance = entrance;
   })();
 </script>
 
 <script>
+  import { startMotion } from "../../lib/motion";
+
+  startMotion();
+
   const applyTheme = () => {
     let storedTheme: string | null = null;
     try { storedTheme = localStorage.getItem("theme"); } catch { /* System theme remains available. */ }

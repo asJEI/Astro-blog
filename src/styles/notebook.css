@@ -20,7 +20,7 @@
   --color-accent: #dfa1b2;
   --color-border: rgb(220 226 237 / 0.16);
 }
-body { transition: background-color 180ms ease, color 180ms ease; }
+body { transition: background-color 200ms ease, color 200ms ease; }
 .heading, .entry__title { font-family: var(--font-serif); }
 .brand-edition { font-family: var(--font-serif); font-weight: 400; opacity: .8; font-size: .72rem; margin-left: .35rem; }
 .home-shell { width: min(calc(100% - 5rem), 1120px); margin: 0 auto; padding: 2.5rem 0 5rem; }

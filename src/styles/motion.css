@@ -1,0 +1,436 @@
+/*
+ * 北海 · 风起时
+ * 统一节奏：反馈短，场景缓，阅读静。
+ */
+
+:root {
+  --motion-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --motion-fast: 160ms;
+  --motion-link: 280ms;
+  --motion-reveal: 420ms;
+  --motion-page: 220ms;
+}
+
+@keyframes hero-rise {
+  from {
+    opacity: 0;
+    translate: 0 8px;
+  }
+}
+
+@keyframes page-leave {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes page-enter {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes wind-line {
+  0%,
+  100% {
+    transform: scaleX(0.45);
+    opacity: 0.4;
+  }
+  50% {
+    transform: scaleX(1);
+    opacity: 0.9;
+  }
+}
+
+@keyframes music-bar {
+  from {
+    transform: scaleY(0.28);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes lightbox-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes lightbox-image {
+  from {
+    opacity: 0;
+    scale: 0.985;
+  }
+}
+
+@keyframes lightbox-out {
+  to {
+    opacity: 0;
+  }
+}
+
+/* ---------------------------------------------------------------- entrance */
+
+html[data-hero-entrance="full"] [data-hero]:not([data-entrance]) [data-hero-enter="title"],
+[data-hero][data-entrance="full"] [data-hero-enter="title"] {
+  animation: hero-rise 450ms var(--motion-ease) both;
+}
+
+html[data-hero-entrance="full"] [data-hero]:not([data-entrance]) [data-hero-enter="copy"],
+[data-hero][data-entrance="full"] [data-hero-enter="copy"] {
+  animation: hero-rise 450ms var(--motion-ease) 100ms both;
+}
+
+html[data-hero-entrance="full"] [data-hero]:not([data-entrance]) [data-hero-enter="links"],
+[data-hero][data-entrance="full"] [data-hero-enter="links"] {
+  animation: hero-rise 420ms var(--motion-ease) 180ms both;
+}
+
+html[data-hero-entrance="short"] [data-hero]:not([data-entrance]) [data-hero-enter],
+[data-hero][data-entrance="short"] [data-hero-enter] {
+  animation: hero-rise 200ms var(--motion-ease) both;
+}
+
+html[data-hero-entrance="short"] [data-hero]:not([data-entrance]) [data-hero-enter="copy"],
+[data-hero][data-entrance="short"] [data-hero-enter="copy"] {
+  animation-delay: 40ms;
+}
+
+html[data-hero-entrance="short"] [data-hero]:not([data-entrance]) [data-hero-enter="links"],
+[data-hero][data-entrance="short"] [data-hero-enter="links"] {
+  animation-delay: 80ms;
+}
+
+.hero__motion-wind i {
+  transform-origin: left center;
+}
+
+html[data-motion-active="on"] .hero__motion-wind i {
+  animation: wind-line 3.2s var(--motion-ease) infinite;
+}
+
+html[data-motion-active="on"] .hero__motion-wind i:nth-child(2) {
+  animation-delay: 0.45s;
+  animation-duration: 3.6s;
+}
+
+html[data-motion-active="on"] .hero__motion-wind i:nth-child(3) {
+  animation-delay: 0.9s;
+  animation-duration: 2.8s;
+}
+
+.hero__atmosphere {
+  opacity: 0;
+}
+
+.hero[data-atmosphere="live"] .hero__atmosphere {
+  opacity: 1;
+  transition: opacity 1.6s ease;
+}
+
+/* ------------------------------------------------------------------ reveal */
+
+[data-reveal].is-armed {
+  opacity: 0;
+  translate: 0 10px;
+}
+
+[data-reveal].is-shown {
+  opacity: 1;
+  translate: 0 0;
+  transition:
+    opacity var(--motion-reveal) var(--motion-ease),
+    translate var(--motion-reveal) var(--motion-ease);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+/* --------------------------------------------------------------- categories */
+
+.perspective--experience .perspective__heading > div {
+  position: relative;
+}
+
+.perspective--experience .perspective__heading > div::after {
+  position: absolute;
+  left: 0;
+  bottom: -0.4rem;
+  width: 2.75rem;
+  height: 1px;
+  background: color-mix(in srgb, var(--color-primary) 80%, transparent);
+  content: "";
+  opacity: 0.4;
+  transform: scaleX(0.28);
+  transform-origin: left center;
+  transition:
+    transform 480ms var(--motion-ease),
+    opacity 480ms ease;
+}
+
+.perspective--experience .perspective__arrow {
+  transition: transform 320ms var(--motion-ease);
+}
+
+.perspective--experience .perspective__heading:is(:hover, :focus-visible) > div::after {
+  opacity: 1;
+  transform: scaleX(1);
+}
+
+.perspective--experience .perspective__heading:is(:hover, :focus-visible) .perspective__arrow {
+  transform: translateX(3px);
+}
+
+.perspective--youwei .perspective__mark {
+  transition:
+    transform 460ms var(--motion-ease),
+    box-shadow 460ms var(--motion-ease);
+}
+
+.perspective--youwei .perspective__heading:is(:hover, :focus-visible) .perspective__mark {
+  box-shadow: 0 0 0 7px color-mix(in srgb, var(--color-accent) 16%, transparent);
+  transform: scale(1.06);
+}
+
+.perspective--observations .perspective__mark,
+.perspective--observations .perspective__arrow {
+  transition:
+    transform 360ms var(--motion-ease),
+    opacity 280ms ease,
+    color 280ms ease;
+}
+
+.perspective--observations .perspective__arrow {
+  opacity: 0.5;
+}
+
+.perspective--observations .perspective__heading:is(:hover, :focus-visible) .perspective__mark,
+.perspective--observations .perspective__heading:is(:hover, :focus-visible) .perspective__arrow {
+  transform: translate(3px, -2px);
+}
+
+.perspective--observations .perspective__heading:is(:hover, :focus-visible) .perspective__arrow {
+  opacity: 1;
+}
+
+/* -------------------------------------------------------------------- links */
+
+.text-link,
+.archive-link span,
+.perspective__article span,
+.recent-page h3 {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 0 1px;
+  transition:
+    background-size var(--motion-link) var(--motion-ease),
+    color var(--motion-fast) ease;
+}
+
+.perspective__article span,
+.archive-link span {
+  width: fit-content;
+}
+
+.text-link:is(:hover, :focus-visible),
+.archive-link:is(:hover, :focus-visible) span,
+.perspective__article:is(:hover, :focus-visible) span,
+.recent-page:is(:hover, :focus-visible) h3 {
+  background-size: 100% 1px;
+}
+
+.recent-page__arrow,
+.first-reading .bookmark {
+  transition: transform 320ms var(--motion-ease), translate 320ms var(--motion-ease);
+}
+
+.first-reading:is(:hover, :focus-visible) .bookmark {
+  translate: 0 3px;
+}
+
+.reading-trail a {
+  transition: color var(--motion-fast) ease;
+}
+
+/* --------------------------------------------------------------------- music */
+
+.music__status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.music__bars {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 0.7rem;
+}
+
+.music__bars span {
+  display: block;
+  width: 1.5px;
+  height: 100%;
+  transform: scaleY(0.28);
+  transform-origin: bottom;
+  background: var(--color-accent);
+  opacity: 0.45;
+}
+
+.music__bars[data-playing="true"] span {
+  opacity: 0.9;
+  animation: music-bar 1.15s var(--motion-ease) infinite alternate;
+}
+
+.music__bars[data-playing="true"] span:nth-child(2) {
+  animation-duration: 0.92s;
+  animation-delay: 0.12s;
+}
+
+.music__bars[data-playing="true"] span:nth-child(3) {
+  animation-duration: 1.28s;
+  animation-delay: 0.2s;
+}
+
+.music__bars[data-playing="true"] span:nth-child(4) {
+  animation-duration: 0.84s;
+  animation-delay: 0.34s;
+}
+
+/* ----------------------------------------------------------------------- toc */
+
+.toc-wrap {
+  position: relative;
+}
+
+.toc__marker {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 2px;
+  height: 0.85rem;
+  background: var(--color-accent);
+  opacity: 0;
+  translate: 0 0;
+  transition: translate var(--motion-page) var(--motion-ease), opacity 180ms ease;
+}
+
+.toc-wrap[data-toc-ready] .toc__marker {
+  opacity: 1;
+}
+
+/* ----------------------------------------------------------------- afterword */
+
+.afterwords summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.afterwords summary::after {
+  width: 1.35rem;
+  height: 1px;
+  flex-shrink: 0;
+  background: currentColor;
+  content: "";
+  transform: scaleX(0.4);
+  transform-origin: right center;
+  transition: transform 220ms var(--motion-ease);
+}
+
+.afterwords details[open] summary::after {
+  transform: scaleX(1);
+}
+
+/* ----------------------------------------------------------------- lightbox */
+
+.image-lightbox.is-open {
+  animation: lightbox-in 200ms var(--motion-ease);
+}
+
+.image-lightbox.is-open .image-lightbox__img {
+  animation: lightbox-image 240ms var(--motion-ease);
+}
+
+.image-lightbox.is-closing {
+  animation: lightbox-out 180ms ease forwards;
+}
+
+.image-lightbox.is-closing .image-lightbox__img {
+  animation: none;
+}
+
+/* -------------------------------------------------------------- page change */
+
+::view-transition-old(root),
+::view-transition-new(root),
+::view-transition-old(site-nav),
+::view-transition-new(site-nav),
+::view-transition-old(site-footer),
+::view-transition-new(site-footer) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-old(page) {
+  animation: var(--motion-page) var(--motion-ease) both page-leave;
+  mix-blend-mode: normal;
+}
+
+::view-transition-new(page) {
+  animation: var(--motion-page) var(--motion-ease) both page-enter;
+  mix-blend-mode: normal;
+}
+
+/* ------------------------------------------------------------ still / system */
+
+html[data-motion-active="still"] [data-hero] [data-hero-enter] {
+  animation: none !important;
+  opacity: 1;
+  translate: none;
+}
+
+html[data-motion-active="still"] .hero__motion-wind i,
+html[data-motion-active="still"] .music__bars span {
+  animation: none;
+}
+
+html[data-motion-active="still"] .music__bars span {
+  opacity: 0.45;
+  transform: scaleY(0.28);
+}
+
+html[data-motion-active="still"] .music__bars[data-playing="true"] span {
+  opacity: 0.9;
+  transform: scaleY(0.62);
+}
+
+html[data-motion-active="still"] [data-reveal] {
+  opacity: 1;
+  translate: none;
+  transition: none;
+}
+
+html[data-motion-active="still"] .toc__marker {
+  transition: none;
+}
+
+html[data-motion-active="still"] .afterwords summary::after,
+html[data-motion-active="still"] .perspective__heading > div::after,
+html[data-motion-active="still"] .perspective__mark,
+html[data-motion-active="still"] .perspective__arrow {
+  transition: none;
+}
+
+html[data-motion-active="still"]::view-transition-old(*),
+html[data-motion-active="still"]::view-transition-new(*),
+html[data-motion-active="still"]::view-transition-group(*) {
+  animation: none !important;
+}

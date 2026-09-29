@@ -1,6 +1,7 @@
 ---
 import heroImage from "../../assets/hero-background.png";
 import mobileHeroImage from "../../assets/mobile-hero-background.png";
+import HeroAtmosphere from "./HeroAtmosphere.astro";
 
 const links = [
   { label: "开始阅读 ↗", href: "#main-content", external: false },
@@ -8,9 +9,10 @@ const links = [
 ];
 ---
 
-<section class="hero" aria-labelledby="hero-title">
+<section class="hero" data-hero aria-labelledby="hero-title">
   <div
     class="hero__image hero__image--desktop"
+    data-hero-parallax
     style={`background-image: url("${heroImage.src}")`}
     aria-hidden="true"
   >
@@ -22,18 +24,21 @@ const links = [
   >
   </div>
   <div class="hero__scrim" aria-hidden="true"></div>
+  <HeroAtmosphere />
   <div class="hero__fade" aria-hidden="true"></div>
 
   <div class="hero__body">
-    <p class="hero__eyebrow">HOKKAI / A LIFE IN PROGRESS</p>
+    <div data-hero-enter="title">
+      <p class="hero__eyebrow">HOKKAI / A LIFE IN PROGRESS</p>
+      <h1 id="hero-title" class="hero__name">北海<span class="hero__edition">未完成时</span></h1>
+    </div>
 
-    <h1 id="hero-title" class="hero__name">北海<span class="hero__edition">未完成时</span></h1>
+    <div data-hero-enter="copy">
+      <p class="hero__motto">北海虽赊，扶摇可接</p>
+      <p class="hero__tagline">在这里，记录我如何理解世界，<br />也记录世界如何改变我。</p>
+    </div>
 
-    <p class="hero__motto">北海虽赊，扶摇可接</p>
-
-    <p class="hero__tagline">在这里，记录我如何理解世界，<br />也记录世界如何改变我。</p>
-
-    <nav class="hero__links" aria-label="快速入口">
+    <nav class="hero__links" data-hero-enter="links" aria-label="快速入口">
       {
         links.map((link) => (
           <a
@@ -67,10 +72,12 @@ const links = [
 
   .hero__image {
     position: absolute;
+    z-index: 0;
     inset: 0;
     background-position: center;
     background-size: cover;
-    scale: 1.02;
+    /* Crop margin so the desktop drift never exposes an edge. */
+    scale: 1.06;
   }
 
   .hero__image--mobile {
@@ -79,6 +86,7 @@ const links = [
 
   .hero__scrim {
     position: absolute;
+    z-index: 1;
     inset: 0;
     background: linear-gradient(
       100deg,
@@ -92,6 +100,7 @@ const links = [
   /* Dissolves the photograph into the page surface below it. */
   .hero__fade {
     position: absolute;
+    z-index: 3;
     inset-inline: 0;
     bottom: 0;
     height: 32vh;
@@ -118,7 +127,6 @@ const links = [
     width: min(calc(100% - 5rem), 1120px);
     margin-inline: auto;
     padding-block: 7rem 6rem;
-    animation: hero-enter 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
   }
 
   .hero__eyebrow {
@@ -201,17 +209,22 @@ const links = [
     bottom: 0;
     height: 1px;
     background: currentColor;
-    opacity: 0.3;
     content: "";
-    transition: opacity 0.2s ease;
+    opacity: 0.35;
+    transform: scaleX(0.28);
+    transform-origin: left center;
+    transition:
+      transform 280ms cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 160ms ease;
   }
 
-  .hero__link:hover {
+  .hero__link:is(:hover, :focus-visible) {
     color: white;
   }
 
-  .hero__link:hover::after {
+  .hero__link:is(:hover, :focus-visible)::after {
     opacity: 1;
+    transform: scaleX(1);
   }
 
   .hero__scroll {
@@ -249,13 +262,6 @@ const links = [
     rotate: 45deg;
   }
 
-  @keyframes hero-enter {
-    from {
-      opacity: 0;
-      translate: 0 1.25rem;
-    }
-  }
-
   @media (max-width: 720px) {
     .hero {
       align-items: flex-end;
@@ -267,6 +273,7 @@ const links = [
 
     .hero__image--mobile {
       display: block;
+      scale: 1.02;
     }
 
     /*
@@ -322,9 +329,4 @@ const links = [
     }
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    .hero__body {
-      animation: none;
-    }
-  }
 </style>

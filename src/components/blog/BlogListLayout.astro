@@ -66,7 +66,7 @@ const formatDay = (date: Date) =>
             <div class="grid gap-14 pt-10">
               {groups.map((group) => (
                 <section aria-label={group.label}>
-                  <div class="flex items-baseline justify-between gap-4 border-b border-border pb-2">
+                  <div class="archive-month flex items-baseline justify-between gap-4 border-b border-border pb-2">
                     <h2 class="label m-0">{group.label}</h2>
                     <span class="meta">{String(group.posts.length).padStart(2, "0")}</span>
                   </div>
@@ -75,7 +75,7 @@ const formatDay = (date: Date) =>
                     {group.posts.map((post) => (
                       <li>
                         <a
-                          class="entry group grid gap-x-5 gap-y-1 sm:grid-cols-[4rem_minmax(0,1fr)]"
+                          class="entry group grid gap-x-5 gap-y-0.5 sm:grid-cols-[4rem_minmax(0,1fr)] sm:gap-y-1"
                           href={`/blog/${post.id}/`}
                         >
                           <time
@@ -93,7 +93,7 @@ const formatDay = (date: Date) =>
                               <p class="m-0 mt-2.5 flex flex-wrap gap-x-3 gap-y-1">
                                 <span class="meta">{post.data.category ? categories[post.data.category].label : "Archive"}</span>
                                 {post.data.tags.map((tag) => (
-                                  <span class="tag">#{tag}</span>
+                                  <span class="tag max-sm:hidden">#{tag}</span>
                                 ))}
                               </p>
                             )}
@@ -130,8 +130,8 @@ const formatDay = (date: Date) =>
 
     <SiteFooter />
 
-    <details class="mobile-assist min-[821px]:hidden">
-      <summary class="mobile-assist__toggle" aria-label="打开辅助信息">
+    <details class="mobile-assist min-[821px]:hidden" data-mobile-assist>
+      <summary class="mobile-assist__toggle mobile-assist__toggle--plus" aria-label="打开辅助信息">
         <svg class="h-5 w-5" viewBox="0 0 24 24" aria-hidden="true">
           <path d="M5 12h14M12 5v14" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.6" />
         </svg>

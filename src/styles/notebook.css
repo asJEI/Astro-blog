@@ -141,3 +141,22 @@ body { transition: background-color 200ms ease, color 200ms ease; }
   .article-content { font-size: 17px; line-height: 1.9; }
   .brand-edition { font-size: .65rem; }
 }
+.tag--more { display: none; }
+@media (max-width: 640px) {
+  .tag--overflow { display: none; }
+  .tag--more { display: inline-block; }
+  /* The month stays readable while its entries scroll beneath the bar. */
+  .archive-month { position: sticky; top: var(--nav-height); z-index: 5; padding-top: .75rem; background: var(--color-background); background-image: var(--grain); }
+  .archive-filters { flex-wrap: nowrap; overflow-x: auto; margin-inline: -1.5rem; padding-inline: 1.5rem; scrollbar-width: none; }
+  .archive-filters::-webkit-scrollbar { display: none; }
+  .archive-filters a { display: inline-flex; flex-shrink: 0; min-height: 40px; align-items: center; padding-inline: 1.1rem; border-radius: 999px; }
+  .text-link, .archive-link, .work-note__link { min-height: 44px; align-items: center; }
+  .reading-trail a { padding: 1.1rem 0; }
+}
+/* Touch has no hover, so taps get their own brief acknowledgement. */
+@media (hover: none) {
+  :is(.entry, .recent-page, .first-reading, .perspective__heading, .perspective__article, .reading-trail a, .archive-link) { -webkit-tap-highlight-color: transparent; transition: background-color 120ms ease, color 120ms ease; }
+  .entry:active .entry__title, .recent-page:active h3, .perspective__article:active, .reading-trail a:active, .archive-link:active { color: var(--color-accent); }
+  .first-reading:active { border-color: var(--color-accent); }
+  .entry:active, .recent-page:active { background: color-mix(in srgb, var(--color-primary) 7%, transparent); }
+}

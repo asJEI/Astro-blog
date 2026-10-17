@@ -4,8 +4,8 @@ import mobileHeroImage from "../../assets/mobile-hero-background.png";
 import HeroAtmosphere from "./HeroAtmosphere.astro";
 
 const links = [
-  { label: "开始阅读 ↗", href: "#main-content", external: false },
-  { label: "关于我", href: "/about", external: false },
+  { label: "开始阅读 ↗", href: "#main-content", external: false, primary: true },
+  { label: "关于我", href: "/about", external: false, primary: false },
 ];
 ---
 
@@ -42,7 +42,7 @@ const links = [
       {
         links.map((link) => (
           <a
-            class="hero__link"
+            class:list={["hero__link", { "hero__link--primary": link.primary }]}
             href={link.href}
             {...(link.external ? { target: "_blank", rel: "noreferrer" } : {})}
           >
@@ -262,66 +262,147 @@ const links = [
     rotate: 45deg;
   }
 
+  /*
+   * Phones stack the artwork above the words: the window and its figure get
+   * the top of the screen to themselves, and the type sits on the page
+   * surface below instead of fighting a near-white wall.
+   */
   @media (max-width: 720px) {
     .hero {
-      align-items: flex-end;
+      --hero-stage: clamp(21rem, 58svh, 34rem);
+
+      display: block;
+      min-height: 0;
+      background: transparent;
+      color: var(--color-text-primary);
     }
 
     .hero__image--desktop {
       display: none;
     }
 
+    /* Framed so the window, birds and seal all stay inside the stage. */
     .hero__image--mobile {
       display: block;
-      scale: 1.02;
+      inset: 0 0 auto;
+      height: var(--hero-stage);
+      background-position: center 16%;
+      scale: 1;
     }
 
-    /*
-     * The mobile artwork is a near-white wall, so light text needs a much
-     * heavier scrim than the desktop crop — anchored at the bottom.
-     */
     .hero__scrim {
-      background: linear-gradient(
-        180deg,
-        rgb(6 9 16 / 0.42) 0%,
-        rgb(6 9 16 / 0.36) 32%,
-        rgb(6 9 16 / 0.74) 70%,
-        rgb(6 9 16 / 0.93) 100%
-      );
+      inset: 0 0 auto;
+      height: var(--hero-stage);
+      background: linear-gradient(180deg, rgb(246 244 239 / 0.45) 0%, rgb(246 244 239 / 0) 22%);
+    }
+
+    :global(.dark) .hero__image--mobile {
+      filter: brightness(0.58) saturate(0.85);
+    }
+
+    :global(.dark) .hero__scrim {
+      background: linear-gradient(180deg, rgb(6 9 16 / 0.5) 0%, rgb(6 9 16 / 0) 26%);
     }
 
     .hero__fade {
-      height: 16vh;
-      background: linear-gradient(180deg, rgb(6 9 16 / 0) 0%, var(--color-background) 100%);
+      top: calc(var(--hero-stage) * 0.55);
+      bottom: auto;
+      height: calc(var(--hero-stage) * 0.45 + 1px);
+      background: linear-gradient(
+        180deg,
+        rgb(246 244 239 / 0) 0%,
+        color-mix(in srgb, var(--color-background) 72%, transparent) 55%,
+        var(--color-background) 100%
+      );
     }
 
     :global(.dark) .hero__fade {
-      background: linear-gradient(180deg, rgb(6 9 16 / 0) 0%, var(--color-background-dark) 100%);
+      background: linear-gradient(
+        180deg,
+        rgb(17 23 32 / 0) 0%,
+        color-mix(in srgb, var(--color-background) 72%, transparent) 55%,
+        var(--color-background) 100%
+      );
     }
 
     .hero__body {
-      width: min(calc(100% - 2rem), 1240px);
-      padding-block: 0 22vh;
+      width: calc(100% - 3rem);
+      padding-block: calc(var(--hero-stage) - 4.25rem) 1rem;
     }
 
     .hero__eyebrow {
-      margin-bottom: 1.25rem;
+      margin-bottom: 1rem;
+      color: var(--color-text-muted);
+      font-size: 0.625rem;
       letter-spacing: 0.22em;
+    }
+
+    .hero__name {
+      font-size: clamp(3.5rem, 18vw, 4.5rem);
+    }
+
+    .hero__edition {
+      margin-left: 1rem;
+      padding-left: 0.75rem;
+      border-left-color: var(--color-border);
+      color: var(--color-text-secondary);
+      font-size: 0.75rem;
     }
 
     .hero__motto {
       margin-top: 1rem;
+      color: var(--color-text-primary);
+      font-size: 1.125rem;
     }
 
     .hero__tagline {
-      margin-top: 0.9rem;
+      margin-top: 0.6rem;
+      color: var(--color-text-secondary);
       font-size: 0.875rem;
       line-height: 1.85;
     }
 
     .hero__links {
-      margin-top: 2rem;
-      gap: 1.25rem;
+      align-items: center;
+      margin-top: 1.75rem;
+      gap: 0.5rem 1.5rem;
+    }
+
+    .hero__link {
+      display: inline-flex;
+      min-height: 44px;
+      align-items: center;
+      padding-bottom: 0;
+      color: var(--color-text-secondary);
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .hero__link::after {
+      bottom: 0.6rem;
+    }
+
+    .hero__link--primary {
+      padding-inline: 1.35rem;
+      border-radius: 999px;
+      background: var(--color-text-primary);
+      color: var(--color-background);
+      transition: background-color 0.2s ease, scale 0.15s ease;
+    }
+
+    .hero__link--primary::after {
+      display: none;
+    }
+
+    .hero__link--primary:is(:hover, :focus-visible) {
+      color: var(--color-background);
+    }
+
+    .hero__link:not(.hero__link--primary):is(:hover, :focus-visible) {
+      color: var(--color-text-primary);
+    }
+
+    .hero__link:active {
+      scale: 0.97;
     }
 
     .hero__scroll {

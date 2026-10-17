@@ -10,13 +10,13 @@
 <canvas class="hero__atmosphere" data-hero-canvas aria-hidden="true"></canvas>
 <script is:inline>
   (function () {
-    var button = document.querySelector("[data-motion-toggle]");
-    if (!button) return;
     var root = document.documentElement;
     var system = root.dataset.motionSystem === "reduce";
     var on = root.dataset.motionActive === "on";
-    button.setAttribute("aria-pressed", on ? "true" : "false");
-    button.setAttribute("aria-disabled", system ? "true" : "false");
+    document.querySelectorAll("[data-motion-toggle]").forEach(function (button) {
+      button.setAttribute("aria-pressed", on ? "true" : "false");
+      button.setAttribute("aria-disabled", system ? "true" : "false");
+    });
   })();
 </script>
 
@@ -113,12 +113,51 @@
     display: inline;
   }
 
+  /* Icon-only on phones, tucked into the artwork's corner, clear of the title. */
   @media (max-width: 720px) {
+    .hero__atmosphere {
+      height: var(--hero-stage);
+    }
+
     .hero__motion {
-      top: calc(var(--nav-height) + 0.65rem);
-      right: auto;
+      top: calc(var(--hero-stage) * 0.55 - 2.75rem);
+      right: max(1rem, env(safe-area-inset-right));
       bottom: auto;
-      left: max(1rem, env(safe-area-inset-left));
+      left: auto;
+      justify-content: center;
+      width: 40px;
+      min-width: 40px;
+      height: 40px;
+      min-height: 40px;
+      padding: 0;
+      border-color: rgb(23 28 38 / 0.12);
+      background: rgb(255 255 255 / 0.55);
+      color: rgb(23 28 38 / 0.72);
+      -webkit-backdrop-filter: blur(10px);
+    }
+
+    :global(.dark) .hero__motion {
+      border-color: rgb(255 255 255 / 0.2);
+      background: rgb(8 12 20 / 0.45);
+      color: rgb(255 255 255 / 0.82);
+    }
+
+    .hero__motion::after {
+      position: absolute;
+      inset: -4px;
+      content: "";
+    }
+
+    .hero__motion-wind {
+      width: 1rem;
+    }
+
+    .hero__motion-copy {
+      display: none;
+    }
+
+    :global(html[data-motion-active="still"]) .hero__motion {
+      opacity: 0.7;
     }
   }
 </style>

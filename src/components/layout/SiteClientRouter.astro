@@ -75,6 +75,26 @@ import { ClientRouter } from "astro:transitions";
   cleanupOrphanedMusicPlayers();
   document.addEventListener("astro:page-load", cleanupOrphanedMusicPlayers);
 
+  // The bottom sheet's backdrop is the <details> itself; a tap there, or on a TOC link, closes it.
+  document.addEventListener("click", (event) => {
+    const target = event.target instanceof Element ? event.target : null;
+    const assist = target?.closest<HTMLDetailsElement>("[data-mobile-assist]");
+    if (!assist?.open) return;
+    if (target === assist || target?.closest("[data-toc-link]")) assist.open = false;
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape") return;
+    document.querySelectorAll<HTMLDetailsElement>("[data-mobile-assist][open]").forEach((assist) => {
+      assist.open = false;
+    });
+  });
+
+  document.addEventListener("toggle", (event) => {
+    if (!(event.target instanceof HTMLDetailsElement) || !event.target.matches("[data-mobile-assist]")) return;
+    document.documentElement.toggleAttribute("data-scroll-lock", event.target.open);
+  }, true);
+
   document.addEventListener("click", (event) => {
     const toggle = event.target instanceof Element ? event.target.closest("[data-theme-toggle]") : null;
     if (!toggle) {

@@ -58,14 +58,14 @@ const formatDate = (date: Date) =>
     <main class="site-grid site-grid--page relative z-10 flex-1 text-text-primary" transition:name="page" transition:animate="fade">
 <div class="min-w-0">
         <article>
-          <header class="measure border-b border-border pb-8">
-            <a class="meta u-link hover:text-accent" href="/blog">← 所有文章</a>
+          <header class="measure border-b border-border pb-6 sm:pb-8">
+            <a class="meta u-link inline-flex min-h-11 items-center hover:text-accent sm:min-h-0" href="/blog">← 所有文章</a>
 
-            <h1 class="heading mt-6 text-[1.75rem] font-semibold leading-[1.45] sm:text-[2.125rem]">
+            <h1 class="heading mt-3 text-[1.625rem] font-semibold leading-[1.45] sm:mt-6 sm:text-[2.125rem]">
               {post.data.title}
             </h1>
 
-            <p class="meta mt-5 flex flex-wrap items-center gap-x-3 gap-y-1">
+            <p class="meta mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 sm:mt-5">
               <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time>
               <span aria-hidden="true">·</span>
               <span>{words} 字</span>
@@ -81,23 +81,26 @@ const formatDate = (date: Date) =>
                       {categories[post.data.category].label}
                     </a>
                   ) : <span class="meta">Archive</span>}
-                  {post.data.tags.map((tag) => (
-                    <span class="tag">#{tag}</span>
+                  {post.data.tags.map((tag, index) => (
+                    <span class:list={["tag", { "tag--overflow": index >= 2 }]}>#{tag}</span>
                   ))}
+                  {post.data.tags.length > 2 && (
+                    <span class="tag tag--more" aria-hidden="true">+{post.data.tags.length - 2}</span>
+                  )}
                 </p>
               )
             }
 
             {
               post.data.description && (
-                <p class="mt-7 border-l-2 border-border pl-5 text-[0.9375rem] leading-8 text-text-secondary">
+                <p class="mt-5 border-l-2 border-border pl-4 text-[0.875rem] leading-7 text-text-secondary sm:mt-7 sm:pl-5 sm:text-[0.9375rem] sm:leading-8">
                   {post.data.description}
                 </p>
               )
             }
           </header>
 
-          <div class="article-content mt-10">
+          <div class="article-content mt-8 sm:mt-10">
             <Content />
           </div>
 
@@ -130,9 +133,18 @@ const formatDate = (date: Date) =>
 
     <SiteFooter />
 
-    <details class="mobile-assist min-[821px]:hidden">
-      <summary class="mobile-assist__toggle" aria-label="打开目录与音乐">
-        <span class="text-xs">目录</span>
+    <button class="back-to-top" type="button" aria-label="回到顶部" data-back-to-top>
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 19V5m-6 6 6-6 6 6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" />
+      </svg>
+    </button>
+
+    <details class="mobile-assist min-[821px]:hidden" data-mobile-assist>
+      <summary class="mobile-assist__toggle mobile-assist__toggle--labelled" aria-label="打开目录与音乐">
+        <svg class="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 6h16M4 12h10M4 18h13" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.6" />
+        </svg>
+        <span class="text-xs tracking-[0.12em]">目录</span>
       </summary>
       <div class="mobile-assist__panel scrollbar-thin">
         <ArticleToc headings={tocHeadings} idPrefix="mobile-" />
@@ -201,6 +213,20 @@ const formatDate = (date: Date) =>
   .code-block__copy:hover {
     border-color: color-mix(in srgb, var(--color-accent) 45%, transparent);
     color: var(--color-accent);
+  }
+
+  /* Touch screens never hover, so the copy button simply stays. */
+  @media (hover: none) {
+    .code-block__copy {
+      padding: 0.4rem 0.7rem;
+      opacity: 1;
+    }
+  }
+
+  @media (max-width: 820px) {
+    .read-progress {
+      height: 3px;
+    }
   }
 </style>
 
@@ -302,9 +328,33 @@ const formatDate = (date: Date) =>
     });
   };
 
+  const initBackToTop = () => {
+    const button = document.querySelector<HTMLButtonElement>("[data-back-to-top]");
+    if (!button) return;
+
+    let ticking = false;
+    const sync = () => {
+      ticking = false;
+      button.toggleAttribute("data-visible", window.scrollY > window.innerHeight * 1.5);
+    };
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(sync);
+    };
+
+    button.addEventListener("click", () => window.scrollTo({ top: 0 }));
+    sync();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    document.addEventListener("astro:before-swap", () => window.removeEventListener("scroll", onScroll), {
+      once: true,
+    });
+  };
+
   const init = () => {
     initToc();
     initCodeCopy();
+    initBackToTop();
   };
 
   init();

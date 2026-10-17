@@ -109,7 +109,7 @@ export const mountHeroAtmosphere = (hero: HTMLElement) => {
   };
 
   const resize = () => {
-    const rect = hero.getBoundingClientRect();
+    const rect = canvas.getBoundingClientRect();
     const nextWidth = rect.width;
     const nextHeight = rect.height;
     if (nextWidth < 2 || nextHeight < 2) return;
@@ -291,7 +291,7 @@ export const mountHeroAtmosphere = (hero: HTMLElement) => {
   buildSprites();
   resize();
   intersection.observe(hero);
-  resizeObserver.observe(hero);
+  resizeObserver.observe(canvas);
   themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
   hero.addEventListener("pointermove", onPointerMove);
   hero.addEventListener("pointerleave", onPointerLeave);

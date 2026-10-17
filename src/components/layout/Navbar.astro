@@ -344,8 +344,14 @@ const searchPosts = sortPostsByDateDesc(
     transition: color 0.2s ease, background-color 0.2s ease;
   }
 
-  .navbar__icon:hover {
-    background: color-mix(in srgb, currentColor 10%, transparent);
+  @media (hover: hover) {
+    .navbar__icon:hover {
+      background: color-mix(in srgb, currentColor 10%, transparent);
+      color: var(--nav-fg-strong);
+    }
+  }
+
+  .navbar__icon:active {
     color: var(--nav-fg-strong);
   }
 
@@ -754,6 +760,7 @@ const searchPosts = sortPostsByDateDesc(
     .search-panel__results {
       max-height: none;
       flex: 1;
+      align-content: start;
       overscroll-behavior: contain;
       padding: 0.5rem 0.75rem max(1rem, env(safe-area-inset-bottom));
     }
